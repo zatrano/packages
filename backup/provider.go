@@ -11,6 +11,7 @@ func init() {
 		Key:         "backup",
 		Description: "Database backup/restore (SQLite + native dump tools)",
 		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		CLI:         backupCLI,
 	})
 }
 
