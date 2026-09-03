@@ -24,7 +24,7 @@ func ConfigFromApp(app BasePather, cfg ConfigGetter, connection string) (Config,
 	if cfg == nil {
 		return Config{}, fmt.Errorf("backup: config unavailable")
 	}
-	defaultName := database.NormalizeDriverName(cfg.GetString("database.default", "sqlite"))
+	defaultName := database.NormalizeDriverName(cfg.GetString("database.default"))
 	name := strings.TrimSpace(connection)
 	if name == "" {
 		name = defaultName
