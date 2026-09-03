@@ -3,7 +3,7 @@ package features_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/features"
+	"github.com/zatrano/packages/features"
 )
 
 func TestFeatureFlags(t *testing.T) {

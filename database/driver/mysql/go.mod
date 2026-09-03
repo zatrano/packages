@@ -1,4 +1,4 @@
-module github.com/zatrano/framework/packages/database/driver/mysql
+module github.com/zatrano/packages/database/driver/mysql
 
 go 1.25.0
 

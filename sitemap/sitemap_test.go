@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/sitemap"
+	"github.com/zatrano/packages/sitemap"
 )
 
 func TestSitemapXML(t *testing.T) {

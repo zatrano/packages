@@ -1,4 +1,4 @@
-module github.com/zatrano/framework/packages/qr
+module github.com/zatrano/packages/qr
 
 go 1.25.0
 

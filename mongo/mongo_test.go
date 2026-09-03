@@ -3,7 +3,7 @@ package mongo_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/mongo"
+	"github.com/zatrano/packages/mongo"
 )
 
 func TestMongoCRUD(t *testing.T) {

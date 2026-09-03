@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/kernel"
-	testkit "github.com/zatrano/framework/packages/testing"
+	testkit "github.com/zatrano/packages/testing"
 )
 
 // Browser is an HTTP feature-test helper wrapping TestCase (not a real browser/DOM engine).

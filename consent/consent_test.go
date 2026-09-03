@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/consent"
+	"github.com/zatrano/packages/consent"
 )
 
 func TestEncodeParse(t *testing.T) {

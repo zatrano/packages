@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/openapi"
+	"github.com/zatrano/packages/openapi"
 	"github.com/zatrano/framework/packages/routing"
 )
 

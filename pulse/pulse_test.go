@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/zatrano/framework/packages/observability"
-	"github.com/zatrano/framework/packages/pulse"
+	"github.com/zatrano/packages/pulse"
 )
 
 func TestPulseSnapshot(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/circuit"
+	"github.com/zatrano/packages/circuit"
 )
 
 func TestCircuitOpens(t *testing.T) {

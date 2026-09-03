@@ -3,8 +3,8 @@ package pulse
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/kernel"
-	"github.com/zatrano/framework/packages/inspector"
-	"github.com/zatrano/framework/packages/search"
+	"github.com/zatrano/packages/inspector"
+	"github.com/zatrano/packages/search"
 )
 
 func init() {

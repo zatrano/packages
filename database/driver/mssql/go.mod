@@ -1,4 +1,4 @@
-module github.com/zatrano/framework/packages/database/driver/mssql
+module github.com/zatrano/packages/database/driver/mssql
 
 go 1.25.0
 

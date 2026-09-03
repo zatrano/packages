@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/backup"
+	"github.com/zatrano/packages/backup"
 )
 
 func TestBackupFilePermissions(t *testing.T) {

@@ -3,7 +3,7 @@ package enums_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/enums"
+	"github.com/zatrano/packages/enums"
 )
 
 func TestStringEnum(t *testing.T) {

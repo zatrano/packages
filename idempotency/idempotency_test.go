@@ -7,7 +7,7 @@ import (
 
 	"github.com/zatrano/framework/packages/cache"
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/idempotency"
+	"github.com/zatrano/packages/idempotency"
 )
 
 func TestIdempotencyMiddlewareReplays(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/negotiate"
+	"github.com/zatrano/packages/negotiate"
 )
 
 func TestNegotiate(t *testing.T) {

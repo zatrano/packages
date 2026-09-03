@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/inspector"
+	"github.com/zatrano/packages/inspector"
 )
 
 func TestInspectorRecordsRequests(t *testing.T) {

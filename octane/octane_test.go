@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/octane"
+	"github.com/zatrano/packages/octane"
 )
 
 func TestOctaneStats(t *testing.T) {

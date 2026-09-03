@@ -3,7 +3,7 @@ package bus_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/bus"
+	"github.com/zatrano/packages/bus"
 )
 
 type greetCommand struct {

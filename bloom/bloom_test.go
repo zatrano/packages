@@ -3,7 +3,7 @@ package bloom_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/bloom"
+	"github.com/zatrano/packages/bloom"
 )
 
 func TestBloomFilter(t *testing.T) {

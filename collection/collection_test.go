@@ -3,7 +3,7 @@ package collection_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/collection"
+	"github.com/zatrano/packages/collection"
 )
 
 func TestCollectionFilterAndTake(t *testing.T) {

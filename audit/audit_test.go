@@ -3,7 +3,7 @@ package audit_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/audit"
+	"github.com/zatrano/packages/audit"
 )
 
 func TestMemoryAuditStore(t *testing.T) {

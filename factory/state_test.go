@@ -7,7 +7,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/zatrano/framework/packages/factory"
+	"github.com/zatrano/packages/factory"
 	"github.com/zatrano/framework/packages/orm"
 )
 

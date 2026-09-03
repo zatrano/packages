@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/timing"
+	"github.com/zatrano/packages/timing"
 )
 
 func TestTimingMarks(t *testing.T) {

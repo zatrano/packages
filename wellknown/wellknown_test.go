@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/wellknown"
+	"github.com/zatrano/packages/wellknown"
 )
 
 func TestSecurityTxt(t *testing.T) {

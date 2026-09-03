@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/webauthn"
+	"github.com/zatrano/packages/webauthn"
 )
 
 func TestMissingConfigErrors(t *testing.T) {

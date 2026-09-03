@@ -3,7 +3,7 @@ package resources_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/resources"
+	"github.com/zatrano/packages/resources"
 )
 
 func TestWrapAndCollection(t *testing.T) {

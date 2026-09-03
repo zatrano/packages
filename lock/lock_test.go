@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/lock"
+	"github.com/zatrano/packages/lock"
 )
 
 func TestLockAcquireRelease(t *testing.T) {

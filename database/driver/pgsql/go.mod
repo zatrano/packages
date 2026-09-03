@@ -1,4 +1,4 @@
-module github.com/zatrano/framework/packages/database/driver/pgsql
+module github.com/zatrano/packages/database/driver/pgsql
 
 go 1.25.0
 

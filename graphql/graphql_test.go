@@ -3,7 +3,7 @@ package graphql_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/graphql"
+	"github.com/zatrano/packages/graphql"
 )
 
 func TestGraphQLExecute(t *testing.T) {

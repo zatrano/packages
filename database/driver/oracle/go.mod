@@ -1,4 +1,4 @@
-module github.com/zatrano/framework/packages/database/driver/oracle
+module github.com/zatrano/packages/database/driver/oracle
 
 go 1.25.0
 

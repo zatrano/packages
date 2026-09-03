@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/zatrano/framework/packages/geo"
+	"github.com/zatrano/packages/geo"
 )
 
 func TestGeoLookup(t *testing.T) {

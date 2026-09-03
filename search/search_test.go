@@ -3,7 +3,7 @@ package search_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/search"
+	"github.com/zatrano/packages/search"
 )
 
 func TestSearchRanksTitleHigher(t *testing.T) {

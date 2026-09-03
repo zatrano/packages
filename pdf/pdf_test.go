@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/pdf"
+	"github.com/zatrano/packages/pdf"
 )
 
 func TestPDFBytes(t *testing.T) {

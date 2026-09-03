@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/archive/zipx"
+	"github.com/zatrano/packages/archive/zipx"
 )
 
 func TestZipCreateExtract(t *testing.T) {

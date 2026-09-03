@@ -3,7 +3,7 @@ package graphql
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/kernel"
-	"github.com/zatrano/framework/packages/features"
+	"github.com/zatrano/packages/features"
 )
 
 func init() {

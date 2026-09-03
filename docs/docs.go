@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/markdown"
+	"github.com/zatrano/packages/markdown"
 	"github.com/zatrano/framework/packages/routing"
 )
 

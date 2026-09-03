@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/debug"
+	"github.com/zatrano/packages/debug"
 )
 
 func TestDump(t *testing.T) {

@@ -1,0 +1,20 @@
+# Binaries
+*.exe
+*.test
+*.out
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local bootstrap leftovers
+storage/
+*.sqlite
+database/*.sqlite
+.env

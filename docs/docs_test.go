@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/docs"
+	"github.com/zatrano/packages/docs"
 	"github.com/zatrano/framework/packages/http"
 	"github.com/zatrano/framework/packages/routing"
 )

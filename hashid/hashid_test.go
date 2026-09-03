@@ -3,7 +3,7 @@ package hashid_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/hashid"
+	"github.com/zatrano/packages/hashid"
 )
 
 func TestHashidRoundTrip(t *testing.T) {

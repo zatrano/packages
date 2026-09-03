@@ -4,7 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/zatrano/framework/packages/api"
+	"github.com/zatrano/packages/api"
 	"github.com/zatrano/framework/packages/http"
 )
 

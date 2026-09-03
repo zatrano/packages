@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/zatrano/framework/packages/process"
+	"github.com/zatrano/packages/process"
 )
 
 func TestCommand(t *testing.T) {

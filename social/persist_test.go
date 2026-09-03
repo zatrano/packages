@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/social"
+	"github.com/zatrano/packages/social"
 )
 
 type memPersist struct {

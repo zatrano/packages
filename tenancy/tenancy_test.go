@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/tenancy"
+	"github.com/zatrano/packages/tenancy"
 )
 
 func TestTenantResolver(t *testing.T) {

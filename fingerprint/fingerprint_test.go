@@ -3,7 +3,7 @@ package fingerprint_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/fingerprint"
+	"github.com/zatrano/packages/fingerprint"
 )
 
 func TestHashStable(t *testing.T) {

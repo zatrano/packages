@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/packages/export/csv"
-	"github.com/zatrano/framework/packages/export/xlsx"
+	"github.com/zatrano/packages/export/csv"
+	"github.com/zatrano/packages/export/xlsx"
 )
 
 // ToMaps imports tabular data from a CSV or Excel (.xlsx/.xlsm) payload.

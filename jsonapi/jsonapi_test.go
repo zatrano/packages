@@ -3,7 +3,7 @@ package jsonapi_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/jsonapi"
+	"github.com/zatrano/packages/jsonapi"
 )
 
 func TestJSONAPIDocument(t *testing.T) {

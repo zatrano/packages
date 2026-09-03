@@ -3,7 +3,7 @@ package jsonschema_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/jsonschema"
+	"github.com/zatrano/packages/jsonschema"
 )
 
 func ptrFloat(v float64) *float64 { return &v }

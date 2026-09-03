@@ -3,7 +3,7 @@ package concurrency_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/concurrency"
+	"github.com/zatrano/packages/concurrency"
 )
 
 func TestMap(t *testing.T) {

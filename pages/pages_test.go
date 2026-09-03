@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/pages"
+	"github.com/zatrano/packages/pages"
 	"github.com/zatrano/framework/packages/routing"
 	"github.com/zatrano/framework/packages/view"
 )

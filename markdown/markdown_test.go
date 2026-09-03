@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/markdown"
+	"github.com/zatrano/packages/markdown"
 )
 
 func TestMarkdownToHTML(t *testing.T) {

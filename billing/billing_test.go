@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/billing"
+	"github.com/zatrano/packages/billing"
 )
 
 func TestBillingFlow(t *testing.T) {

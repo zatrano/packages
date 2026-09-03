@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/image"
+	"github.com/zatrano/packages/image"
 )
 
 func TestImageCreateResize(t *testing.T) {

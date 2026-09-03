@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/otp"
+	"github.com/zatrano/packages/otp"
 )
 
 func TestGenerateVerify(t *testing.T) {

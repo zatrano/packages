@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/shorturl"
+	"github.com/zatrano/packages/shorturl"
 )
 
 func TestShortURL(t *testing.T) {

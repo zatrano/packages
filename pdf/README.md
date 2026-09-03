@@ -3,7 +3,7 @@
 Minimal PDF generation (stdlib only). Use `Inline` for browser viewing or `Attachment` / `Response` for download.
 
 ```go
-import "github.com/zatrano/framework/packages/pdf"
+import "github.com/zatrano/packages/pdf"
 
 doc := pdf.New("Report", "Line 1", "Line 2")
 bytes := doc.Bytes()

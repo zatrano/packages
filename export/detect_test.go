@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/export"
-	"github.com/zatrano/framework/packages/export/xlsx"
+	"github.com/zatrano/packages/export"
+	"github.com/zatrano/packages/export/xlsx"
 )
 
 func TestToMapsCSV(t *testing.T) {

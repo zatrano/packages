@@ -3,7 +3,7 @@ package webhooks_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/webhooks"
+	"github.com/zatrano/packages/webhooks"
 )
 
 func TestWebhookSignVerify(t *testing.T) {
