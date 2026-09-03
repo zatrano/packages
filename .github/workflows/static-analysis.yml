@@ -1,0 +1,43 @@
+name: static analysis
+
+on:
+  push:
+    branches:
+      - main
+      - '*.x'
+      - 'v2-stage-*'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  vet:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: packages
+    steps:
+      - name: Checkout packages
+        uses: actions/checkout@v5
+        with:
+          path: packages
+
+      - name: Checkout framework
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/framework
+          ref: v2-stage-b
+          path: framework
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.13'
+          cache: true
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Run go vet
+        run: go vet ./...

@@ -1,0 +1,48 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+      - '*.x'
+      - 'v2-stage-*'
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  APP_KEY: ci-test-app-key-not-for-production-use
+  APP_ENV: testing
+  APP_DEBUG: 'true'
+
+jobs:
+  linux_tests:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: packages
+    steps:
+      - name: Checkout packages
+        uses: actions/checkout@v5
+        with:
+          path: packages
+
+      - name: Checkout framework
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/framework
+          ref: v2-stage-b
+          path: framework
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.13'
+          cache: true
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Unit tests
+        run: go test ./...
