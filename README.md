@@ -100,25 +100,142 @@ notification.From(app)
 
 There is no `mail` package. Send email through `notification` with `Channels: ["mail"]`.
 
-## What is in this repo
+## Packages
 
-**Web stack** — `session`, `flash`, `validation`, `view`, `assets`, `localization`, `filesystem`
+HTTP, routing, middleware, config, and the CLI live in the [framework](https://github.com/zatrano/framework). Everything below is this module.
 
-**Identity** — `auth`, `authorization`, `hashing`, `apitoken`
+**Service** — blank-import (`package:enable`). **Library** — `import` in your code. **Heavy** — own `go.mod`, only when needed.
 
-**Data** — `database`, `orm`, `factory`, `cache`, `redisx`
+### Web
 
-**Async** — `queue`, `events`, `notification`, `broadcasting`, `schedule`
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`session`](session) | service | Per-visitor server-side sessions (file driver by default) |
+| [`flash`](flash) | service | One-request success/error messages and old input |
+| [`validation`](validation) | service | Form and request validation (pipe rules, FormRequest) |
+| [`view`](view) | service | HTML templates (`views/`) |
+| [`assets`](assets) | service | Vite/Mix manifest URLs in views |
+| [`localization`](localization) | service | JSON translations under `lang/` |
+| [`filesystem`](filesystem) | service | Named disks (`local`, `public`, …) |
+| [`pages`](pages) | library | File-based static pages registered on the router |
 
-**HTTP extras** — `httpclient`, `ratelimit`, `url`, `maintenance`, `health`, `observability`
+### Identity
 
-**Intelligence** — `ai` (service), `rag` and `agent` (libraries)
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`auth`](auth) | service | Session login, register, password reset, email verify, lockout, MFA, remember-me |
+| [`authorization`](authorization) | service | Gates and policies after authentication |
+| [`hashing`](hashing) | service | bcrypt password hashes |
+| [`apitoken`](apitoken) | service | Personal access tokens (Bearer) |
+| [`social`](social) | service | GitHub/Google OAuth **client** login |
+| [`oauth`](oauth) | service | OAuth2 **authorization server** (not social login) |
+| [`otp`](otp) | service | Short numeric OTPs (you deliver via SMS/mail) |
+| [`totp`](totp) | library | Authenticator-app TOTP secrets and codes |
+| [`webauthn`](webauthn) | heavy | Passkey registration and login (own `go.mod`) |
+| [`consent`](consent) | library | Cookie-consent helpers |
+| [`fingerprint`](fingerprint) | library | Device fingerprint helpers |
+| [`honeypot`](honeypot) | library | Hidden spam-trap fields on forms |
 
-**Opt-in services** — `oauth`, `social`, `billing`, `webauthn`, `audit`, `backup`, `mongo`, `graphql`, `inspector`, `features`, `lock`, `octane`, `pulse`, `search`, `shorturl`, `sitemap`, `tenancy`, `webhooks`, `wellknown`, …
+### Data
 
-**Libraries** — `collection`, `totp`, `resources`, `pagination`, `export`, `openapi`, `testing`, `timing`, `useragent`, `websocket`, `markdown`, `image`, `pdf`, …
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`database`](database) | service | SQL connections, query builder, schema, migrations, seeders |
+| [`orm`](orm) | service | Models, relations, eager loading, soft deletes |
+| [`factory`](factory) | library | Model factories for tests and seeders |
+| [`cache`](cache) | service | Temporary key/value store (file / memory / redis) |
+| [`redisx`](redisx) | service | Shared Redis client used by cache and queue |
+| [`mongo`](mongo) | heavy | Document store client, not SQL ORM (own `go.mod`) |
+| [`search`](search) | service | In-memory search index |
+| [`hashid`](hashid) | service | Obfuscate numeric IDs for public URLs |
+| [`enums`](enums) | service | String-backed enums with labels |
 
-The catalog in the framework (`kernel/catalog.go`) is the name list. This tree is the code.
+### Async
+
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`queue`](queue) | service | Named background jobs (sync / database / redis) |
+| [`events`](events) | service | Sync event dispatch and model observers |
+| [`notification`](notification) | service | Mail, SMS, push, database inbox, broadcast — this is how you send email |
+| [`broadcasting`](broadcasting) | service | Channel events to log/file/null drivers (not a WebSocket server) |
+| [`schedule`](schedule) | service | Cron-like tasks via `schedule:run` (no long-running daemon) |
+| [`bus`](bus) | service | Sync command bus (`Dispatch` → handler). Not a queue |
+| [`lock`](lock) | service | Process-local atomic locks (not distributed) |
+| [`cron`](cron) | library | Cron expression parse and match |
+
+### HTTP extras
+
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`httpclient`](httpclient) | service | Outbound HTTP with JSON, retries, and fakes |
+| [`ratelimit`](ratelimit) | service | Named in-process rate limiters |
+| [`url`](url) | service | Absolute URLs, named routes, signed links |
+| [`maintenance`](maintenance) | service | Downtime page (`down` / `up`) |
+| [`health`](health) | service | `/health` style checks |
+| [`observability`](observability) | service | Metrics collection |
+| [`idempotency`](idempotency) | library | Idempotent POST keys |
+| [`negotiate`](negotiate) | library | `Accept` content negotiation |
+| [`timing`](timing) | library | Server-Timing measurements |
+| [`websocket`](websocket) | library | WebSocket upgrade helpers |
+| [`useragent`](useragent) | library | Parse browser/OS from User-Agent |
+| [`geo`](geo) | service | Resolve client geolocation |
+| [`wellknown`](wellknown) | service | `/.well-known` and `security.txt` |
+
+### Intelligence
+
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`ai`](ai) | service | Chat / completion providers |
+| [`rag`](rag) | library | Chunking, embed pipeline, vector store helpers |
+| [`agent`](agent) | library | Agent loop, tools, conversation memory |
+
+### Product addons
+
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`billing`](billing) | service | Subscriptions / Stripe-style billing and webhooks |
+| [`audit`](audit) | service | Request and audit event logging |
+| [`backup`](backup) | service | Database backup/restore via native CLIs |
+| [`graphql`](graphql) | service | GraphQL schema and queries |
+| [`inspector`](inspector) | service | Request inspector toolbar data |
+| [`features`](features) | service | In-memory feature flags and % rollouts |
+| [`octane`](octane) | service | Concurrent request metrics + `GOMAXPROCS` hint. Not a multi-process app server |
+| [`pulse`](pulse) | service | Metrics pulse dashboard |
+| [`shorturl`](shorturl) | service | Create and resolve short URLs |
+| [`sitemap`](sitemap) | service | Build XML sitemaps |
+| [`tenancy`](tenancy) | service | Resolve current tenant from header/query/host (no auto DB isolation) |
+| [`webhooks`](webhooks) | service | Signed outbound webhook delivery |
+| [`circuit`](circuit) | service | Circuit breaker around flaky dependencies |
+| [`docs`](docs) | service | Markdown documentation repository (docs sites) |
+| [`version`](version) | service | Runtime version helper |
+
+### Libraries
+
+| Package | Kind | What it does |
+| --- | --- | --- |
+| [`api`](api) | library | API versioning helpers |
+| [`archive/zipx`](archive/zipx) | library | ZIP create and extract |
+| [`bloom`](bloom) | library | Bloom filter |
+| [`browser`](browser) | library | Headless browser test helpers |
+| [`collection`](collection) | library | In-memory collections (`Filter`, `Map`, …) |
+| [`concurrency`](concurrency) | library | Parallel tasks: `Run` / `Map` / `Pool` |
+| [`debug`](debug) | library | Dump helpers |
+| [`export`](export) | library | CSV/XLSX import and export |
+| [`image`](image) | library | Resize and encode images |
+| [`jsonapi`](jsonapi) | library | JSON:API document helpers |
+| [`jsonschema`](jsonschema) | library | JSON Schema validation |
+| [`markdown`](markdown) | library | Markdown → HTML |
+| [`openapi`](openapi) | library | OpenAPI generate/serve helpers |
+| [`pagination`](pagination) | library | Page metadata for list endpoints |
+| [`pdf`](pdf) | library | PDF generate and inline view |
+| [`process`](process) | library | Run OS commands |
+| [`qr`](qr) | heavy | QR code images (own `go.mod`) |
+| [`resources`](resources) | library | API resource transformers |
+| [`testing`](testing) | library | Feature tests (`Get("/").AssertOK()`) |
+
+`bootutil` is an internal coerce/CLI helper. It is not a consumer package.
+
+The name list also lives in the framework catalog (`kernel/catalog.go`). This tree is the code.
 
 ## Nested modules
 
