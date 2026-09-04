@@ -12,6 +12,7 @@ All notable changes to `github.com/zatrano/packages` are documented in this file
 ### Changed
 
 - Imports that resolve `app/views`, `app/localization`, and `app/database` now use `github.com/zatrano/framework/kernel/dirs` (was `kernel/layout`).
+- CI on `v2-dev`: tests, coding style, static analysis, and security (same set as the framework). Linux jobs check out `zatrano/framework@v2-dev` as a sibling.
 
 ### Notes
 

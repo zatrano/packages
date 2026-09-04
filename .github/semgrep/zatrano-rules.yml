@@ -1,0 +1,30 @@
+# ZATRANO packages Semgrep rules (low-noise).
+
+rules:
+  - id: zatrano-hardcoded-secret-session
+    languages: [go]
+    severity: ERROR
+    message: >-
+      Hardcoded credential-like string in session;
+      use crypto/rand or configuration.
+    paths:
+      include:
+        - "/session/**/*.go"
+    pattern-either:
+      - pattern: password := "..."
+      - pattern: secret := "..."
+      - pattern: apiKey := "..."
+      - pattern: token := "hardcoded-..."
+
+  - id: zatrano-query-raw-sprintf
+    languages: [go]
+    severity: ERROR
+    message: >-
+      WhereRaw/OrderByRaw with fmt.Sprintf may indicate SQL injection risk;
+      prefer bound parameters.
+    paths:
+      include:
+        - "/database/**/*.go"
+    pattern-either:
+      - pattern: $B.WhereRaw(fmt.Sprintf(...), ...)
+      - pattern: $B.OrderByRaw(fmt.Sprintf(...))

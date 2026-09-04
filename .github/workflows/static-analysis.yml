@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - '*.x'
-      - 'v2-stage-*'
+      - 'v2-dev'
   pull_request:
 
 permissions:
@@ -14,6 +14,7 @@ permissions:
 jobs:
   vet:
     runs-on: ubuntu-24.04
+    name: go vet
     defaults:
       run:
         working-directory: packages
@@ -27,7 +28,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: zatrano/framework
-          ref: v2-stage-b
+          ref: v2-dev
           path: framework
 
       - name: Setup Go
@@ -35,9 +36,45 @@ jobs:
         with:
           go-version: '1.25.13'
           cache: true
+          cache-dependency-path: packages/go.sum
 
       - name: Download modules
         run: go mod download
 
       - name: Run go vet
         run: go vet ./...
+
+  staticcheck:
+    runs-on: ubuntu-24.04
+    name: staticcheck
+    defaults:
+      run:
+        working-directory: packages
+    steps:
+      - name: Checkout packages
+        uses: actions/checkout@v5
+        with:
+          path: packages
+
+      - name: Checkout framework
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/framework
+          ref: v2-dev
+          path: framework
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.13'
+          cache: true
+          cache-dependency-path: packages/go.sum
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Install staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@v0.7.0
+
+      - name: Run staticcheck
+        run: staticcheck ./...

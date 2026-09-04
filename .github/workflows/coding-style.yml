@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - '*.x'
-      - 'v2-stage-*'
+      - 'v2-dev'
   pull_request:
 
 permissions:
@@ -14,6 +14,7 @@ permissions:
 jobs:
   gofmt:
     runs-on: ubuntu-24.04
+    name: gofmt
     defaults:
       run:
         working-directory: packages
@@ -40,6 +41,7 @@ jobs:
 
   mod-tidy:
     runs-on: ubuntu-24.04
+    name: go mod tidy
     defaults:
       run:
         working-directory: packages
@@ -53,7 +55,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: zatrano/framework
-          ref: v2-stage-b
+          ref: v2-dev
           path: framework
 
       - name: Setup Go
@@ -61,8 +63,15 @@ jobs:
         with:
           go-version: '1.25.13'
           cache: true
+          cache-dependency-path: packages/go.sum
 
       - name: Check go.mod / go.sum
         run: |
+          set -euo pipefail
           go mod tidy
           git diff --exit-code go.mod go.sum
+          for d in mongo webauthn qr database/driver/sqlite database/driver/mysql database/driver/pgsql database/driver/mssql database/driver/oracle database/driver/mongo; do
+            if [[ -f "$d/go.mod" ]]; then
+              (cd "$d" && go mod tidy && git diff --exit-code go.mod go.sum)
+            fi
+          done
