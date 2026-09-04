@@ -9,13 +9,16 @@ import (
 	"github.com/zatrano/packages/database/seeder"
 )
 
-// Bootable is satisfied by *core.Application for migrator/seeder helpers.
+// Bootable is satisfied by *kernel.Application for migrator/seeder helpers.
 type Bootable interface {
 	App
 	Bootstrap() error
-	Migrations() any
-	Seeders() any
 }
+
+const (
+	migrationsBinding = "migrations"
+	seedersBinding    = "seeders"
+)
 
 // Table starts a query builder on a table via the application DB binding.
 func Table(app App, table string) (*query.Builder, error) {
@@ -46,7 +49,7 @@ func Migrator(app Bootable) (contracts.Migrator, error) {
 	if err != nil {
 		return nil, err
 	}
-	items, err := migrationList(app.Migrations())
+	items, err := migrationList(boundValue(app, migrationsBinding))
 	if err != nil {
 		return nil, err
 	}
@@ -61,11 +64,22 @@ func SeederRunner(app Bootable) (*seeder.Runner, error) {
 	if err := app.Bootstrap(); err != nil {
 		return nil, err
 	}
-	items, err := seederList(app.Seeders())
+	items, err := seederList(boundValue(app, seedersBinding))
 	if err != nil {
 		return nil, err
 	}
 	return seeder.NewRunner(items...), nil
+}
+
+func boundValue(app App, abstract string) any {
+	if app == nil {
+		return nil
+	}
+	raw, err := app.Make(abstract)
+	if err != nil {
+		return nil
+	}
+	return raw
 }
 
 func migrationList(raw any) ([]migration.Migration, error) {
