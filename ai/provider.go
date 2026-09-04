@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/zatrano/framework/bootstrap/addons"
-	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/kernel/env"
 	"github.com/zatrano/framework/kernel/routing"
 )

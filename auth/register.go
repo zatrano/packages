@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/packages/hashing"
 	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/packages/hashing"
 )
 
 // UserCreator creates authenticatable users.

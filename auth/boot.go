@@ -5,9 +5,8 @@ import (
 	"strings"
 	"time"
 
-	appconfig "github.com/zatrano/framework/kernel/config"
-	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/packages/authorization"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/cache"
@@ -18,7 +17,7 @@ import (
 )
 
 func boot(app contracts.App) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "auth", appconfig.Auth())
+	pkgconfig.LoadIfAbsent(app.Config(), "auth", pkgconfig.Auth())
 	app.Container().Instance("gate", authorization.New())
 	authManager := NewManager(app.Config().GetString("auth.defaults.guard", "web"))
 	authManager.SetSessionManager(session.From(app))

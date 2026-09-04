@@ -105,6 +105,9 @@ jobs:
           REDIS_PORT: 6379
           MONGO_URI: memory
 
+      - name: Link live SQL drivers
+        run: bash .github/scripts/live-driver-link.sh
+
       - name: Live MySQL smoke
         run: go test ./database -run TestLiveDriverSmoke -count=1
         env:

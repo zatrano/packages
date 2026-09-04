@@ -3,9 +3,8 @@ package notification
 import (
 	"strings"
 
-	appconfig "github.com/zatrano/framework/kernel/config"
-	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/kernel/env"
 	"github.com/zatrano/packages/broadcasting"
 	"github.com/zatrano/packages/database"
@@ -13,7 +12,7 @@ import (
 )
 
 func boot(app contracts.App) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "notifications", appconfig.Notifications())
+	pkgconfig.LoadIfAbsent(app.Config(), "notifications", pkgconfig.Notifications())
 	mgr := NewManager()
 	if app.Logger() != nil {
 		mgr.SetErrorHandler(func(err error) {

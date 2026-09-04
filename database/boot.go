@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"strings"
 
-	appconfig "github.com/zatrano/framework/kernel/config"
-	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/database/query"
 	"github.com/zatrano/packages/events"
@@ -15,7 +14,7 @@ import (
 )
 
 func boot(app contracts.App) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "database", appconfig.Database())
+	pkgconfig.LoadIfAbsent(app.Config(), "database", pkgconfig.Database())
 	defaultConn := strings.TrimSpace(app.Config().GetString("database.default"))
 	connections := map[string]ConnectionConfig{}
 
