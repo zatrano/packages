@@ -12,6 +12,7 @@ func init() {
 		Description: "Translator / locales",
 		Order:       60,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

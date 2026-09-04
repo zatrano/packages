@@ -12,6 +12,7 @@ func init() {
 		Description: "Gates and policies",
 		Order:       51,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

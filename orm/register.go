@@ -12,6 +12,7 @@ func init() {
 		Description: "Active-record ORM",
 		Order:       11,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

@@ -12,6 +12,7 @@ func init() {
 		Description: "Event broadcasting",
 		Order:       90,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

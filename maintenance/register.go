@@ -13,6 +13,7 @@ func init() {
 		Description: "Maintenance mode",
 		Order:       21,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

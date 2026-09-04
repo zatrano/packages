@@ -12,6 +12,7 @@ func init() {
 		Description: "Authentication guards",
 		Order:       50,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

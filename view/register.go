@@ -12,6 +12,7 @@ func init() {
 		Description: "HTML view engine",
 		Order:       129,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

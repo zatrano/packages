@@ -12,6 +12,7 @@ func init() {
 		Description: "Cache manager",
 		Order:       20,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

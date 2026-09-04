@@ -12,6 +12,7 @@ func init() {
 		Key:         "octane",
 		Description: "Concurrent runtime metrics",
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

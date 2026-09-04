@@ -13,6 +13,7 @@ func init() {
 		Description: "Notifications",
 		Order:       100,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

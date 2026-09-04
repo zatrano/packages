@@ -11,6 +11,7 @@ func init() {
 		Key:         "enums",
 		Description: "String enum registry",
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

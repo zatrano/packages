@@ -12,6 +12,7 @@ func init() {
 		Description: "Task scheduler",
 		Order:       70,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

@@ -12,6 +12,7 @@ func init() {
 		Description: "Job queues",
 		Order:       40,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 
