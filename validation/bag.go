@@ -4,12 +4,12 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/kernel/http"
-	"github.com/zatrano/packages/flash"
 )
 
 const (
 	errorsFlashKey      = "_validation_errors"
 	errorBagsFlashKey   = "_validation_error_bags"
+	oldInputFlashKey    = "_old_input"
 	defaultErrorBagName = "default"
 )
 
@@ -134,7 +134,9 @@ func WithInput(req *http.Request, input ...map[string]string) {
 	if len(input) > 0 && input[0] != nil {
 		data = input[0]
 	}
-	flash.Old(req, data)
+	if sess := req.Session(); sess != nil {
+		sess.Flash(oldInputFlashKey, data)
+	}
 }
 
 func parseErrorsValue(raw any) Errors {

@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/zatrano/framework/bootstrap"
 	"github.com/zatrano/packages/billing"
 )
 
@@ -153,4 +154,13 @@ func TestCheckoutCompletedActivatesPendingSubscription(t *testing.T) {
 	}
 	_ = pending
 	_ = sessionID
+}
+
+func TestBillingImportBootsWithoutSession(t *testing.T) {
+	t.Setenv("APP_KEY", "test-key-for-packages-billing-tests!")
+	t.Setenv("APP_CONFIG_CACHE", "false")
+	app := bootstrap.App()
+	if err := app.Bootstrap(); err != nil {
+		t.Fatal(err)
+	}
 }
