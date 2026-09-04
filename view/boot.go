@@ -72,5 +72,6 @@ func boot(app contracts.App) error {
 	}
 	engine.SetEnvironment(app.Environment())
 	app.Container().Instance("view", engine)
+	installHTTPBridge(app)
 	return nil
 }
