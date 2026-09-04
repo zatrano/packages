@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/packages/view"
+	"github.com/zatrano/packages/view"
 )
 
 // Notifiable can receive notifications.

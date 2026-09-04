@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/session"
+	"github.com/zatrano/packages/session"
 )
 
 func TestSessionDirectoryPermissions(t *testing.T) {

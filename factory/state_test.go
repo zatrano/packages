@@ -8,7 +8,7 @@ import (
 	_ "modernc.org/sqlite"
 
 	"github.com/zatrano/packages/factory"
-	"github.com/zatrano/framework/packages/orm"
+	"github.com/zatrano/packages/orm"
 )
 
 type stateUser struct {

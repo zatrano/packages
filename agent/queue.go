@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/packages/queue"
+	"github.com/zatrano/packages/queue"
 )
 
 // DefaultJobName is the queue job name used by RegisterQueue / PushRun.

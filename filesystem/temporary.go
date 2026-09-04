@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 )
 
 // SetSigningKey configures HMAC signing for local temporary URLs.

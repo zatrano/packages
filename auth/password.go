@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/hashing"
-	"github.com/zatrano/framework/packages/session"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/hashing"
+	"github.com/zatrano/packages/session"
 )
 
 var (

@@ -12,7 +12,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // WebFetchOptions configures the built-in web_fetch tool.

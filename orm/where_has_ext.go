@@ -1,7 +1,7 @@
 package orm
 
 import (
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 // WhereHasMorph keeps parents that have polymorphic related rows of typeValue.

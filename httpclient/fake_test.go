@@ -3,7 +3,7 @@ package httpclient_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/httpclient"
+	"github.com/zatrano/packages/httpclient"
 )
 
 func TestFakeClient(t *testing.T) {

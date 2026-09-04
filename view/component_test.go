@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/view"
+	"github.com/zatrano/packages/view"
 )
 
 func TestComponentRender(t *testing.T) {

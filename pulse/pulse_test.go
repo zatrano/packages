@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/observability"
+	"github.com/zatrano/packages/observability"
 	"github.com/zatrano/packages/pulse"
 )
 

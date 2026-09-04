@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 )
 
 // BasicAuth authenticates the request with HTTP Basic credentials without writing a session.

@@ -105,7 +105,7 @@ func KnownDrivers() []string {
 func DriverModulePath(name string) string {
 	switch strings.ToLower(name) {
 	case "sqlite", "sqlite3":
-		return "github.com/zatrano/framework/packages/database/driver/sqlite"
+		return "github.com/zatrano/packages/database/driver/sqlite"
 	case "mysql":
 		return "github.com/zatrano/packages/database/driver/mysql"
 	case "pgsql", "postgres", "postgresql":

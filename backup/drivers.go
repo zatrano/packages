@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/zatrano/framework/packages/database"
+	"github.com/zatrano/packages/database"
 )
 
 func (m *Manager) createMySQL(dest string) error {

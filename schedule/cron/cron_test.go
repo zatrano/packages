@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/schedule/cron"
+	"github.com/zatrano/packages/schedule/cron"
 )
 
 func TestCronMatches(t *testing.T) {

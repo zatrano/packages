@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/localization"
-	"github.com/zatrano/framework/packages/notification"
+	"github.com/zatrano/packages/localization"
+	"github.com/zatrano/packages/notification"
 )
 
 func TestPasswordResetNotificationLocalized(t *testing.T) {

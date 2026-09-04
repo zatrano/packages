@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/support/uuid"
+	"github.com/zatrano/framework/support/uuid"
 )
 
 // StripeGateway talks to the Stripe REST API.

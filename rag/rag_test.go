@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/ai"
-	"github.com/zatrano/framework/packages/rag"
+	"github.com/zatrano/packages/ai"
+	"github.com/zatrano/packages/rag"
 )
 
 func TestTextChunker(t *testing.T) {

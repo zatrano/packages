@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // Agent runs a chat↔tool loop with optional memory and RAG retrieval.

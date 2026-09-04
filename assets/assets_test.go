@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/assets"
+	"github.com/zatrano/packages/assets"
 )
 
 func TestManifestURL(t *testing.T) {

@@ -3,7 +3,7 @@ package factory
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/packages/orm"
+	"github.com/zatrano/packages/orm"
 )
 
 var states = map[string]map[string]Definition{}

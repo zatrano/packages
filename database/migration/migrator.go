@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zatrano/framework/packages/database/schema"
+	"github.com/zatrano/packages/database/schema"
 )
 
 // Migration is a database migration.

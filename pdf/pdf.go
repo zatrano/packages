@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
 )
 
 const (

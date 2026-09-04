@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 	"github.com/zatrano/packages/docs"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
 )
 
 func TestDocsListAndGet(t *testing.T) {

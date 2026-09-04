@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/packages/database"
+	"github.com/zatrano/packages/database"
 )
 
 // BasePather is satisfied by contracts.App (and test fakes that only need paths).

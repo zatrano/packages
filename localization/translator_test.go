@@ -3,7 +3,7 @@ package localization_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/localization"
+	"github.com/zatrano/packages/localization"
 )
 
 func TestEmbeddedDefaults(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/zatrano/framework/packages/orm"
+	"github.com/zatrano/packages/orm"
 )
 
 type touchModel struct {

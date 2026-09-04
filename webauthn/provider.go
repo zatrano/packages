@@ -2,9 +2,9 @@ package webauthn
 
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
+	pkgconfig "github.com/zatrano/framework/config"
 	"github.com/zatrano/framework/contracts"
-	pkgconfig "github.com/zatrano/framework/packages/config"
-	"github.com/zatrano/framework/packages/env"
+	"github.com/zatrano/framework/env"
 )
 
 func init() {

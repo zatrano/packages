@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/ratelimit"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/ratelimit"
 )
 
 func TestNamedLimiter(t *testing.T) {

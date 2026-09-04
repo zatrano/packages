@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/hashing"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/hashing"
 )
 
 // GenericUser is a map-backed authenticatable user.

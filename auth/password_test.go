@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/auth"
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/auth"
 	_ "modernc.org/sqlite"
 )
 

@@ -3,7 +3,7 @@ package validation
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
 )
 
 // FormRequest defines a validated request contract.

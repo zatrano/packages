@@ -3,8 +3,8 @@ package api
 import (
 	"strings"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 )
 
 const (

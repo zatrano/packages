@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/framework/packages/localization/defaults"
+	"github.com/zatrano/packages/localization/defaults"
 )
 
 // Translator resolves translation strings.

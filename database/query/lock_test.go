@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 func TestLockClauses(t *testing.T) {

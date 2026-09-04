@@ -3,7 +3,7 @@ package agent
 import (
 	"context"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // Chatter is satisfied by *ai.Client (Using / Profile).

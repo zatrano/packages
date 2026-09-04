@@ -1,4 +1,4 @@
-module github.com/zatrano/framework/packages/database/driver/sqlite
+module github.com/zatrano/packages/database/driver/sqlite
 
 go 1.25.0
 

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"reflect"
 
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 // ConnectionResolver resolves a named connection to *sql.DB and driver name.

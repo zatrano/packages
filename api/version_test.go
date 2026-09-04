@@ -4,8 +4,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/zatrano/framework/http"
 	"github.com/zatrano/packages/api"
-	"github.com/zatrano/framework/packages/http"
 )
 
 func TestFromRequestHeaders(t *testing.T) {

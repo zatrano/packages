@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/zatrano/framework/packages/orm"
+	"github.com/zatrano/packages/orm"
 )
 
 type hiddenUser struct {

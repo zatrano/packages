@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
-	"github.com/zatrano/framework/packages/view"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/packages/view"
 )
 
 // Registrar mounts file-based pages onto a router.

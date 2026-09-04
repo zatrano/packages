@@ -3,7 +3,7 @@ package agent
 import (
 	"sync"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // BufferMemory keeps an in-process message list (optionally capped).

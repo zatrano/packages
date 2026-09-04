@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 // MorphToMany returns related models through a polymorphic pivot

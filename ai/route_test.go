@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 type downDriver struct{}

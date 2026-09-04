@@ -4,12 +4,12 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/bootstrap/addons"
+	pkgconfig "github.com/zatrano/framework/config"
 	"github.com/zatrano/framework/contracts"
-	pkgconfig "github.com/zatrano/framework/packages/config"
-	"github.com/zatrano/framework/packages/env"
-	"github.com/zatrano/framework/packages/events"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/notification"
+	"github.com/zatrano/framework/env"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/events"
+	"github.com/zatrano/packages/notification"
 )
 
 func init() {

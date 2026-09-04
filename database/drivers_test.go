@@ -4,11 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/database"
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/database/schema"
+	"github.com/zatrano/packages/database"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/database/schema"
 
-	_ "github.com/zatrano/framework/packages/database/driver/sqlite"
+	_ "github.com/zatrano/packages/database/driver/sqlite"
 )
 
 func TestBuildDSNAllDrivers(t *testing.T) {

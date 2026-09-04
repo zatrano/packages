@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/rag"
+	"github.com/zatrano/packages/rag"
 )
 
 func TestJSONFileStorePersist(t *testing.T) {

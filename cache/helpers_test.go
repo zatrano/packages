@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/cache"
+	"github.com/zatrano/packages/cache"
 )
 
 func TestCacheHelpers(t *testing.T) {

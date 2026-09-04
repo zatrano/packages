@@ -7,7 +7,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 func TestWhereAnyAndAll(t *testing.T) {

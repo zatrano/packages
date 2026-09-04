@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/apitoken"
-	"github.com/zatrano/framework/packages/auth"
+	"github.com/zatrano/packages/apitoken"
+	"github.com/zatrano/packages/auth"
 )
 
 type stubProvider struct {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // Registry maps tool names to handlers and builds ai.Tool definitions.

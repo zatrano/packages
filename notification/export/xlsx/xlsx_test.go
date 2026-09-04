@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/zatrano/framework/packages/notification/export/xlsx"
+	"github.com/zatrano/packages/notification/export/xlsx"
 )
 
 func TestToMapsReadsSharedStrings(t *testing.T) {

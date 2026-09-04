@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/database/schema"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/database/schema"
 )
 
 // Live driver smoke tests. Drivers must already be linked (db:setup).

@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/zatrano/framework/packages/rag"
+	"github.com/zatrano/packages/rag"
 )
 
 // RAGRetrieve adapts a rag.Pipeline to Retriever (topK hits → FormatContext).

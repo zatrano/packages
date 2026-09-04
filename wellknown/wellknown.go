@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 )
 
 // Config holds security.txt / well-known metadata.

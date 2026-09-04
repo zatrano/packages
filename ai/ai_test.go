@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/ai"
-	zhttp "github.com/zatrano/framework/packages/http"
+	zhttp "github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/ai"
 )
 
 func TestAIChat(t *testing.T) {

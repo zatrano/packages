@@ -4,14 +4,14 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/bootstrap"
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
 	"github.com/zatrano/packages/browser"
 )
 
 func TestBrowserVisitHome(t *testing.T) {
 	t.Setenv("APP_KEY", "test-key-for-packages-browser-tests!")
 	t.Setenv("APP_CONFIG_CACHE", "false")
-	app := bootstrap.App(bootstrap.Minimal())
+	app := bootstrap.App()
 	if err := app.Bootstrap(); err != nil {
 		t.Fatal(err)
 	}

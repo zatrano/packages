@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/zatrano/framework/http"
 	"github.com/zatrano/packages/honeypot"
-	"github.com/zatrano/framework/packages/http"
 )
 
 func TestHoneypotRejectsFilledField(t *testing.T) {

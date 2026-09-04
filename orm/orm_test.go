@@ -8,9 +8,9 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/events"
-	"github.com/zatrano/framework/packages/orm"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/events"
+	"github.com/zatrano/packages/orm"
 )
 
 type softModel struct {

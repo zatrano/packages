@@ -3,7 +3,7 @@ package jsonapi
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
 )
 
 // Resource is a JSON:API resource object.

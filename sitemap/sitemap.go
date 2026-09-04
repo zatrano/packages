@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 )
 
 // URL is a sitemap entry.

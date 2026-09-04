@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/notification"
+	"github.com/zatrano/packages/notification"
 	_ "modernc.org/sqlite"
 )
 

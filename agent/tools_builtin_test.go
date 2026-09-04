@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/agent"
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/agent"
+	"github.com/zatrano/packages/ai"
 )
 
 func TestRegisterWebFetch(t *testing.T) {

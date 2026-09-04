@@ -3,7 +3,7 @@ package pagination_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/orm/pagination"
+	"github.com/zatrano/packages/orm/pagination"
 )
 
 func TestPaginator(t *testing.T) {

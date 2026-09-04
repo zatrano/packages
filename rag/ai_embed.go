@@ -3,7 +3,7 @@ package rag
 import (
 	"context"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // FromAI returns an Embedder that calls ai.Manager.Embed (optional model override).

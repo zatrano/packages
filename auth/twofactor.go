@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/auth/totp"
-	"github.com/zatrano/framework/packages/hashing"
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/auth/totp"
+	"github.com/zatrano/packages/hashing"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 // PairScorer scores how well a document answers a query (cross-encoder style).

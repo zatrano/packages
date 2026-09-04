@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/database/schema"
+	"github.com/zatrano/packages/database/schema"
 )
 
 func TestForeignIDConstrainedCreateSQL(t *testing.T) {

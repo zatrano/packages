@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/zatrano/framework/packages/rag"
+	"github.com/zatrano/packages/rag"
 )
 
 func TestKeywordRerankAndQueryWith(t *testing.T) {

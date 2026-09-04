@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/zatrano/framework/packages/rag"
+	"github.com/zatrano/packages/rag"
 	_ "modernc.org/sqlite"
 )
 

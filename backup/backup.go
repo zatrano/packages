@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/database"
-	"github.com/zatrano/framework/packages/safepath"
+	"github.com/zatrano/framework/safepath"
+	"github.com/zatrano/packages/database"
 )
 
 // Config describes the database connection to back up and where files go.

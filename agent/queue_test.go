@@ -5,9 +5,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/zatrano/framework/packages/agent"
-	"github.com/zatrano/framework/packages/ai"
-	"github.com/zatrano/framework/packages/queue"
+	"github.com/zatrano/packages/agent"
+	"github.com/zatrano/packages/ai"
+	"github.com/zatrano/packages/queue"
 )
 
 func TestQueueRunnerSync(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/auth"
-	"github.com/zatrano/framework/packages/localization"
+	"github.com/zatrano/packages/auth"
+	"github.com/zatrano/packages/localization"
 )
 
 func TestAuthErrorsReturnLocalizationKeys(t *testing.T) {

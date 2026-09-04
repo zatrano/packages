@@ -9,8 +9,8 @@ import (
     "context"
     "encoding/json"
 
-    "github.com/zatrano/framework/packages/agent"
-    "github.com/zatrano/framework/packages/ai"
+    "github.com/zatrano/packages/agent"
+    "github.com/zatrano/packages/ai"
 )
 
 mgr := ai.New()

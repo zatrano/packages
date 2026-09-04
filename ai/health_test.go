@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 func TestCheckHealthFake(t *testing.T) {

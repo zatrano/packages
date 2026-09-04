@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/packages/auth"
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/packages/auth"
+	"github.com/zatrano/packages/database/query"
 )
 
 // Token is a personal access token record.

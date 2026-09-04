@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/hashing"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
-	"github.com/zatrano/framework/packages/session"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/packages/hashing"
+	"github.com/zatrano/packages/session"
 )
 
 // LegacySessionKey is the pre–multi-guard session key (read for migration).

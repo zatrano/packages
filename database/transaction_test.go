@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/database"
+	"github.com/zatrano/packages/database"
 )
 
 func TestTransactionCommitAndRollback(t *testing.T) {

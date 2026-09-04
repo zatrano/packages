@@ -11,8 +11,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 )
 
 const acceptGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"

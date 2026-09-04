@@ -8,9 +8,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 	"github.com/zatrano/packages/markdown"
-	"github.com/zatrano/framework/packages/routing"
 )
 
 // Page is a documentation markdown page.

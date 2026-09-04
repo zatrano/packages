@@ -3,7 +3,7 @@ package orm_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/orm"
+	"github.com/zatrano/packages/orm"
 )
 
 func TestPreventLazyLoading(t *testing.T) {

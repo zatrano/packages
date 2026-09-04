@@ -3,7 +3,7 @@ package orm
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 // WithRelationSubquery adds a correlated subquery select alias onto the parent query.

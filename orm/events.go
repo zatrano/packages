@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/framework/packages/events"
+	"github.com/zatrano/packages/events"
 )
 
 var (

@@ -3,7 +3,7 @@ package events_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/events"
+	"github.com/zatrano/packages/events"
 )
 
 type demoSubscriber struct {

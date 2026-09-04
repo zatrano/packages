@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/auth/totp"
+	"github.com/zatrano/packages/auth/totp"
 )
 
 func TestTOTPRoundTrip(t *testing.T) {

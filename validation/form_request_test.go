@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/validation"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/validation"
 )
 
 type memSession struct {

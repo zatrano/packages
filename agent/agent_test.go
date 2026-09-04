@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/agent"
-	"github.com/zatrano/framework/packages/ai"
-	"github.com/zatrano/framework/packages/rag"
+	"github.com/zatrano/packages/agent"
+	"github.com/zatrano/packages/ai"
+	"github.com/zatrano/packages/rag"
 )
 
 func TestAgentToolLoop(t *testing.T) {

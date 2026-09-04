@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/view"
+	"github.com/zatrano/packages/view"
 )
 
 func TestComposer(t *testing.T) {

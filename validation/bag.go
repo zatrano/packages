@@ -3,8 +3,8 @@ package validation
 import (
 	"strings"
 
-	"github.com/zatrano/framework/packages/flash"
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/flash"
 )
 
 const (

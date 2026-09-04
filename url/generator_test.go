@@ -3,8 +3,8 @@ package url_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/routing"
-	"github.com/zatrano/framework/packages/url"
+	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/packages/url"
 )
 
 func TestGenerator(t *testing.T) {

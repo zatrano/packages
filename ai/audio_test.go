@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 func TestFakeTTSAndSTT(t *testing.T) {

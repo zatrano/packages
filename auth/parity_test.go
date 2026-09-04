@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/auth"
-	"github.com/zatrano/framework/packages/auth/totp"
-	"github.com/zatrano/framework/packages/encryption"
-	"github.com/zatrano/framework/packages/hashing"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/session"
+	"github.com/zatrano/framework/encryption"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/auth"
+	"github.com/zatrano/packages/auth/totp"
+	"github.com/zatrano/packages/hashing"
+	"github.com/zatrano/packages/session"
 )
 
 func TestValidateOnceLoginUsingIDAndViaRemember(t *testing.T) {

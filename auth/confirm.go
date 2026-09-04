@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/hashing"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/routing"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/packages/hashing"
 )
 
 const passwordConfirmedKey = "auth.password_confirmed_at"

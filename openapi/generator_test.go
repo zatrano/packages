@@ -3,9 +3,9 @@ package openapi_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/routing"
 	"github.com/zatrano/packages/openapi"
-	"github.com/zatrano/framework/packages/routing"
 )
 
 func TestGenerateOpenAPI(t *testing.T) {

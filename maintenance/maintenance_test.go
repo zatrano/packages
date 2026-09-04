@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/maintenance"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/maintenance"
 )
 
 func TestMaintenanceToggleAndMiddleware(t *testing.T) {

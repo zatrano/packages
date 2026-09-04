@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/localization"
+	"github.com/zatrano/packages/localization"
 )
 
 func TestPublishedAndOptions(t *testing.T) {

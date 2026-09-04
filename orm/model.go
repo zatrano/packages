@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/orm/pagination"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/orm/pagination"
 )
 
 // DB is the active database connection used by ORM.

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/observability"
+	"github.com/zatrano/packages/observability"
 )
 
 func TestPrometheusExport(t *testing.T) {

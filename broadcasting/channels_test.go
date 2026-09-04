@@ -4,8 +4,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/zatrano/framework/packages/broadcasting"
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/broadcasting"
 )
 
 func TestChannelAuthorization(t *testing.T) {

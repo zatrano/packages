@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/cache"
-	"github.com/zatrano/framework/packages/http"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/cache"
 	"github.com/zatrano/packages/idempotency"
 )
 

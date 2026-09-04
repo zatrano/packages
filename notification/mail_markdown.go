@@ -1,6 +1,6 @@
 package notification
 
-import "github.com/zatrano/framework/packages/view"
+import "github.com/zatrano/packages/view"
 
 // SetView attaches a view engine for template-based mail bodies (used by channels).
 func (m *MailManager) SetView(engine *view.Engine) {

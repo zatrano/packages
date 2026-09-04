@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/zatrano/framework/packages/database/query"
+	"github.com/zatrano/packages/database/query"
 )
 
 // Table starts a query builder on the default connection managed externally.

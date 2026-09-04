@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/notification"
+	"github.com/zatrano/packages/notification"
 )
 
 func TestHTTPSmsSenderJSON(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/zatrano/framework/packages/queue"
+	"github.com/zatrano/packages/queue"
 )
 
 func TestQueueChainAndFail(t *testing.T) {

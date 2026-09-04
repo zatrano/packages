@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/packages/support/uuid"
+	"github.com/zatrano/framework/support/uuid"
 )
 
 // FakeDriver returns deterministic stub replies for tests and local use without API keys.

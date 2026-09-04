@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/notification"
+	"github.com/zatrano/packages/notification"
 )
 
 func TestAttachAndReplyTo(t *testing.T) {

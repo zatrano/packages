@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/auth"
-	"github.com/zatrano/framework/packages/hashing"
-	"github.com/zatrano/framework/packages/http"
-	"github.com/zatrano/framework/packages/session"
+	"github.com/zatrano/framework/http"
+	"github.com/zatrano/packages/auth"
+	"github.com/zatrano/packages/hashing"
+	"github.com/zatrano/packages/session"
 )
 
 type memoryRememberProvider struct {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/packages/database/migration"
-	"github.com/zatrano/framework/packages/database/query"
-	"github.com/zatrano/framework/packages/database/seeder"
+	"github.com/zatrano/packages/database/migration"
+	"github.com/zatrano/packages/database/query"
+	"github.com/zatrano/packages/database/seeder"
 )
 
 // Bootable is satisfied by *core.Application for migrator/seeder helpers.

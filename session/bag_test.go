@@ -3,7 +3,7 @@ package session_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/session"
+	"github.com/zatrano/packages/session"
 )
 
 func TestBagLifecycleHelpers(t *testing.T) {

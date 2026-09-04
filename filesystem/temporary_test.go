@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/filesystem"
+	"github.com/zatrano/packages/filesystem"
 )
 
 func TestLocalTemporaryURL(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/packages/env"
+	"github.com/zatrano/framework/env"
 )
 
 func init() {

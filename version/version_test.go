@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/version"
+	"github.com/zatrano/packages/version"
 )
 
 func TestVersionLoadFile(t *testing.T) {

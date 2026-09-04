@@ -8,8 +8,8 @@ Import-only library (no `package:enable`). Pair with `packages/ai` for embedding
 import (
     "context"
 
-    "github.com/zatrano/framework/packages/ai"
-    "github.com/zatrano/framework/packages/rag"
+    "github.com/zatrano/packages/ai"
+    "github.com/zatrano/packages/rag"
 )
 
 mgr := ai.New() // or ai.From(app)

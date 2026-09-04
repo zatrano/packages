@@ -3,7 +3,7 @@ package ai_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/ai"
+	"github.com/zatrano/packages/ai"
 )
 
 func TestPreferCheapest(t *testing.T) {

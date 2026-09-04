@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/packages/filesystem"
+	"github.com/zatrano/packages/filesystem"
 )
 
 func TestDirectoryHelpers(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/zatrano/framework/packages/localization/defaults"
+	"github.com/zatrano/packages/localization/defaults"
 )
 
 var localeLabels = map[string]string{

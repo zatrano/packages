@@ -3,7 +3,7 @@ package validation_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/packages/validation"
+	"github.com/zatrano/packages/validation"
 )
 
 func TestNewValidationRules(t *testing.T) {

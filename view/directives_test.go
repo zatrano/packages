@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/packages/validation"
-	"github.com/zatrano/framework/packages/view"
+	"github.com/zatrano/packages/validation"
+	"github.com/zatrano/packages/view"
 )
 
 func TestFormDirectives(t *testing.T) {

@@ -3,7 +3,7 @@ package billing
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/packages/notification"
+	"github.com/zatrano/packages/notification"
 )
 
 // InvoicePaidNotification is sent when an invoice is paid.

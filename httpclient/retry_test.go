@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/zatrano/framework/packages/httpclient"
+	"github.com/zatrano/packages/httpclient"
 )
 
 func TestHTTPClientRetry(t *testing.T) {

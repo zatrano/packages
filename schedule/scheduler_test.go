@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/packages/schedule"
+	"github.com/zatrano/packages/schedule"
 )
 
 func TestWithoutOverlapping(t *testing.T) {
