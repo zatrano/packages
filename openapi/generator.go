@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/routing"
 )
 
 // Spec is a minimal OpenAPI 3 document.

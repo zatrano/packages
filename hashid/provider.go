@@ -3,7 +3,7 @@ package hashid
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
+	"github.com/zatrano/framework/kernel/env"
 )
 
 func init() {

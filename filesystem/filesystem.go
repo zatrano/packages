@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/safepath"
+	"github.com/zatrano/framework/kernel/safepath"
 )
 
 // Disk is a filesystem disk contract.

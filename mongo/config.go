@@ -1,6 +1,6 @@
 package mongo
 
-import "github.com/zatrano/framework/env"
+import "github.com/zatrano/framework/kernel/env"
 
 // DefaultConfig returns MongoDB configuration defaults.
 func DefaultConfig() map[string]any {

@@ -4,7 +4,7 @@ import (
 	stdhttp "net/http"
 	"testing"
 
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 func TestSameOriginRejectsCrossSite(t *testing.T) {

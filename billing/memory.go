@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/support/uuid"
+	"github.com/zatrano/framework/kernel/support/uuid"
 )
 
 // MemoryGateway is an in-process billing driver for demos and tests.

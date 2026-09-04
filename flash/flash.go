@@ -1,7 +1,7 @@
 package flash
 
 import (
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 const (

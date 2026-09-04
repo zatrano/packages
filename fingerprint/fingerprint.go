@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"strings"
 
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 // Hash builds a stable fingerprint from parts.

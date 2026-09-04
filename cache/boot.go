@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
+	"github.com/zatrano/framework/kernel/env"
 	"github.com/zatrano/packages/redisx"
 )
 

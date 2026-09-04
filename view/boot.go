@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/layout"
+	"github.com/zatrano/framework/kernel/layout"
 	"github.com/zatrano/packages/assets"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/localization"

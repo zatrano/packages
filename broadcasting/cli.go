@@ -47,7 +47,7 @@ func (c *MakeChannelCommand) Handle(args []string) error {
 import (
 	"github.com/zatrano/packages/auth"
 	corebroadcast "github.com/zatrano/packages/broadcasting"
-	. "github.com/zatrano/framework/http"
+	. "github.com/zatrano/framework/kernel/http"
 )
 
 // %s authorizes "%s" channels.

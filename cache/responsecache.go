@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/http"
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/kernel/routing"
 )
 
 type cachedHTTPResponse struct {

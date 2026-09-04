@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 // Options controls CSV encode/decode behaviour.

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/bootstrap"
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 	"github.com/zatrano/packages/browser"
 )
 

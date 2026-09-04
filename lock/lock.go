@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/support/uuid"
+	"github.com/zatrano/framework/kernel/support/uuid"
 )
 
 type entry struct {

@@ -1,6 +1,6 @@
 package webauthn
 
-import "github.com/zatrano/framework/env"
+import "github.com/zatrano/framework/kernel/env"
 
 // DefaultConfig returns WebAuthn/passkey configuration defaults.
 func DefaultConfig() map[string]any {

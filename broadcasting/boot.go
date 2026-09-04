@@ -2,8 +2,8 @@ package broadcasting
 
 import (
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 func boot(app contracts.App) error {

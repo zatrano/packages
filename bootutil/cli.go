@@ -8,7 +8,7 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/layout"
+	"github.com/zatrano/framework/kernel/layout"
 )
 
 // NamedCmd is a console command that can be registered through addon Meta.CLI.

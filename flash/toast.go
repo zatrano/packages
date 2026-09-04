@@ -4,7 +4,7 @@ import (
 	"html"
 	"strings"
 
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 const KeyToast = "flash_toasts"

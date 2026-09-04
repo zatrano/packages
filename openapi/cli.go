@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/routing"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {

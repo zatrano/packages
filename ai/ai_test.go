@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	zhttp "github.com/zatrano/framework/http"
+	zhttp "github.com/zatrano/framework/kernel/http"
 	"github.com/zatrano/packages/ai"
 )
 

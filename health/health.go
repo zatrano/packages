@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/http"
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/kernel/routing"
 )
 
 // Status values for a check.

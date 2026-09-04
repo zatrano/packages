@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
+	"github.com/zatrano/framework/kernel/env"
 )
 
 func boot(app contracts.App) error {

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/http"
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/kernel/routing"
 	"github.com/zatrano/packages/hashing"
 	"github.com/zatrano/packages/session"
 )

@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/bootstrap/addons"
-	pkgconfig "github.com/zatrano/framework/config"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
+	"github.com/zatrano/framework/kernel/env"
 )
 
 func init() {

@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/zatrano/framework/safepath"
+	"github.com/zatrano/framework/kernel/safepath"
 )
 
 // maxExtractBytes caps a single member to mitigate zip bombs (DoS).

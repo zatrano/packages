@@ -3,7 +3,7 @@ package maintenance
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/routing"
 )
 
 func init() {

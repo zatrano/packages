@@ -11,8 +11,8 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
-	"github.com/zatrano/framework/layout"
+	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/kernel/layout"
 )
 
 type namedCmd interface {

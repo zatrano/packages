@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	zhttp "github.com/zatrano/framework/http"
+	zhttp "github.com/zatrano/framework/kernel/http"
 )
 
 // HandleHTTP processes a framework HTTP webhook request.

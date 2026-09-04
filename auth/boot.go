@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	appconfig "github.com/zatrano/framework/config"
-	pkgconfig "github.com/zatrano/framework/config"
+	appconfig "github.com/zatrano/framework/kernel/config"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/packages/authorization"
 	"github.com/zatrano/packages/bootutil"

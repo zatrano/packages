@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	applayout "github.com/zatrano/framework/layout"
+	applayout "github.com/zatrano/framework/kernel/layout"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {

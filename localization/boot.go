@@ -2,8 +2,8 @@ package localization
 
 import (
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
-	"github.com/zatrano/framework/layout"
+	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/kernel/layout"
 )
 
 func boot(app contracts.App) error {

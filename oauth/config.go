@@ -1,6 +1,6 @@
 package oauth
 
-import "github.com/zatrano/framework/env"
+import "github.com/zatrano/framework/kernel/env"
 
 // DefaultConfig returns OAuth2 server configuration defaults.
 func DefaultConfig() map[string]any {

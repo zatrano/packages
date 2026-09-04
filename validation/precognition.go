@@ -3,8 +3,8 @@ package validation
 import (
 	"strings"
 
-	"github.com/zatrano/framework/http"
-	"github.com/zatrano/framework/routing"
+	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/kernel/routing"
 )
 
 const precognitionHeader = "Precognition"

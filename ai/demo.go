@@ -3,7 +3,7 @@ package ai
 import (
 	"strings"
 
-	"github.com/zatrano/framework/http"
+	"github.com/zatrano/framework/kernel/http"
 )
 
 type demoChatBody struct {

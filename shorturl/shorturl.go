@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/http"
-	"github.com/zatrano/framework/routing"
-	"github.com/zatrano/framework/support/uuid"
+	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/kernel/routing"
+	"github.com/zatrano/framework/kernel/support/uuid"
 )
 
 // Link is a shortened URL record.

@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/layout"
+	"github.com/zatrano/framework/kernel/layout"
 )
 
 type MakeComponentCommand struct {

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/config"
+	"github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/packages/backup"
 )
 

@@ -3,10 +3,10 @@ package notification
 import (
 	"strings"
 
-	appconfig "github.com/zatrano/framework/config"
-	pkgconfig "github.com/zatrano/framework/config"
+	appconfig "github.com/zatrano/framework/kernel/config"
+	pkgconfig "github.com/zatrano/framework/kernel/config"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/env"
+	"github.com/zatrano/framework/kernel/env"
 	"github.com/zatrano/packages/broadcasting"
 	"github.com/zatrano/packages/database"
 	"github.com/zatrano/packages/localization"
