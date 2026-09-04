@@ -14,7 +14,7 @@ import (
 )
 
 func boot(app contracts.App) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "database", pkgconfig.Database())
+	pkgconfig.LoadIfAbsent(app.Config(), "database", DefaultConfig())
 	defaultConn := strings.TrimSpace(app.Config().GetString("database.default"))
 	connections := map[string]ConnectionConfig{}
 

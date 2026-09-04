@@ -40,9 +40,67 @@ type Retriever interface {
 // Handler executes a single tool call and returns a string result for the model.
 type Handler func(ctx context.Context, call ai.ToolCall) (string, error)
 
+// ToolStatus classifies a tool execution outcome.
+type ToolStatus string
+
+const (
+	ToolOK      ToolStatus = "ok"
+	ToolError   ToolStatus = "error"
+	ToolTimeout ToolStatus = "timeout"
+	ToolDenied  ToolStatus = "denied"
+	ToolInvalid ToolStatus = "invalid"
+)
+
+// ToolResult is a typed outcome of one tool call (status, retryability, error).
+type ToolResult struct {
+	ID        string
+	Name      string
+	Status    ToolStatus
+	Output    string
+	Error     string
+	Retryable bool
+	Metadata  map[string]string
+}
+
+// Content is the string sent back to the model as the tool message body.
+func (r ToolResult) Content() string {
+	if r.Status == ToolOK {
+		return r.Output
+	}
+	if r.Output != "" {
+		return r.Output
+	}
+	msg := r.Error
+	if msg == "" {
+		msg = string(r.Status)
+		if msg == "" {
+			msg = "tool failed"
+		}
+	}
+	return "error: " + msg
+}
+
+// ExecError lets a handler set status and retryability instead of a bare error.
+type ExecError struct {
+	Status    ToolStatus
+	Message   string
+	Retryable bool
+}
+
+func (e *ExecError) Error() string {
+	if e == nil {
+		return ""
+	}
+	if e.Message != "" {
+		return e.Message
+	}
+	return string(e.Status)
+}
+
 // Result is the outcome of Agent.Run.
 type Result struct {
-	Response *ai.ChatResponse
-	Steps    int
-	Messages []ai.Message // full transcript including tools
+	Response    *ai.ChatResponse
+	Steps       int
+	Messages    []ai.Message // full transcript including tools
+	ToolResults []ToolResult
 }

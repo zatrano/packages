@@ -12,7 +12,7 @@ import (
 )
 
 func boot(app contracts.App) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "notifications", pkgconfig.Notifications())
+	pkgconfig.LoadIfAbsent(app.Config(), "notifications", DefaultConfig())
 	mgr := NewManager()
 	if app.Logger() != nil {
 		mgr.SetErrorHandler(func(err error) {

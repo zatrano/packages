@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -52,23 +53,26 @@ func RegisterWebFetch(reg *Registry, opts WebFetchOptions) error {
 			URL string `json:"url"`
 		}
 		if err := call.UnmarshalArguments(&args); err != nil {
-			return "", err
+			return "", &ExecError{Status: ToolInvalid, Message: err.Error()}
 		}
 		u := strings.TrimSpace(args.URL)
 		if u == "" {
-			return "", fmt.Errorf("url is required")
+			return "", &ExecError{Status: ToolInvalid, Message: "url is required"}
 		}
 		if !opts.AllowHTTP && !strings.HasPrefix(strings.ToLower(u), "https://") {
-			return "", fmt.Errorf("only https URLs are allowed")
+			return "", &ExecError{Status: ToolDenied, Message: "only https URLs are allowed"}
 		}
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 		if err != nil {
-			return "", err
+			return "", &ExecError{Status: ToolInvalid, Message: err.Error()}
 		}
 		req.Header.Set("User-Agent", "ZATRANO-agent/1.6")
 		resp, err := client.Do(req)
 		if err != nil {
-			return "", err
+			if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
+				return "", err
+			}
+			return "", &ExecError{Status: ToolError, Message: err.Error(), Retryable: true}
 		}
 		defer resp.Body.Close()
 		limited := io.LimitReader(resp.Body, int64(maxBytes)+1)

@@ -32,13 +32,15 @@ func boot(app contracts.App) error {
 	}
 	mgr := NewManager(env.Get("CACHE_STORE", "file"), stores)
 	app.Container().Instance("cache", mgr)
-	if app.Health() != nil {
-		app.Health().Custom("cache", func(ctx context.Context) error {
-			if From(app) == nil {
-				return fmt.Errorf("cache unavailable")
-			}
-			return From(app).Put("health:ping", "ok", 0)
-		})
+	if raw, err := app.Make("health"); err == nil {
+		if h, ok := raw.(contracts.Health); ok && h != nil {
+			h.Custom("cache", func(ctx context.Context) error {
+				if From(app) == nil {
+					return fmt.Errorf("cache unavailable")
+				}
+				return From(app).Put("health:ping", "ok", 0)
+			})
+		}
 	}
 	return nil
 }

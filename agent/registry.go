@@ -2,6 +2,7 @@ package agent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -60,19 +61,67 @@ func (r *Registry) Tools() []ai.Tool {
 }
 
 // Execute runs the handler for call.Function.Name.
+// On failure the string is the model-facing Content() and err is the classified message.
 func (r *Registry) Execute(ctx context.Context, call ai.ToolCall) (string, error) {
-	if r == nil {
-		return "", fmt.Errorf("agent: registry is nil")
+	res := r.ExecuteResult(ctx, call)
+	if res.Status != ToolOK {
+		msg := res.Error
+		if msg == "" {
+			msg = string(res.Status)
+		}
+		return res.Content(), fmt.Errorf("%s", msg)
 	}
+	return res.Output, nil
+}
+
+// ExecuteResult runs the handler and returns a typed status (ok/error/timeout/denied/invalid).
+func (r *Registry) ExecuteResult(ctx context.Context, call ai.ToolCall) ToolResult {
 	name := strings.TrimSpace(call.Function.Name)
+	out := ToolResult{ID: call.ID, Name: name, Status: ToolError}
+	if r == nil {
+		out.Status = ToolInvalid
+		out.Error = "agent: registry is nil"
+		return out
+	}
 	r.mu.RLock()
 	h := r.handlers[name]
 	r.mu.RUnlock()
 	if h == nil {
-		return "", fmt.Errorf("agent: unknown tool %q", name)
+		out.Status = ToolInvalid
+		out.Error = fmt.Sprintf("agent: unknown tool %q", name)
+		return out
 	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	return h(ctx, call)
+	text, err := h(ctx, call)
+	if err != nil {
+		out.Status, out.Retryable, out.Error = classifyToolErr(err)
+		return out
+	}
+	out.Status = ToolOK
+	out.Output = text
+	return out
+}
+
+func classifyToolErr(err error) (ToolStatus, bool, string) {
+	if err == nil {
+		return ToolOK, false, ""
+	}
+	var ex *ExecError
+	if errors.As(err, &ex) && ex != nil {
+		status := ex.Status
+		if status == "" {
+			status = ToolError
+		}
+		msg := ex.Message
+		if msg == "" {
+			msg = err.Error()
+		}
+		return status, ex.Retryable, msg
+	}
+	if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
+		return ToolTimeout, true, err.Error()
+	}
+	return ToolError, false, err.Error()
 }

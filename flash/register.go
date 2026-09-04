@@ -11,6 +11,7 @@ func init() {
 		Key:         "flash",
 		Description: "Flash / toast messages",
 		Order:       131,
+		Requires:    []string{"session"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }

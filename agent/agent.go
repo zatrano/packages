@@ -66,6 +66,7 @@ func (a *Agent) Run(ctx context.Context, userMessage string) (*Result, error) {
 	}
 
 	var last *ai.ChatResponse
+	var toolResults []ToolResult
 	steps := 0
 	for step := 1; step <= maxSteps; step++ {
 		steps = step
@@ -87,22 +88,20 @@ func (a *Agent) Run(ctx context.Context, userMessage string) (*Result, error) {
 		last = resp
 		if !resp.HasToolCalls() {
 			mem.Append(resp.Message)
-			return &Result{Response: resp, Steps: steps, Messages: mem.Messages()}, nil
+			return &Result{Response: resp, Steps: steps, Messages: mem.Messages(), ToolResults: toolResults}, nil
 		}
 		mem.Append(ai.AssistantToolCalls(resp.Message.ToolCalls...))
 		if a.Tools == nil {
 			return nil, fmt.Errorf("agent: model requested tools but Tools registry is nil")
 		}
 		for _, call := range resp.Message.ToolCalls {
-			out, err := a.Tools.Execute(ctx, call)
-			if err != nil {
-				out = "error: " + err.Error()
-			}
-			mem.Append(ai.ToolResultMessage(call.ID, out))
+			tr := a.Tools.ExecuteResult(ctx, call)
+			toolResults = append(toolResults, tr)
+			mem.Append(ai.ToolResultMessage(call.ID, tr.Content()))
 		}
 	}
 	if last == nil {
 		return nil, fmt.Errorf("agent: no response")
 	}
-	return &Result{Response: last, Steps: steps, Messages: mem.Messages()}, fmt.Errorf("agent: max steps (%d) reached", maxSteps)
+	return &Result{Response: last, Steps: steps, Messages: mem.Messages(), ToolResults: toolResults}, fmt.Errorf("agent: max steps (%d) reached", maxSteps)
 }

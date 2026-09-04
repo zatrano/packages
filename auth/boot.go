@@ -17,7 +17,7 @@ import (
 )
 
 func boot(app contracts.App) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "auth", pkgconfig.Auth())
+	pkgconfig.LoadIfAbsent(app.Config(), "auth", DefaultConfig())
 	app.Container().Instance("gate", authorization.New())
 	authManager := NewManager(app.Config().GetString("auth.defaults.guard", "web"))
 	authManager.SetSessionManager(session.From(app))
@@ -101,11 +101,13 @@ func boot(app contracts.App) error {
 	}
 
 	authManager.SetVerificationURLGenerator(func(user Authenticatable) (string, error) {
-		if user == nil || app.URL() == nil {
+		gen, _ := app.Make("url")
+		u, _ := gen.(contracts.URLGenerator)
+		if user == nil || u == nil {
 			return "", fmt.Errorf("verification url unavailable")
 		}
 		email := EmailForVerification(user)
-		return app.URL().Signed("/auth/email/verify/"+fmt.Sprint(user.AuthID()), 60*time.Minute, map[string]string{
+		return u.Signed("/auth/email/verify/"+fmt.Sprint(user.AuthID()), 60*time.Minute, map[string]string{
 			"hash": EmailHash(email),
 		})
 	})
@@ -181,9 +183,11 @@ func boot(app contracts.App) error {
 			app.Container().Instance("passwords", passwords)
 		}
 	}
-	if app.Health() != nil && database.From(app) != nil {
-		if db, err := database.From(app).DB(); err == nil {
-			app.Health().Database(db)
+	if raw, err := app.Make("health"); err == nil {
+		if h, ok := raw.(contracts.Health); ok && h != nil && database.From(app) != nil {
+			if db, err := database.From(app).DB(); err == nil {
+				h.Database(db)
+			}
 		}
 	}
 	return nil

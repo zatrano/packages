@@ -20,10 +20,15 @@ func init() {
 type ServiceProvider struct{}
 
 func (p *ServiceProvider) Register(app contracts.App) error {
-	if app.Metrics() == nil {
+	raw, err := app.Make("metrics")
+	if err != nil || raw == nil {
 		return nil
 	}
-	dash := New(app.Metrics()).WithExtra(func() map[string]any {
+	m, ok := raw.(contracts.Metrics)
+	if !ok || m == nil {
+		return nil
+	}
+	dash := New(m).WithExtra(func() map[string]any {
 		extra := map[string]any{}
 		if insp := inspector.From(app); insp != nil {
 			extra["inspector_entries"] = insp.Count()

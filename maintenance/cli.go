@@ -57,7 +57,11 @@ func (c *DownCommand) Handle(args []string) error {
 			i++
 		}
 	}
-	if err := c.app.Maintenance().Enable(payload); err != nil {
+	m := From(c.app)
+	if m == nil {
+		return fmt.Errorf("maintenance unavailable")
+	}
+	if err := m.Enable(payload); err != nil {
 		return err
 	}
 	fmt.Println("Application is now in maintenance mode.")
@@ -74,7 +78,11 @@ func (c *UpCommand) Handle(args []string) error {
 	if err := c.app.Bootstrap(); err != nil {
 		return err
 	}
-	if err := c.app.Maintenance().Disable(); err != nil {
+	m := From(c.app)
+	if m == nil {
+		return fmt.Errorf("maintenance unavailable")
+	}
+	if err := m.Disable(); err != nil {
 		return err
 	}
 	fmt.Println("Application is now live.")

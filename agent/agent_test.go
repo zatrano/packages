@@ -57,6 +57,9 @@ func TestAgentToolLoop(t *testing.T) {
 	if !foundTool {
 		t.Fatalf("%+v", res.Messages)
 	}
+	if len(res.ToolResults) == 0 || res.ToolResults[0].Status != agent.ToolOK {
+		t.Fatalf("tool results=%+v", res.ToolResults)
+	}
 }
 
 func TestAgentWithRetriever(t *testing.T) {

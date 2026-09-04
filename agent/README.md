@@ -69,4 +69,4 @@ a.Retrieve = agent.RAGRetrieve{Pipeline: ragPipeline, TopK: 5}
 | `ResultStore` / `MemoryResultStore` / `JSONFileResultStore` | Persist outcomes by job ID |
 | `Chain` / `CatalogChain` | Sequential multi-agent runs |
 | `Graph` / `RouteIf` / `RouteContains` | Branching multi-agent graph |
-| `Result` | Final response + step count + transcript |
+| `Result` | Final response + step count + transcript + typed `ToolResults` |

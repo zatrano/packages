@@ -6,6 +6,7 @@ All notable changes to `github.com/zatrano/packages` are documented in this file
 
 ### Added
 
+- Agent tool execution returns typed `ToolResult` (`ok` / `error` / `timeout` / `denied` / `invalid`, retryable, model `Content()`). `Registry.Execute` still returns `(string, error)`.
 - First-party addon packages split from the ZATRANO framework module (Stage B).
 - Consumers blank-import a package (for example `github.com/zatrano/packages/billing`) and enable it with `bootstrap.WithAddons(...)`.
 

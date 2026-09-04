@@ -11,6 +11,7 @@ func init() {
 		Key:         "orm",
 		Description: "Active-record ORM",
 		Order:       11,
+		Requires:    []string{"database"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})
