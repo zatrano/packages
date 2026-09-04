@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 	testkit "github.com/zatrano/packages/testing"
 )
 
@@ -19,7 +19,7 @@ type Browser struct {
 }
 
 // New creates a browser session around an application.
-func New(app *kernel.Application) (*Browser, error) {
+func New(app contracts.App) (*Browser, error) {
 	tc, err := testkit.New(app)
 	if err != nil {
 		return nil, err

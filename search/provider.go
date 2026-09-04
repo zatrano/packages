@@ -2,7 +2,7 @@ package search
 
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 )
 
 func init() {
@@ -10,16 +10,16 @@ func init() {
 		Name:        "search",
 		Key:         "search",
 		Description: "In-memory search engine",
-		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }
 
 // ServiceProvider boots the search addon.
 type ServiceProvider struct{}
 
-func (p *ServiceProvider) Register(app *kernel.Application) error {
+func (p *ServiceProvider) Register(app contracts.App) error {
 	app.Container().Instance("search", New(NewMemoryEngine()))
 	return nil
 }
 
-func (p *ServiceProvider) Boot(app *kernel.Application) error { return nil }
+func (p *ServiceProvider) Boot(app contracts.App) error { return nil }

@@ -1,8 +1,8 @@
 package circuit
 
-import "github.com/zatrano/framework/kernel"
+import "github.com/zatrano/framework/contracts"
 
 // From resolves the package service from the application container.
-func From(app *kernel.Application) *Manager {
-	return kernel.Resolve[*Manager](app, "circuit")
+func From(app contracts.App) *Manager {
+	return contracts.Resolve[*Manager](app, "circuit")
 }

@@ -1,8 +1,8 @@
 package oauth
 
-import "github.com/zatrano/framework/kernel"
+import "github.com/zatrano/framework/contracts"
 
 // From resolves the OAuth server from the application container.
-func From(app *kernel.Application) *Server {
-	return kernel.Resolve[*Server](app, "oauth")
+func From(app contracts.App) *Server {
+	return contracts.Resolve[*Server](app, "oauth")
 }

@@ -2,7 +2,7 @@ package enums
 
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 )
 
 func init() {
@@ -10,14 +10,14 @@ func init() {
 		Name:        "enums",
 		Key:         "enums",
 		Description: "String enum registry",
-		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }
 
 // ServiceProvider boots the enums addon.
 type ServiceProvider struct{}
 
-func (p *ServiceProvider) Register(app *kernel.Application) error {
+func (p *ServiceProvider) Register(app contracts.App) error {
 	reg := NewRegistry()
 	reg.Register(NewString("post_status", "draft:Draft", "published:Published", "archived:Archived"))
 	reg.Register(NewString("user_role", "admin", "editor", "viewer"))
@@ -25,4 +25,4 @@ func (p *ServiceProvider) Register(app *kernel.Application) error {
 	return nil
 }
 
-func (p *ServiceProvider) Boot(app *kernel.Application) error { return nil }
+func (p *ServiceProvider) Boot(app contracts.App) error { return nil }

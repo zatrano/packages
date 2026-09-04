@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/zatrano/framework/bootstrap/addons"
-	appconfig "github.com/zatrano/framework/config"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 	pkgconfig "github.com/zatrano/framework/packages/config"
 	"github.com/zatrano/framework/packages/env"
 )
@@ -16,15 +15,15 @@ func init() {
 		Key:         "mongo",
 		Description: "MongoDB client (separate module)",
 		Heavy:       true,
-		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }
 
 // ServiceProvider boots the MongoDB client addon.
 type ServiceProvider struct{}
 
-func (p *ServiceProvider) Register(app *kernel.Application) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "mongo", appconfig.Mongo())
+func (p *ServiceProvider) Register(app contracts.App) error {
+	pkgconfig.LoadIfAbsent(app.Config(), "mongo", DefaultConfig())
 	if app.Bound("mongo") {
 		return nil
 	}
@@ -37,4 +36,4 @@ func (p *ServiceProvider) Register(app *kernel.Application) error {
 	return nil
 }
 
-func (p *ServiceProvider) Boot(app *kernel.Application) error { return nil }
+func (p *ServiceProvider) Boot(app contracts.App) error { return nil }

@@ -4,8 +4,7 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/bootstrap/addons"
-	appconfig "github.com/zatrano/framework/config"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 	pkgconfig "github.com/zatrano/framework/packages/config"
 	"github.com/zatrano/framework/packages/env"
 	"github.com/zatrano/framework/packages/events"
@@ -18,15 +17,15 @@ func init() {
 		Name:        "billing",
 		Key:         "billing",
 		Description: "Central billing (memory/stripe gateways, webhooks)",
-		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }
 
 // ServiceProvider boots the billing addon.
 type ServiceProvider struct{}
 
-func (p *ServiceProvider) Register(app *kernel.Application) error {
-	pkgconfig.LoadIfAbsent(app.Config(), "billing", appconfig.Billing())
+func (p *ServiceProvider) Register(app contracts.App) error {
+	pkgconfig.LoadIfAbsent(app.Config(), "billing", DefaultConfig())
 	baseURL := app.Config().GetString("app.url", env.Get("APP_URL", "http://localhost:8080"))
 	mgr := NewManager(baseURL)
 
@@ -82,7 +81,7 @@ func (p *ServiceProvider) Register(app *kernel.Application) error {
 	return nil
 }
 
-func (p *ServiceProvider) Boot(app *kernel.Application) error {
+func (p *ServiceProvider) Boot(app contracts.App) error {
 	if app == nil || app.Router() == nil {
 		return nil
 	}

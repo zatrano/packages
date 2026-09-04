@@ -2,7 +2,7 @@ package backup
 
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 )
 
 func init() {
@@ -10,7 +10,7 @@ func init() {
 		Name:        "backup",
 		Key:         "backup",
 		Description: "Database backup/restore (SQLite + native dump tools)",
-		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         backupCLI,
 	})
 }
@@ -18,7 +18,7 @@ func init() {
 // ServiceProvider boots the backup addon.
 type ServiceProvider struct{}
 
-func (p *ServiceProvider) Register(app *kernel.Application) error {
+func (p *ServiceProvider) Register(app contracts.App) error {
 	mgr, err := ManagerFromApp(app, "")
 	if err != nil {
 		return err
@@ -27,4 +27,4 @@ func (p *ServiceProvider) Register(app *kernel.Application) error {
 	return nil
 }
 
-func (p *ServiceProvider) Boot(app *kernel.Application) error { return nil }
+func (p *ServiceProvider) Boot(app contracts.App) error { return nil }

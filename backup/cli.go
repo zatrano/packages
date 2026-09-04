@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 )
 
-func backupCLI(app *kernel.Application) []addons.CLICommand {
+func backupCLI(app contracts.App) []addons.CLICommand {
 	return []addons.CLICommand{
 		{Name: "db:backup", Description: "Backup the default (or --connection) database using native tools", Handle: func(args []string) error {
 			return runBackupCreate(app, args)
@@ -25,7 +25,7 @@ func backupCLI(app *kernel.Application) []addons.CLICommand {
 	}
 }
 
-func backupManager(app *kernel.Application, args []string) (*Manager, []string, error) {
+func backupManager(app contracts.App, args []string) (*Manager, []string, error) {
 	if err := app.Bootstrap(); err != nil {
 		return nil, nil, err
 	}
@@ -58,7 +58,7 @@ func parseBackupFlags(args []string) (connection string, rest []string) {
 	return connection, rest
 }
 
-func runBackupCreate(app *kernel.Application, args []string) error {
+func runBackupCreate(app contracts.App, args []string) error {
 	mgr, rest, err := backupManager(app, args)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func runBackupCreate(app *kernel.Application, args []string) error {
 	return nil
 }
 
-func runBackupList(app *kernel.Application, args []string) error {
+func runBackupList(app contracts.App, args []string) error {
 	mgr, _, err := backupManager(app, args)
 	if err != nil {
 		return err
@@ -104,7 +104,7 @@ func runBackupList(app *kernel.Application, args []string) error {
 	return nil
 }
 
-func runBackupRestore(app *kernel.Application, args []string) error {
+func runBackupRestore(app contracts.App, args []string) error {
 	mgr, rest, err := backupManager(app, args)
 	if err != nil {
 		return err

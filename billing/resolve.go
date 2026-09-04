@@ -1,8 +1,8 @@
 package billing
 
-import "github.com/zatrano/framework/kernel"
+import "github.com/zatrano/framework/contracts"
 
 // From resolves the billing manager from the application container.
-func From(app *kernel.Application) *Manager {
-	return kernel.Resolve[*Manager](app, "billing")
+func From(app contracts.App) *Manager {
+	return contracts.Resolve[*Manager](app, "billing")
 }

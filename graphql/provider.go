@@ -2,7 +2,7 @@ package graphql
 
 import (
 	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/packages/features"
 )
 
@@ -11,14 +11,14 @@ func init() {
 		Name:        "graphql",
 		Key:         "graphql",
 		Description: "GraphQL schema and queries",
-		Factory:     func() kernel.Provider { return &ServiceProvider{} },
+		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }
 
 // ServiceProvider boots the GraphQL addon.
 type ServiceProvider struct{}
 
-func (p *ServiceProvider) Register(app *kernel.Application) error {
+func (p *ServiceProvider) Register(app contracts.App) error {
 	schema := NewSchema()
 	schema.Query("health", func(args map[string]any) (any, error) {
 		return "ok", nil
@@ -45,4 +45,4 @@ func (p *ServiceProvider) Register(app *kernel.Application) error {
 	return nil
 }
 
-func (p *ServiceProvider) Boot(app *kernel.Application) error { return nil }
+func (p *ServiceProvider) Boot(app contracts.App) error { return nil }

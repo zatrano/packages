@@ -1,8 +1,8 @@
 package audit
 
-import "github.com/zatrano/framework/kernel"
+import "github.com/zatrano/framework/contracts"
 
 // From resolves the audit manager from the application container.
-func From(app *kernel.Application) *Manager {
-	return kernel.Resolve[*Manager](app, "audit")
+func From(app contracts.App) *Manager {
+	return contracts.Resolve[*Manager](app, "audit")
 }
