@@ -2,6 +2,7 @@
 # Test the root module and every nested module (own go.mod).
 set -euo pipefail
 
+export GOWORK=off
 go test ./...
 
 nested=(

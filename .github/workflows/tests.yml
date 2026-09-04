@@ -135,9 +135,6 @@ jobs:
       fail-fast: false
       matrix:
         go: ['1.25.13']
-    defaults:
-      run:
-        working-directory: packages
     steps:
       - name: Set git to use LF
         run: |
@@ -164,9 +161,11 @@ jobs:
           cache-dependency-path: packages/go.sum
 
       - name: Download modules
+        working-directory: packages
         run: go mod download
 
       - name: Execute tests
+        working-directory: packages
         run: go test ./...
         env:
           MONGO_URI: memory
