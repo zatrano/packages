@@ -11,8 +11,8 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/kernel/dirs"
 	"github.com/zatrano/framework/kernel/env"
-	"github.com/zatrano/framework/kernel/layout"
 )
 
 type namedCmd interface {
@@ -403,7 +403,7 @@ func writeModelMigration(app contracts.App, modelName, table, translation string
 	structName := toExported(description)
 	fileName := stamp + "_" + description + ".go"
 
-	dir := filepath.Join(layout.DatabaseDirForCreate(app), "migrations")
+	dir := filepath.Join(dirs.DatabaseDirForCreate(app), "migrations")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
@@ -472,7 +472,7 @@ func (c *MakeMigrationCommand) Handle(args []string) error {
 	structName := toExported(description)
 	fileName := stamp + "_" + description + ".go"
 
-	dir := filepath.Join(layout.DatabaseDirForCreate(c.app), "migrations")
+	dir := filepath.Join(dirs.DatabaseDirForCreate(c.app), "migrations")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
@@ -528,7 +528,7 @@ func (c *MakeSeederCommand) Handle(args []string) error {
 	if !strings.HasSuffix(name, "Seeder") {
 		name += "Seeder"
 	}
-	dir := filepath.Join(layout.DatabaseDirForCreate(c.app), "seeders")
+	dir := filepath.Join(dirs.DatabaseDirForCreate(c.app), "seeders")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}

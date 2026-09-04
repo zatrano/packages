@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel/layout"
+	"github.com/zatrano/framework/kernel/dirs"
 	"github.com/zatrano/packages/localization/defaults"
 )
 
@@ -33,7 +33,7 @@ func (c *LangPublishCommand) Handle(args []string) error {
 		if err != nil {
 			return err
 		}
-		dest := filepath.Join(layout.LocalizationDirForCreate(c.app), filepath.FromSlash(path))
+		dest := filepath.Join(dirs.LocalizationDirForCreate(c.app), filepath.FromSlash(path))
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return err
 		}

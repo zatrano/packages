@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/zatrano/framework/kernel/layout"
+	"github.com/zatrano/framework/kernel/dirs"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
@@ -67,7 +67,7 @@ func (c *MakeFactoryCommand) Handle(args []string) error {
 	}
 	name := args[0]
 	mod := bootutil.ConsumerModule(c.app)
-	dir := filepath.Join(layout.DatabaseDirForCreate(c.app), "factories")
+	dir := filepath.Join(dirs.DatabaseDirForCreate(c.app), "factories")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}

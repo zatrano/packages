@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel/layout"
+	"github.com/zatrano/framework/kernel/dirs"
 )
 
 type MakeComponentCommand struct {
@@ -27,7 +27,7 @@ func (c *MakeComponentCommand) Handle(args []string) error {
 	if slug == "" {
 		slug = strings.ToLower(name)
 	}
-	dir := filepath.Join(layout.ViewsDirForCreate(c.app), "components")
+	dir := filepath.Join(dirs.ViewsDirForCreate(c.app), "components")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/layout"
+	"github.com/zatrano/framework/kernel/dirs"
 )
 
 // NamedCmd is a console command that can be registered through addon Meta.CLI.
@@ -52,18 +52,18 @@ func ApplyConsumerPlaceholders(app contracts.App, body string) string {
 	return body
 }
 
-// ScaffoldDest maps starter layout prefixes onto app/views, app/localization, app/database.
+// ScaffoldDest maps starter path prefixes onto app/views, app/localization, app/database.
 func ScaffoldDest(app contracts.App, parts []string) string {
 	if app == nil || len(parts) == 0 {
 		return ""
 	}
 	switch parts[0] {
 	case "views":
-		return filepath.Join(append([]string{layout.ViewsDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{dirs.ViewsDirForCreate(app)}, parts[1:]...)...)
 	case "lang":
-		return filepath.Join(append([]string{layout.LocalizationDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{dirs.LocalizationDirForCreate(app)}, parts[1:]...)...)
 	case "database":
-		return filepath.Join(append([]string{layout.DatabaseDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{dirs.DatabaseDirForCreate(app)}, parts[1:]...)...)
 	default:
 		return app.BasePath(parts...)
 	}

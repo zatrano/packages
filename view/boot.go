@@ -6,14 +6,14 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/layout"
+	"github.com/zatrano/framework/kernel/dirs"
 	"github.com/zatrano/packages/assets"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/localization"
 )
 
 func boot(app contracts.App) error {
-	engine := New(layout.ViewsDir(app))
+	engine := New(dirs.ViewsDir(app))
 	engine.EnableCache(!app.IsDebug())
 	engine.Share("appName", app.Config().GetString("app.name", "ZATRANO"))
 	if tr := localization.From(app); tr != nil {

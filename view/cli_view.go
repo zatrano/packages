@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	applayout "github.com/zatrano/framework/kernel/layout"
+	"github.com/zatrano/framework/kernel/dirs"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
@@ -63,9 +63,9 @@ func (c *MakeViewCommand) Handle(args []string) error {
 		}
 	}
 	rel := strings.Join(parts, string(os.PathSeparator))
-	dir := filepath.Join(applayout.ViewsDirForCreate(c.app), filepath.Dir(rel))
+	dir := filepath.Join(dirs.ViewsDirForCreate(c.app), filepath.Dir(rel))
 	if filepath.Dir(rel) == "." {
-		dir = applayout.ViewsDirForCreate(c.app)
+		dir = dirs.ViewsDirForCreate(c.app)
 	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
