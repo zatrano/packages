@@ -68,5 +68,23 @@ jobs:
       - name: Check go.mod / go.sum
         run: |
           set -euo pipefail
-          GOWORK=off go mod tidy
+          export GOWORK=off
+          go mod tidy
           git diff --exit-code go.mod go.sum
+          nested=(
+            mongo
+            webauthn
+            qr
+            database/driver/sqlite
+            database/driver/mysql
+            database/driver/pgsql
+            database/driver/mssql
+            database/driver/oracle
+            database/driver/mongo
+          )
+          for d in "${nested[@]}"; do
+            if [[ -f "$d/go.mod" ]]; then
+              (cd "$d" && go mod tidy)
+              git diff --exit-code "$d/go.mod" "$d/go.sum"
+            fi
+          done
