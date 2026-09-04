@@ -6,9 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/framework/env"
 	"github.com/zatrano/framework/http"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 	"github.com/zatrano/framework/routing"
 	"github.com/zatrano/packages/flash"
 	"github.com/zatrano/packages/localization"
@@ -17,21 +18,27 @@ import (
 )
 
 type httpBridge struct {
-	app *kernel.Application
+	app contracts.App
 }
 
-func installHTTPBridge(app *kernel.Application) {
+func installHTTPBridge(app contracts.App) {
 	app.SetHTTPBridge(&httpBridge{app: app})
 }
 
-func (b *httpBridge) Middleware() []routing.MiddlewareFunc {
-	return []routing.MiddlewareFunc{
+func (b *httpBridge) Middleware() []any {
+	return []any{
 		b.sessionMiddleware(),
 		b.localeMiddleware(),
 	}
 }
 
-func (b *httpBridge) Finalize(w stdhttp.ResponseWriter, req *http.Request, resp *http.Response) *http.Response {
+func (b *httpBridge) Finalize(w stdhttp.ResponseWriter, reqAny any, respAny any) any {
+	req, _ := reqAny.(*http.Request)
+	resp, _ := respAny.(*http.Response)
+	return b.finalize(w, req, resp)
+}
+
+func (b *httpBridge) finalize(w stdhttp.ResponseWriter, req *http.Request, resp *http.Response) *http.Response {
 	app := b.app
 	if resp == nil {
 		resp = http.Abort(204)
@@ -75,7 +82,7 @@ func (b *httpBridge) Finalize(w stdhttp.ResponseWriter, req *http.Request, resp 
 				}
 			}
 			data["locale"] = locale
-			langPath := kernel.LocalizationDir(app)
+			langPath := layout.LocalizationDir(app)
 			data["langPublished"] = localization.Published(langPath)
 			data["locales"] = localization.Options(langPath, locale)
 		}
@@ -150,7 +157,7 @@ func (b *httpBridge) localeMiddleware() routing.MiddlewareFunc {
 		return func(req *http.Request) *http.Response {
 			tr := localization.From(b.app)
 			if tr != nil {
-				langPath := kernel.LocalizationDir(b.app)
+				langPath := layout.LocalizationDir(b.app)
 				locale := ""
 				if sess := req.Session(); sess != nil {
 					if raw, ok := sess.Get("locale").(string); ok {

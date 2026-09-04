@@ -10,21 +10,16 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/bootstrap"
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeEnumCommand{app: k},
+		&MakeEnumCommand{app: app},
 	)
 }
 
 type MakeEnumCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeEnumCommand) Name() string        { return "make:enum" }

@@ -8,22 +8,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel"
 	"github.com/zatrano/framework/routing"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&OpenAPIGenerateCommand{app: k},
+		&OpenAPIGenerateCommand{app: app},
 	)
 }
 
 type OpenAPIGenerateCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *OpenAPIGenerateCommand) Name() string { return "openapi:generate" }

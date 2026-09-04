@@ -2,16 +2,17 @@ package view
 
 import (
 	"fmt"
+	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 )
 
 type MakeComponentCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeComponentCommand) Name() string        { return "make:component" }
@@ -26,7 +27,7 @@ func (c *MakeComponentCommand) Handle(args []string) error {
 	if slug == "" {
 		slug = strings.ToLower(name)
 	}
-	dir := filepath.Join(kernel.ViewsDirForCreate(c.app), "components")
+	dir := filepath.Join(layout.ViewsDirForCreate(c.app), "components")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}

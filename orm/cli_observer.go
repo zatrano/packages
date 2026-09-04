@@ -8,25 +8,19 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeObserverCommand{app: k},
-		&MakeRepositoryCommand{app: k},
-		&MakeScopeCommand{app: k},
-		&MakeCastCommand{app: k},
+		&MakeObserverCommand{app: app},
+		&MakeRepositoryCommand{app: app},
+		&MakeScopeCommand{app: app},
+		&MakeCastCommand{app: app},
 	)
 }
 
 type MakeObserverCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeObserverCommand) Name() string        { return "make:observer" }

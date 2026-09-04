@@ -10,24 +10,20 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 	"github.com/zatrano/packages/localization/defaults"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeLangCommand{app: k},
-		&LangPublishCommand{app: k},
+		&MakeLangCommand{app: app},
+		&LangPublishCommand{app: app},
 	)
 }
 
 // MakeLangCommand scaffolds a new locale directory from built-in defaults.
 type MakeLangCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeLangCommand) Name() string { return "make:lang" }
@@ -54,7 +50,7 @@ func (c *MakeLangCommand) Handle(args []string) error {
 		if strings.ContainsAny(group, `/\`) {
 			return fmt.Errorf("invalid group name")
 		}
-		dir := filepath.Join(kernel.LocalizationDirForCreate(c.app), locale)
+		dir := filepath.Join(layout.LocalizationDirForCreate(c.app), locale)
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return err
 		}
@@ -89,7 +85,7 @@ func (c *MakeLangCommand) Handle(args []string) error {
 			return err
 		}
 		rel := strings.TrimPrefix(filepath.ToSlash(path), source+"/")
-		dest := filepath.Join(kernel.LocalizationDirForCreate(c.app), locale, filepath.FromSlash(rel))
+		dest := filepath.Join(layout.LocalizationDirForCreate(c.app), locale, filepath.FromSlash(rel))
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return err
 		}
@@ -118,7 +114,7 @@ func (c *MakeLangCommand) Handle(args []string) error {
 			if readErr != nil {
 				continue
 			}
-			dest := filepath.Join(kernel.LocalizationDirForCreate(c.app), locale+".json")
+			dest := filepath.Join(layout.LocalizationDirForCreate(c.app), locale+".json")
 			if writeErr := os.MkdirAll(filepath.Dir(dest), 0o755); writeErr != nil {
 				return writeErr
 			}

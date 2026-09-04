@@ -3,18 +3,17 @@ package database
 import (
 	"bufio"
 	"fmt"
+	"github.com/zatrano/framework/contracts"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 // DBSetupCommand interactively (or via flags) selects SQL drivers, writes
 // bootstrap/database_drivers.go, updates .env, and runs go get for selected modules.
 type DBSetupCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *DBSetupCommand) Name() string { return "db:setup" }

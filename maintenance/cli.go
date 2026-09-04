@@ -8,22 +8,17 @@ import (
 	"strings"
 
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&DownCommand{app: k},
-		&UpCommand{app: k},
+		&DownCommand{app: app},
+		&UpCommand{app: app},
 	)
 }
 
 type DownCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *DownCommand) Name() string        { return "down" }
@@ -70,7 +65,7 @@ func (c *DownCommand) Handle(args []string) error {
 }
 
 type UpCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *UpCommand) Name() string        { return "up" }

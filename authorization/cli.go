@@ -7,22 +7,16 @@ import (
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakePolicyCommand{app: k},
+		&MakePolicyCommand{app: app},
 	)
 }
 
 type MakePolicyCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakePolicyCommand) Name() string        { return "make:policy" }

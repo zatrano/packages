@@ -8,22 +8,16 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&OctaneStartCommand{app: k},
+		&OctaneStartCommand{app: app},
 	)
 }
 
 type OctaneStartCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *OctaneStartCommand) Name() string { return "octane:start" }

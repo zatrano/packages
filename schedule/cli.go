@@ -6,23 +6,18 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel"
 	"github.com/zatrano/packages/bootutil"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&ScheduleRunCommand{app: k},
-		&ScheduleListCommand{app: k},
+		&ScheduleRunCommand{app: app},
+		&ScheduleListCommand{app: app},
 	)
 }
 
 type ScheduleRunCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *ScheduleRunCommand) Name() string        { return "schedule:run" }
@@ -47,7 +42,7 @@ func (c *ScheduleRunCommand) Handle(args []string) error {
 }
 
 type ScheduleListCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *ScheduleListCommand) Name() string        { return "schedule:list" }

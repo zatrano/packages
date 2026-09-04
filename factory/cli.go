@@ -8,21 +8,17 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeFactoryCommand{app: k},
+		&MakeFactoryCommand{app: app},
 	)
 }
 
 type MakeResourceCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeResourceCommand) Name() string        { return "make:resource" }
@@ -60,7 +56,7 @@ func %s(model models.%s) map[string]any {
 }
 
 type MakeFactoryCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeFactoryCommand) Name() string        { return "make:factory" }
@@ -71,7 +67,7 @@ func (c *MakeFactoryCommand) Handle(args []string) error {
 	}
 	name := args[0]
 	mod := bootutil.ConsumerModule(c.app)
-	dir := filepath.Join(kernel.DatabaseDirForCreate(c.app), "factories")
+	dir := filepath.Join(layout.DatabaseDirForCreate(c.app), "factories")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}

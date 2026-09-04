@@ -8,7 +8,7 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 )
 
 // NamedCmd is a console command that can be registered through addon Meta.CLI.
@@ -16,12 +16,6 @@ type NamedCmd interface {
 	Name() string
 	Description() string
 	Handle(args []string) error
-}
-
-// KernelApp type-asserts contracts.App to *kernel.Application.
-func KernelApp(app contracts.App) *kernel.Application {
-	k, _ := app.(*kernel.Application)
-	return k
 }
 
 // CLI wraps named commands for addon registration.
@@ -39,7 +33,7 @@ func CLI(cmds ...NamedCmd) []addons.CLICommand {
 }
 
 // ConsumerModule returns the consuming application's Go module path.
-func ConsumerModule(app *kernel.Application) string {
+func ConsumerModule(app contracts.App) string {
 	if app == nil {
 		return "your/module"
 	}
@@ -51,7 +45,7 @@ func ConsumerModule(app *kernel.Application) string {
 }
 
 // ApplyConsumerPlaceholders rewrites generated stub module paths.
-func ApplyConsumerPlaceholders(app *kernel.Application, body string) string {
+func ApplyConsumerPlaceholders(app contracts.App, body string) string {
 	mod := ConsumerModule(app)
 	body = strings.ReplaceAll(body, "__MODULE__", mod)
 	body = strings.ReplaceAll(body, "github.com/zatrano/framework/app/", mod+"/app/")
@@ -59,24 +53,24 @@ func ApplyConsumerPlaceholders(app *kernel.Application, body string) string {
 }
 
 // ScaffoldDest maps starter layout prefixes onto app/views, app/localization, app/database.
-func ScaffoldDest(app *kernel.Application, parts []string) string {
+func ScaffoldDest(app contracts.App, parts []string) string {
 	if app == nil || len(parts) == 0 {
 		return ""
 	}
 	switch parts[0] {
 	case "views":
-		return filepath.Join(append([]string{kernel.ViewsDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{layout.ViewsDirForCreate(app)}, parts[1:]...)...)
 	case "lang":
-		return filepath.Join(append([]string{kernel.LocalizationDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{layout.LocalizationDirForCreate(app)}, parts[1:]...)...)
 	case "database":
-		return filepath.Join(append([]string{kernel.DatabaseDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{layout.DatabaseDirForCreate(app)}, parts[1:]...)...)
 	default:
 		return app.BasePath(parts...)
 	}
 }
 
 // ConsoleStubsDir locates framework console/stubs via go.mod replace or sibling trees.
-func ConsoleStubsDir(app *kernel.Application) string {
+func ConsoleStubsDir(app contracts.App) string {
 	if app == nil {
 		return ""
 	}

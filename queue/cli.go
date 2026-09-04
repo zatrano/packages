@@ -9,23 +9,18 @@ import (
 
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel"
 	"github.com/zatrano/packages/bootutil"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&QueueWorkCommand{app: k},
-		&MakeJobCommand{app: k},
+		&QueueWorkCommand{app: app},
+		&MakeJobCommand{app: app},
 	)
 }
 
 type QueueWorkCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *QueueWorkCommand) Name() string        { return "queue:work" }
@@ -76,7 +71,7 @@ func (c *QueueWorkCommand) Handle(args []string) error {
 }
 
 type MakeJobCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeJobCommand) Name() string        { return "make:job" }

@@ -2,18 +2,17 @@ package auth
 
 import (
 	"fmt"
+	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 // MakeDashboardCommand scaffolds the management dashboard (davet.link-style shell).
 type MakeDashboardCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeDashboardCommand) Name() string { return "make:dashboard" }

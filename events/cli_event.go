@@ -2,15 +2,15 @@ package events
 
 import (
 	"fmt"
+	"github.com/zatrano/framework/contracts"
 	"os"
 	"path/filepath"
 
-	"github.com/zatrano/framework/kernel"
 	"github.com/zatrano/packages/bootutil"
 )
 
 type MakeEventCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeEventCommand) Name() string        { return "make:event" }
@@ -41,7 +41,7 @@ type %s struct {
 }
 
 type MakeListenerCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeListenerCommand) Name() string        { return "make:listener" }

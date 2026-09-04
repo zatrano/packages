@@ -12,7 +12,7 @@ import (
 	"github.com/zatrano/framework/bootstrap/addons"
 	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/framework/env"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 )
 
 type namedCmd interface {
@@ -21,28 +21,19 @@ type namedCmd interface {
 	Handle(args []string) error
 }
 
-func kernelApp(app contracts.App) *kernel.Application {
-	k, _ := app.(*kernel.Application)
-	return k
-}
-
 // Commands returns database CLI commands for addon registration.
 func Commands(app contracts.App) []addons.CLICommand {
-	k := kernelApp(app)
-	if k == nil {
-		return nil
-	}
 	raw := []namedCmd{
-		&MigrateCommand{app: k},
-		&MigrateRollbackCommand{app: k},
-		&MigrateStatusCommand{app: k},
-		&MigrateFreshCommand{app: k},
-		&DBCreateCommand{app: k},
-		&DBSeedCommand{app: k},
-		&MakeModelCommand{app: k},
-		&MakeMigrationCommand{app: k},
-		&MakeSeederCommand{app: k},
-		&DBSetupCommand{app: k},
+		&MigrateCommand{app: app},
+		&MigrateRollbackCommand{app: app},
+		&MigrateStatusCommand{app: app},
+		&MigrateFreshCommand{app: app},
+		&DBCreateCommand{app: app},
+		&DBSeedCommand{app: app},
+		&MakeModelCommand{app: app},
+		&MakeMigrationCommand{app: app},
+		&MakeSeederCommand{app: app},
+		&DBSetupCommand{app: app},
 	}
 	out := make([]addons.CLICommand, 0, len(raw))
 	for _, c := range raw {
@@ -57,7 +48,7 @@ func Commands(app contracts.App) []addons.CLICommand {
 }
 
 type MigrateCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MigrateCommand) Name() string        { return "migrate" }
@@ -74,7 +65,7 @@ func (c *MigrateCommand) Handle(args []string) error {
 }
 
 type MigrateRollbackCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MigrateRollbackCommand) Name() string        { return "migrate:rollback" }
@@ -91,7 +82,7 @@ func (c *MigrateRollbackCommand) Handle(args []string) error {
 }
 
 type MigrateStatusCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MigrateStatusCommand) Name() string        { return "migrate:status" }
@@ -108,7 +99,7 @@ func (c *MigrateStatusCommand) Handle(args []string) error {
 }
 
 type MigrateFreshCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MigrateFreshCommand) Name() string { return "migrate:fresh" }
@@ -128,7 +119,7 @@ func (c *MigrateFreshCommand) Handle(args []string) error {
 
 // DBCreateCommand creates the configured MySQL/PostgreSQL database.
 type DBCreateCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *DBCreateCommand) Name() string { return "db:create" }
@@ -266,7 +257,7 @@ func createOracleDatabase() error {
 }
 
 type DBSeedCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *DBSeedCommand) Name() string        { return "db:seed" }
@@ -284,7 +275,7 @@ func (c *DBSeedCommand) Handle(args []string) error {
 }
 
 type MakeModelCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeModelCommand) Name() string { return "make:model" }
@@ -406,13 +397,13 @@ func (m *%s) TableName() string {
 	}
 }
 
-func writeModelMigration(app *kernel.Application, modelName, table, translation string) error {
+func writeModelMigration(app contracts.App, modelName, table, translation string) error {
 	description := "create_" + table + "_table"
 	stamp := time.Now().Format("20060102_150405")
 	structName := toExported(description)
 	fileName := stamp + "_" + description + ".go"
 
-	dir := filepath.Join(kernel.DatabaseDirForCreate(app), "migrations")
+	dir := filepath.Join(layout.DatabaseDirForCreate(app), "migrations")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
@@ -467,7 +458,7 @@ func (m *%s) Down(s *schema.Builder) error {
 }
 
 type MakeMigrationCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeMigrationCommand) Name() string        { return "make:migration" }
@@ -481,7 +472,7 @@ func (c *MakeMigrationCommand) Handle(args []string) error {
 	structName := toExported(description)
 	fileName := stamp + "_" + description + ".go"
 
-	dir := filepath.Join(kernel.DatabaseDirForCreate(c.app), "migrations")
+	dir := filepath.Join(layout.DatabaseDirForCreate(c.app), "migrations")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
@@ -524,7 +515,7 @@ func (m *%s) Down(s *schema.Builder) error {
 }
 
 type MakeSeederCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeSeederCommand) Name() string        { return "make:seeder" }
@@ -537,7 +528,7 @@ func (c *MakeSeederCommand) Handle(args []string) error {
 	if !strings.HasSuffix(name, "Seeder") {
 		name += "Seeder"
 	}
-	dir := filepath.Join(kernel.DatabaseDirForCreate(c.app), "seeders")
+	dir := filepath.Join(layout.DatabaseDirForCreate(c.app), "seeders")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}

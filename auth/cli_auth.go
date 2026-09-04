@@ -9,24 +9,18 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeAuthCommand{app: k},
-		&MakeDashboardCommand{app: k},
+		&MakeAuthCommand{app: app},
+		&MakeDashboardCommand{app: app},
 	)
 }
 
 // MakeAuthCommand scaffolds the full application auth layer.
 type MakeAuthCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeAuthCommand) Name() string { return "make:auth" }
@@ -276,7 +270,7 @@ func uniqueMatches(re *regexp.Regexp, src string) []string {
 	return out
 }
 
-func writeStubFile(app *kernel.Application, body []byte, dst string) error {
+func writeStubFile(app contracts.App, body []byte, dst string) error {
 	text := string(body)
 	if strings.HasSuffix(dst, ".go") {
 		text = bootutil.ApplyConsumerPlaceholders(app, text)

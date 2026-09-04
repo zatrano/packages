@@ -7,24 +7,18 @@ import (
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeSubscriberCommand{app: k},
-		&MakeEventCommand{app: k},
-		&MakeListenerCommand{app: k},
+		&MakeSubscriberCommand{app: app},
+		&MakeEventCommand{app: app},
+		&MakeListenerCommand{app: app},
 	)
 }
 
 type MakeSubscriberCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeSubscriberCommand) Name() string        { return "make:subscriber" }

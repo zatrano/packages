@@ -2,17 +2,18 @@ package localization
 
 import (
 	"fmt"
+	"github.com/zatrano/framework/contracts"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 	"github.com/zatrano/packages/localization/defaults"
 )
 
 type LangPublishCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *LangPublishCommand) Name() string { return "lang:publish" }
@@ -32,7 +33,7 @@ func (c *LangPublishCommand) Handle(args []string) error {
 		if err != nil {
 			return err
 		}
-		dest := filepath.Join(kernel.LocalizationDirForCreate(c.app), filepath.FromSlash(path))
+		dest := filepath.Join(layout.LocalizationDirForCreate(c.app), filepath.FromSlash(path))
 		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 			return err
 		}

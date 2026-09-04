@@ -3,13 +3,13 @@ package localization
 import (
 	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/framework/env"
-	"github.com/zatrano/framework/kernel"
+	"github.com/zatrano/framework/layout"
 )
 
 func boot(app contracts.App) error {
 	locale := app.Config().GetString("app.locale", env.Get("APP_LOCALE", "en"))
 	fallback := app.Config().GetString("app.fallback", env.Get("APP_FALLBACK_LOCALE", "en"))
-	translator := New(kernel.LocalizationDir(app), locale, fallback)
+	translator := New(layout.LocalizationDir(app), locale, fallback)
 	_ = translator.Load(locale)
 	if fallback != locale {
 		_ = translator.Load(fallback)

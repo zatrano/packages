@@ -8,22 +8,16 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeChannelCommand{app: k},
+		&MakeChannelCommand{app: app},
 	)
 }
 
 type MakeChannelCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeChannelCommand) Name() string { return "make:channel" }

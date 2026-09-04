@@ -9,22 +9,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel"
+	applayout "github.com/zatrano/framework/layout"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
-	k := bootutil.KernelApp(app)
-	if k == nil {
-		return nil
-	}
 	return bootutil.CLI(
-		&MakeViewCommand{app: k},
-		&MakeComponentCommand{app: k},
+		&MakeViewCommand{app: app},
+		&MakeComponentCommand{app: app},
 	)
 }
 
 type MakeViewCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeViewCommand) Name() string        { return "make:view" }
@@ -67,9 +63,9 @@ func (c *MakeViewCommand) Handle(args []string) error {
 		}
 	}
 	rel := strings.Join(parts, string(os.PathSeparator))
-	dir := filepath.Join(kernel.ViewsDirForCreate(c.app), filepath.Dir(rel))
+	dir := filepath.Join(applayout.ViewsDirForCreate(c.app), filepath.Dir(rel))
 	if filepath.Dir(rel) == "." {
-		dir = kernel.ViewsDirForCreate(c.app)
+		dir = applayout.ViewsDirForCreate(c.app)
 	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err

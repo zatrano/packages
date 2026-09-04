@@ -2,16 +2,15 @@ package orm
 
 import (
 	"fmt"
+	"github.com/zatrano/framework/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/zatrano/framework/kernel"
 )
 
 type MakeRepositoryCommand struct {
-	app *kernel.Application
+	app contracts.App
 }
 
 func (c *MakeRepositoryCommand) Name() string        { return "make:repository" }
