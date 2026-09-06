@@ -2,6 +2,10 @@
 
 All notable changes to `github.com/zatrano/packages` are documented in this file.
 
+## 2.0.1 - 2026-09-06
+
+Require `github.com/zatrano/framework/v2 v2.0.1` (GOPROXY-valid kernel module). This packages module is still not tagged `v2.x`.
+
 ## 2.0.0 - 2026-09-06
 
 v2 packages are the default line on `main`. This module stays `github.com/zatrano/packages` (no `/v2` suffix) so it must not be tagged `v2.x`. Use `go get github.com/zatrano/packages@main`. The kernel it requires is `github.com/zatrano/framework/v2`.
