@@ -58,6 +58,8 @@ func init() {
 }
 ```
 
+Environment keys for a package live in that package's `.env.example`. They are not part of the kernel example file.
+
 The **application** blank-imports the package. `bootstrap.App()` then loads every registered provider. If you do not import it, it is not compiled in and it does not boot.
 
 ```go
@@ -81,7 +83,7 @@ go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`package:enable` writes the blank-import into `bootstrap/addons.go`. That is the only “enable” step. Libraries are never enabled — you just `import` them.
+`package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
 | Kind | In the binary when | Examples |
 | --- | --- | --- |
