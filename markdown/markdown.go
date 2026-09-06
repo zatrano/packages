@@ -8,17 +8,20 @@ import (
 )
 
 var (
-	reHeading  = regexp.MustCompile(`(?m)^(#{1,6})\s+(.+)$`)
-	reBold     = regexp.MustCompile(`\*\*(.+?)\*\*|__(.+?)__`)
-	reItalic   = regexp.MustCompile(`\*(.+?)\*|_(.+?)_`)
-	reCode     = regexp.MustCompile("`([^`]+)`")
-	reLink     = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
-	reHR       = regexp.MustCompile(`(?m)^-{3,}$`)
-	reUL       = regexp.MustCompile(`(?m)^(?:[-*]\s+.+\n?)+`)
-	reOL       = regexp.MustCompile(`(?m)^(?:\d+\.\s+.+\n?)+`)
-	reQuote    = regexp.MustCompile(`(?m)^>\s?(.+)$`)
-	reFence    = regexp.MustCompile("(?s)```([a-zA-Z0-9_-]*)\\n(.*?)```")
-	reTableRow = regexp.MustCompile(`(?m)^\|.+\|$`)
+	reHeading    = regexp.MustCompile(`(?m)^(#{1,6})\s+(.+)$`)
+	reBold       = regexp.MustCompile(`\*\*(.+?)\*\*|__(.+?)__`)
+	reItalic     = regexp.MustCompile(`\*(.+?)\*|_(.+?)_`)
+	reItalicStar = regexp.MustCompile(`(^|[^A-Za-z0-9])\*([A-Za-z0-9](?:[^*\n]*[A-Za-z0-9])?)\*([^A-Za-z0-9]|$)`)
+	reItalicU    = regexp.MustCompile(`(^|[^A-Za-z0-9])_([^_\n]+?)_([^A-Za-z0-9]|$)`)
+	reCode       = regexp.MustCompile("`([^`]+)`")
+	reLink       = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
+	reInlineSlot = regexp.MustCompile("\x00INL(\\d+)\x00")
+	reHR         = regexp.MustCompile(`(?m)^-{3,}$`)
+	reUL         = regexp.MustCompile(`(?m)^(?:[-*]\s+.+\n?)+`)
+	reOL         = regexp.MustCompile(`(?m)^(?:\d+\.\s+.+\n?)+`)
+	reQuote      = regexp.MustCompile(`(?m)^>\s?(.+)$`)
+	reFence      = regexp.MustCompile("(?s)```([a-zA-Z0-9_-]*)\\n(.*?)```")
+	reTableRow   = regexp.MustCompile(`(?m)^\|.+\|$`)
 )
 
 // ToHTML converts a small Markdown subset to HTML.
@@ -204,46 +207,89 @@ func splitTableRow(line string) []string {
 }
 
 func inline(input string) string {
-	escaped := html.EscapeString(input)
-	raw := input
-	raw = reCode.ReplaceAllStringFunc(raw, func(m string) string {
+	slots := make([]string, 0)
+	put := func(fragment string) string {
+		slots = append(slots, fragment)
+		return "\x00INL" + strconv.Itoa(len(slots)-1) + "\x00"
+	}
+
+	raw := reCode.ReplaceAllStringFunc(input, func(m string) string {
 		match := reCode.FindStringSubmatch(m)
 		if len(match) != 2 {
-			return html.EscapeString(m)
+			return m
 		}
-		return "<code>" + html.EscapeString(match[1]) + "</code>"
-	})
-	raw = reBold.ReplaceAllStringFunc(raw, func(m string) string {
-		match := reBold.FindStringSubmatch(m)
-		if len(match) < 3 {
-			return html.EscapeString(m)
-		}
-		text := match[1]
-		if text == "" {
-			text = match[2]
-		}
-		return "<strong>" + html.EscapeString(text) + "</strong>"
-	})
-	raw = reItalic.ReplaceAllStringFunc(raw, func(m string) string {
-		match := reItalic.FindStringSubmatch(m)
-		if len(match) < 3 {
-			return html.EscapeString(m)
-		}
-		text := match[1]
-		if text == "" {
-			text = match[2]
-		}
-		return "<em>" + html.EscapeString(text) + "</em>"
+		return put("<code>" + html.EscapeString(match[1]) + "</code>")
 	})
 	raw = reLink.ReplaceAllStringFunc(raw, func(m string) string {
 		match := reLink.FindStringSubmatch(m)
 		if len(match) != 3 {
-			return html.EscapeString(m)
+			return m
 		}
-		return `<a href="` + html.EscapeString(match[2]) + `">` + html.EscapeString(match[1]) + `</a>`
+		label := applyEmphasis(match[1], put)
+		return put(`<a href="` + html.EscapeString(match[2]) + `">` + label + `</a>`)
 	})
-	if raw != input {
-		return raw
+	raw = applyEmphasis(raw, put)
+	return restoreInlineSlots(escapeExceptSlots(raw), slots)
+}
+
+func applyEmphasis(raw string, put func(string) string) string {
+	raw = reBold.ReplaceAllStringFunc(raw, func(m string) string {
+		match := reBold.FindStringSubmatch(m)
+		if len(match) < 3 {
+			return m
+		}
+		text := match[1]
+		if text == "" {
+			text = match[2]
+		}
+		return put("<strong>" + escapeExceptSlots(text) + "</strong>")
+	})
+	raw = reItalicStar.ReplaceAllStringFunc(raw, func(m string) string {
+		match := reItalicStar.FindStringSubmatch(m)
+		if len(match) != 4 {
+			return m
+		}
+		return match[1] + put("<em>"+escapeExceptSlots(match[2])+"</em>") + match[3]
+	})
+	raw = reItalicU.ReplaceAllStringFunc(raw, func(m string) string {
+		match := reItalicU.FindStringSubmatch(m)
+		if len(match) != 4 {
+			return m
+		}
+		return match[1] + put("<em>"+escapeExceptSlots(match[2])+"</em>") + match[3]
+	})
+	return raw
+}
+
+func escapeExceptSlots(s string) string {
+	var b strings.Builder
+	last := 0
+	for _, loc := range reInlineSlot.FindAllStringIndex(s, -1) {
+		b.WriteString(html.EscapeString(s[last:loc[0]]))
+		b.WriteString(s[loc[0]:loc[1]])
+		last = loc[1]
 	}
-	return escaped
+	b.WriteString(html.EscapeString(s[last:]))
+	return b.String()
+}
+
+func restoreInlineSlots(s string, slots []string) string {
+	for i := 0; i <= len(slots) && strings.Contains(s, "\x00INL"); i++ {
+		next := reInlineSlot.ReplaceAllStringFunc(s, func(m string) string {
+			match := reInlineSlot.FindStringSubmatch(m)
+			if len(match) != 2 {
+				return ""
+			}
+			n, err := strconv.Atoi(match[1])
+			if err != nil || n < 0 || n >= len(slots) {
+				return ""
+			}
+			return slots[n]
+		})
+		if next == s {
+			break
+		}
+		s = next
+	}
+	return s
 }
