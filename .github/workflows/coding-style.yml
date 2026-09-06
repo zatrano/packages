@@ -1,0 +1,89 @@
+name: coding style
+
+on:
+  push:
+    branches:
+      - main
+      - '*.x'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gofmt:
+    runs-on: ubuntu-24.04
+    name: gofmt
+    defaults:
+      run:
+        working-directory: packages
+    steps:
+      - name: Checkout packages
+        uses: actions/checkout@v5
+        with:
+          path: packages
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.13'
+          cache: true
+
+      - name: Check formatting
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "The following files are not gofmt'd:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+  mod-tidy:
+    runs-on: ubuntu-24.04
+    name: go mod tidy
+    defaults:
+      run:
+        working-directory: packages
+    steps:
+      - name: Checkout packages
+        uses: actions/checkout@v5
+        with:
+          path: packages
+
+      - name: Checkout framework
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/framework
+          ref: main
+          path: framework
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.13'
+          cache: true
+          cache-dependency-path: packages/go.sum
+
+      - name: Check go.mod / go.sum
+        run: |
+          set -euo pipefail
+          export GOWORK=off
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+          nested=(
+            mongo
+            webauthn
+            qr
+            database/driver/sqlite
+            database/driver/mysql
+            database/driver/pgsql
+            database/driver/mssql
+            database/driver/oracle
+            database/driver/mongo
+          )
+          for d in "${nested[@]}"; do
+            if [[ -f "$d/go.mod" ]]; then
+              (cd "$d" && go mod tidy)
+              git diff --exit-code "$d/go.mod" "$d/go.sum"
+            fi
+          done
