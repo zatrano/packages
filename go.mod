@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/redis/go-redis/v9 v9.11.0
-	github.com/zatrano/framework v0.0.0
+	github.com/zatrano/framework/v2 v2.0.0
 	github.com/zatrano/packages/database/driver/sqlite v1.0.0
 	golang.org/x/crypto v0.55.0
 	golang.org/x/sys v0.47.0
@@ -26,7 +26,7 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 )
 
-replace github.com/zatrano/framework => ../framework
+replace github.com/zatrano/framework/v2 => ../framework
 
 replace github.com/zatrano/packages/database/driver/sqlite => ./database/driver/sqlite
 

@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/zatrano/framework/kernel/http"
-	"github.com/zatrano/framework/kernel/routing"
+	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/routing"
 	"github.com/zatrano/packages/observability/timing"
 )
 

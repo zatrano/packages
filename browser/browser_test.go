@@ -3,8 +3,8 @@ package browser_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/bootstrap"
-	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/v2/bootstrap"
+	"github.com/zatrano/framework/v2/kernel/http"
 	"github.com/zatrano/packages/browser"
 )
 

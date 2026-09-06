@@ -1,7 +1,7 @@
 package factory
 
 import (
-	"github.com/zatrano/framework/bootstrap/addons"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
 )
 
 func init() {

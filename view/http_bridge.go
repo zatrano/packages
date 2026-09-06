@@ -4,8 +4,8 @@ import (
 	"fmt"
 	stdhttp "net/http"
 
-	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v2/kernel/http"
 )
 
 type httpBridge struct {

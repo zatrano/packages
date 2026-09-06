@@ -1,6 +1,6 @@
 package url
 
-import "github.com/zatrano/framework/contracts"
+import "github.com/zatrano/framework/v2/contracts"
 
 // From resolves the URL generator from the application container.
 func From(app contracts.App) *Generator {

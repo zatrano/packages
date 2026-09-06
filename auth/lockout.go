@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/http"
 )
 
 // ErrLockout is returned when login attempts are temporarily throttled.

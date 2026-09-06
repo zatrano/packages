@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/database/migration"
 	"github.com/zatrano/packages/database/query"
 	"github.com/zatrano/packages/database/seeder"

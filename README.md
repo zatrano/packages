@@ -30,12 +30,12 @@
 
 This module is **`github.com/zatrano/packages`**. It is not the kernel.
 
-The kernel lives in [`github.com/zatrano/framework`](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
+The kernel lives in [`github.com/zatrano/framework/v2`](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
 
 The two modules cannot be merged: this one already requires the framework.
 
 ```text
-  github.com/zatrano/framework          github.com/zatrano/packages
+  github.com/zatrano/framework/v2          github.com/zatrano/packages
   ────────────────────────────          ──────────────────────────
   kernel/http  kernel/routing           session  auth  database  view
   contracts    bootstrap.App()          queue    ai    oauth     billing
@@ -262,7 +262,7 @@ database/driver/mongo/
 Clone next to the framework as `framework` (or `ZATRANO` via junction):
 
 ```text
-replace github.com/zatrano/framework => ../framework
+replace github.com/zatrano/framework/v2 => ../framework
 ```
 
 ```bash
@@ -276,7 +276,7 @@ Work lands on **`main`**, same default branch as the framework.
 ```go
 import "github.com/zatrano/packages/billing"
 import "github.com/zatrano/packages/auth"
-import "github.com/zatrano/framework/kernel/http"   // kernel, not this module
+import "github.com/zatrano/framework/v2/kernel/http"   // kernel, not this module
 ```
 
 Kernel types (`http.Request`, the router, CSRF) stay in the framework. This module implements the rest and talks to the kernel through `contracts.App`.

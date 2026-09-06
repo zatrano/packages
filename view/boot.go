@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/dirs"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v2/kernel/dirs"
 	"github.com/zatrano/packages/assets"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/localization"

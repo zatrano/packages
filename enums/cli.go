@@ -2,14 +2,14 @@ package enums
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/bootstrap"
+	"github.com/zatrano/framework/v2/bootstrap"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/http"
 )
 
 // FromMaps writes an .xlsx workbook from row maps (union of keys, sorted).

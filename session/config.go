@@ -1,6 +1,6 @@
 package session
 
-import "github.com/zatrano/framework/kernel/env"
+import "github.com/zatrano/framework/v2/kernel/env"
 
 // DefaultConfig returns session configuration.
 func DefaultConfig() map[string]any {

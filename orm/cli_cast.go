@@ -2,7 +2,7 @@ package orm
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"

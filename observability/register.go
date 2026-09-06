@@ -1,9 +1,9 @@
 package observability
 
 import (
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/routing"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v2/kernel/routing"
 )
 
 func init() {

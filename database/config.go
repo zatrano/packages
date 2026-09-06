@@ -3,7 +3,7 @@ package database
 import (
 	"strings"
 
-	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/v2/kernel/env"
 )
 
 // DefaultConfig returns database configuration from the environment.

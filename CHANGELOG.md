@@ -4,7 +4,7 @@ All notable changes to `github.com/zatrano/packages` are documented in this file
 
 ## 2.0.0 - 2026-09-06
 
-v2 packages are the default line on `main`. Go module path remains `github.com/zatrano/packages` (no `/v2` suffix). Use `go get github.com/zatrano/packages@main` until a v0/v1 module tag is cut.
+v2 packages are the default line on `main`. This module stays `github.com/zatrano/packages` (no `/v2` suffix) so it must not be tagged `v2.x`. Use `go get github.com/zatrano/packages@main`. The kernel it requires is `github.com/zatrano/framework/v2`.
 
 ### Added
 
@@ -14,7 +14,7 @@ v2 packages are the default line on `main`. Go module path remains `github.com/z
 
 ### Changed
 
-- Imports that resolve `app/views`, `app/localization`, and `app/database` now use `github.com/zatrano/framework/kernel/dirs` (was `kernel/layout`).
+- Imports that resolve `app/views`, `app/localization`, and `app/database` now use `github.com/zatrano/framework/v2/kernel/dirs` (was `kernel/layout`).
 - CI: tests, coding style, static analysis, and security (same set as the framework). Linux jobs check out `zatrano/framework@main` as a sibling.
 - `validation` no longer imports `flash` (old input is flashed on the session directly). Importing validation/database/billing must not register the flash addon.
 - Browser feature tests register probe routes before `Bootstrap` (router is frozen after boot).
@@ -22,4 +22,4 @@ v2 packages are the default line on `main`. Go module path remains `github.com/z
 ### Notes
 
 - Go module path is `github.com/zatrano/packages` (no `/v2` suffix). Do **not** tag `v2.0.0-alpha`: the Go toolchain would require `github.com/zatrano/packages/v2`. Use `v0.x` / `v1.x` tags (for example `v1.0.0-alpha`) until a real v1/v2 module decision.
-- Local development: `replace github.com/zatrano/framework => ../framework`.
+- Local development: `replace github.com/zatrano/framework/v2 => ../framework`.

@@ -3,8 +3,8 @@ package filesystem
 import (
 	"strings"
 
-	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v2/kernel/env"
 )
 
 func boot(app contracts.App) error {

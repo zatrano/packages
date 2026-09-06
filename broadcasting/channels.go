@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/framework/kernel/http"
-	"github.com/zatrano/framework/kernel/routing"
+	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/routing"
 )
 
 // ChannelAuth decides whether a request may subscribe to a channel.

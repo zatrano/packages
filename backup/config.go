@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/database"
 )
 

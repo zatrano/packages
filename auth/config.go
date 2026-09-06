@@ -1,6 +1,6 @@
 package auth
 
-import "github.com/zatrano/framework/kernel/env"
+import "github.com/zatrano/framework/v2/kernel/env"
 
 // DefaultConfig returns authentication guard and provider defaults.
 func DefaultConfig() map[string]any {

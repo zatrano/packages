@@ -12,7 +12,7 @@ require (
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	github.com/zatrano/framework v0.0.0 // indirect
+	github.com/zatrano/framework/v2 v2.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.17.9 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
@@ -21,4 +21,4 @@ require (
 
 replace github.com/zatrano/packages/mongo => ../../../mongo
 
-replace github.com/zatrano/framework => ../../../../framework
+replace github.com/zatrano/framework/v2 => ../../../../framework

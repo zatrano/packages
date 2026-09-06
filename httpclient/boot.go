@@ -1,7 +1,7 @@
 package httpclient
 
 import (
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 )
 
 func boot(app contracts.App) error {

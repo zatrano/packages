@@ -11,8 +11,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/zatrano/framework/kernel/support/str"
-	"github.com/zatrano/framework/kernel/support/uuid"
+	"github.com/zatrano/framework/v2/kernel/support/str"
+	"github.com/zatrano/framework/v2/kernel/support/uuid"
 )
 
 // Errors holds validation error messages keyed by field.

@@ -2,13 +2,13 @@ package localization
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/kernel/dirs"
+	"github.com/zatrano/framework/v2/kernel/dirs"
 	"github.com/zatrano/packages/localization/defaults"
 )
 

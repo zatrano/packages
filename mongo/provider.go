@@ -3,10 +3,10 @@ package mongo
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
-	pkgconfig "github.com/zatrano/framework/kernel/config"
-	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
+	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
+	"github.com/zatrano/framework/v2/kernel/env"
 )
 
 func init() {

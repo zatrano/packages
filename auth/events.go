@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/http"
 )
 
 const (

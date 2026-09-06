@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	testkit "github.com/zatrano/packages/testing"
 )
 

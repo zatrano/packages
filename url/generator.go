@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/zatrano/framework/kernel/routing"
+	"github.com/zatrano/framework/v2/kernel/routing"
 )
 
 // Generator builds application URLs.

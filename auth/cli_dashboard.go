@@ -2,7 +2,7 @@ package auth
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
@@ -181,7 +181,7 @@ func (c *MakeDashboardCommand) Handle(args []string) error {
 			text = stripUnusedImport(text, "github.com/zatrano/packages/api")
 		}
 		if strings.HasSuffix(dst, ".go") && !mods["impersonate"] {
-			text = stripUnusedImport(text, "github.com/zatrano/framework/app/http/middleware")
+			text = stripUnusedImport(text, "github.com/zatrano/framework/v2/app/http/middleware")
 			text = stripUnusedImport(text, mod+"/app/http/middleware")
 		}
 		base := filepath.Base(dst)
@@ -191,7 +191,7 @@ func (c *MakeDashboardCommand) Handle(args []string) error {
 		if base == "dashboard_controller.go" && !mods["users"] && !mods["roles"] {
 			text = stripUnusedImport(text, "github.com/zatrano/packages/orm")
 			if !mods["notifications"] {
-				text = stripUnusedImport(text, "github.com/zatrano/framework/app/models")
+				text = stripUnusedImport(text, "github.com/zatrano/framework/v2/app/models")
 				text = stripUnusedImport(text, mod+"/app/models")
 			}
 		}

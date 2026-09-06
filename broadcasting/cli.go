@@ -2,8 +2,8 @@ package broadcasting
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
@@ -47,7 +47,7 @@ func (c *MakeChannelCommand) Handle(args []string) error {
 import (
 	"github.com/zatrano/packages/auth"
 	corebroadcast "github.com/zatrano/packages/broadcasting"
-	. "github.com/zatrano/framework/kernel/http"
+	. "github.com/zatrano/framework/v2/kernel/http"
 )
 
 // %s authorizes "%s" channels.

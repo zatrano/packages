@@ -2,9 +2,9 @@ module github.com/zatrano/packages/mongo
 
 go 1.25.0
 
-require github.com/zatrano/framework v0.0.0
+require github.com/zatrano/framework/v2 v2.0.0
 
-replace github.com/zatrano/framework => ../../framework
+replace github.com/zatrano/framework/v2 => ../../framework
 
 require go.mongodb.org/mongo-driver v1.17.9
 

@@ -1,6 +1,6 @@
 package notification
 
-import "github.com/zatrano/framework/kernel/env"
+import "github.com/zatrano/framework/v2/kernel/env"
 
 // DefaultConfig returns notification configuration.
 func DefaultConfig() map[string]any {

@@ -1,6 +1,6 @@
 package ai
 
-import "github.com/zatrano/framework/kernel/env"
+import "github.com/zatrano/framework/v2/kernel/env"
 
 // DefaultConfig returns AI manager configuration defaults.
 func DefaultConfig() map[string]any {

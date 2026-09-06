@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 )
 
 // TestCase wraps an application for HTTP feature tests.

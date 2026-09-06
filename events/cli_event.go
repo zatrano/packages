@@ -2,7 +2,7 @@ package events
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"os"
 	"path/filepath"
 

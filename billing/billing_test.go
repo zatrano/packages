@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/bootstrap"
+	"github.com/zatrano/framework/v2/bootstrap"
 	"github.com/zatrano/packages/billing"
 )
 

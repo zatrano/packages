@@ -3,9 +3,9 @@ package notification
 import (
 	"strings"
 
-	"github.com/zatrano/framework/contracts"
-	pkgconfig "github.com/zatrano/framework/kernel/config"
-	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/v2/contracts"
+	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
+	"github.com/zatrano/framework/v2/kernel/env"
 	"github.com/zatrano/packages/broadcasting"
 	"github.com/zatrano/packages/database"
 	"github.com/zatrano/packages/localization"

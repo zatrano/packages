@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
 )
 
 func backupCLI(app contracts.App) []addons.CLICommand {

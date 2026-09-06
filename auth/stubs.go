@@ -3,7 +3,7 @@ package auth
 import (
 	"embed"
 	"fmt"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/contracts"
 	"os"
 	"path/filepath"
 

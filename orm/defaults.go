@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/kernel/support/uuid"
+	"github.com/zatrano/framework/v2/kernel/support/uuid"
 )
 
 // HasDefaults provides default attribute values applied on Create when missing.

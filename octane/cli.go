@@ -2,8 +2,8 @@ package octane
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"runtime"
 	"strconv"

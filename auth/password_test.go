@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/http"
 	"github.com/zatrano/packages/auth"
 	_ "modernc.org/sqlite"
 )

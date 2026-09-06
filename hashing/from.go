@@ -1,6 +1,6 @@
 package hashing
 
-import "github.com/zatrano/framework/contracts"
+import "github.com/zatrano/framework/v2/contracts"
 
 // From resolves the hasher from the application container.
 func From(app contracts.App) *Manager {

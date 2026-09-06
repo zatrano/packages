@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/bootstrap/addons"
-	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/dirs"
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v2/kernel/dirs"
 )
 
 // NamedCmd is a console command that can be registered through addon Meta.CLI.
@@ -38,7 +38,7 @@ func ConsumerModule(app contracts.App) string {
 		return "your/module"
 	}
 	mod, err := modulePath(app.BasePath())
-	if err != nil || strings.TrimSpace(mod) == "" || mod == "github.com/zatrano/framework" {
+	if err != nil || strings.TrimSpace(mod) == "" || mod == "github.com/zatrano/framework/v2" {
 		return "your/module"
 	}
 	return mod
@@ -48,7 +48,7 @@ func ConsumerModule(app contracts.App) string {
 func ApplyConsumerPlaceholders(app contracts.App, body string) string {
 	mod := ConsumerModule(app)
 	body = strings.ReplaceAll(body, "__MODULE__", mod)
-	body = strings.ReplaceAll(body, "github.com/zatrano/framework/app/", mod+"/app/")
+	body = strings.ReplaceAll(body, "github.com/zatrano/framework/v2/app/", mod+"/app/")
 	return body
 }
 
@@ -76,7 +76,7 @@ func ConsoleStubsDir(app contracts.App) string {
 	}
 	root := app.BasePath()
 	var candidates []string
-	if p := goModReplace(root, "github.com/zatrano/framework"); p != "" {
+	if p := goModReplace(root, "github.com/zatrano/framework/v2"); p != "" {
 		candidates = append(candidates, filepath.Join(p, "console", "stubs"))
 	}
 	candidates = append(candidates,

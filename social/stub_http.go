@@ -4,8 +4,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/zatrano/framework/kernel/http"
-	"github.com/zatrano/framework/kernel/routing"
+	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v2/kernel/routing"
 )
 
 // AuthorizeHandler completes the local stub flow on the same origin.

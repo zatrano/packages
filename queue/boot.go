@@ -1,8 +1,8 @@
 package queue
 
 import (
-	"github.com/zatrano/framework/contracts"
-	"github.com/zatrano/framework/kernel/env"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v2/kernel/env"
 	"github.com/zatrano/packages/database"
 	"github.com/zatrano/packages/redisx"
 )
