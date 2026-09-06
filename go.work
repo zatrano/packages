@@ -2,14 +2,14 @@ go 1.25.0
 
 use (
 	.
-	./mongo
-	./webauthn
-	./qr
-	./database/driver/mysql
-	./database/driver/pgsql
-	./database/driver/mssql
-	./database/driver/oracle
+	../framework
 	./database/driver/mongo
+	./database/driver/mssql
+	./database/driver/mysql
+	./database/driver/oracle
+	./database/driver/pgsql
+	./database/driver/sqlite
+	./mongo
+	./qr
+	./webauthn
 )
-
-replace github.com/zatrano/framework => ../framework
