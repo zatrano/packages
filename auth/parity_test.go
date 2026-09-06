@@ -221,7 +221,7 @@ func TestTwoFactorSecretsAreEncrypted(t *testing.T) {
 	user, _ := provider.Create(map[string]any{"email": "enc@zatrano.test", "password": hash})
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
-	crypt, err := encryption.New("zatrano-dev-key")
+	crypt, err := encryption.New(encryption.LocalDevKey)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -358,7 +358,7 @@ func TestTrustedDeviceSkipsTwoFactorChallenge(t *testing.T) {
 	user, _ := provider.Create(map[string]any{"email": "device@zatrano.test", "password": hash, "name": "Device"})
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
-	crypt, err := encryption.New("zatrano-dev-key")
+	crypt, err := encryption.New(encryption.LocalDevKey)
 	if err != nil {
 		t.Fatal(err)
 	}

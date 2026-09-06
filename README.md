@@ -28,9 +28,9 @@
 
 ---
 
-This module is **`github.com/zatrano/packages`**. It is not the kernel.
+This module is [github.com/zatrano/packages](https://github.com/zatrano/packages). It is not the kernel.
 
-The kernel lives in [`github.com/zatrano/framework/v2`](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
+The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
 
 The two modules cannot be merged: this one already requires the framework.
 

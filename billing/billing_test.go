@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/zatrano/framework/v2/bootstrap"
+	"github.com/zatrano/framework/v2/kernel/encryption"
 	"github.com/zatrano/packages/billing"
 )
 
@@ -157,7 +158,7 @@ func TestCheckoutCompletedActivatesPendingSubscription(t *testing.T) {
 }
 
 func TestBillingImportBootsWithoutSession(t *testing.T) {
-	t.Setenv("APP_KEY", "test-key-for-packages-billing-tests!")
+	t.Setenv("APP_KEY", encryption.LocalDevKey)
 	t.Setenv("APP_CONFIG_CACHE", "false")
 	app := bootstrap.App()
 	if err := app.Bootstrap(); err != nil {

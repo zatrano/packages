@@ -9,7 +9,7 @@ import (
 )
 
 func TestBrowserVisitHome(t *testing.T) {
-	t.Setenv("APP_KEY", "test-key-for-packages-browser-tests!")
+	t.Setenv("APP_KEY", "zatrano-dev-key-do-not-use-prod!")
 	t.Setenv("APP_CONFIG_CACHE", "false")
 	app := bootstrap.App()
 	app.Router().Get("/browser-probe", func(req *http.Request) *http.Response {

@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  APP_KEY: ci-test-app-key-not-for-production-use
+  APP_KEY: zatrano-dev-key-do-not-use-prod!
   APP_ENV: testing
   APP_DEBUG: 'true'
 
