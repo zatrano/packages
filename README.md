@@ -17,13 +17,13 @@
   ·
   <a href="https://zatrano.com/docs">Docs</a>
   ·
-  <a href="https://github.com/zatrano/framework/blob/v2-dev/PACKAGES.md">Package guide</a>
+  <a href="https://github.com/zatrano/framework/blob/main/PACKAGES.md">Package guide</a>
 </p>
 
 <p align="center">
-  Active line: <a href="https://github.com/zatrano/packages/tree/v2-dev"><code>v2-dev</code></a>
+  Active line: <a href="https://github.com/zatrano/packages/tree/main"><code>main</code></a>
   ·
-  <code>go get github.com/zatrano/packages@v2-dev</code>
+  <code>go get github.com/zatrano/packages@main</code>
 </p>
 
 ---
@@ -77,7 +77,7 @@ sess := session.From(app)
 From the app CLI:
 
 ```bash
-go get github.com/zatrano/packages@v2-dev
+go get github.com/zatrano/packages@main
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
@@ -269,7 +269,7 @@ replace github.com/zatrano/framework => ../framework
 go test ./...
 ```
 
-Work lands on **`v2-dev`**, same branch name as the framework.
+Work lands on **`main`**, same default branch as the framework.
 
 ## Import path
 
@@ -286,7 +286,7 @@ Kernel types (`http.Request`, the router, CSRF) stay in the framework. This modu
 | | |
 | --- | --- |
 | [Framework README](https://github.com/zatrano/framework) | Kernel, `zatrano new`, boot rule |
-| [PACKAGES.md](https://github.com/zatrano/framework/blob/v2-dev/PACKAGES.md) | Purpose and usage per package |
+| [PACKAGES.md](https://github.com/zatrano/framework/blob/main/PACKAGES.md) | Purpose and usage per package |
 | [zatrano.com/docs](https://zatrano.com/docs) | Product guides |
 | [Package ecosystem](https://zatrano.com/docs/package-ecosystem) | Enable, doctor, presets |
 
