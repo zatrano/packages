@@ -2,6 +2,10 @@
 
 All notable changes to `github.com/zatrano/packages` are documented in this file.
 
+## 2.0.4 - 2026-09-07
+
+Require `github.com/zatrano/framework/v2 v2.0.4`. This packages module is still not tagged `v2.x`.
+
 ## 2.0.3 - 2026-09-07
 
 Require `github.com/zatrano/framework/v2 v2.0.3` (registry data model on the kernel). This packages module is still not tagged `v2.x`.
