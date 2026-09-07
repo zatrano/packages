@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>Official addons for the ZATRANO kernel. Import a package, it boots. Leave it out, it is not in the binary.</em>
+  <em>Official addons for the ZATRANO kernel. Services boot when they are both imported and enabled. Leave a package out of the binary, and it cannot boot.</em>
 </p>
 
 <p align="center">
@@ -60,7 +60,7 @@ func init() {
 
 Environment keys for a package live in that package's `.env.example`. They are not part of the kernel example file.
 
-The **application** blank-imports the package. `bootstrap.App()` then loads every registered provider. If you do not import it, it is not compiled in and it does not boot.
+The **application** blank-imports the package and lists it in `bootstrap/enabled.go`. `bootstrap.App()` boots **Enabled ∩ Imported**. If you do not import it, it is not compiled in and it does not boot. Without an enablement manifest, `App()` falls back to every imported bootable addon.
 
 ```go
 import (
@@ -87,7 +87,7 @@ go run ./cmd/app package:doctor
 
 | Kind | In the binary when | Examples |
 | --- | --- | --- |
-| **Service** | You blank-import it | `auth`, `database`, `queue`, `ai`, `oauth` |
+| **Service** | Blank-import **and** list in `EnabledAddons` (`Enabled ∩ Imported`) | `auth`, `database`, `queue`, `ai`, `oauth` |
 | **Library** | You `import` it in your code | `collection`, `totp`, `resources`, `rag` |
 | **Heavy** | Own `go.mod`, only when needed | `webauthn`, `mongo`, `qr`, SQL drivers |
 
@@ -237,7 +237,7 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 
 `bootutil` is an internal coerce/CLI helper. It is not a consumer package.
 
-The name list also lives in the framework catalog (`kernel/catalog.go`). This tree is the code.
+The name list lives in the framework CLI catalog (`console/catalog.go`). Kernel `kernel/catalog.go` is primitives only. This tree is the code.
 
 ## Nested modules
 

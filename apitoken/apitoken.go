@@ -292,6 +292,9 @@ func (m *Manager) Find(plain string) (*Token, auth.Authenticatable, error) {
 		return nil, nil, nil
 	}
 	_ = m.store.Touch(token.ID)
+	if m.provider == nil {
+		return token, nil, nil
+	}
 	user, err := m.provider.RetrieveByID(token.UserID)
 	if err != nil {
 		return token, nil, err

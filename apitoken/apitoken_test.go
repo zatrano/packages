@@ -40,3 +40,21 @@ func TestPersonalAccessTokenCreateAndFind(t *testing.T) {
 		t.Fatal("ability mismatch")
 	}
 }
+
+func TestFindWithoutProviderReturnsToken(t *testing.T) {
+	mgr := apitoken.New(apitoken.NewMemoryStore(), nil)
+	token, err := mgr.Create(1, "cli", []string{"*"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	found, user, err := mgr.Find(token.PlainText)
+	if err != nil || found == nil || user != nil {
+		t.Fatalf("find without provider: %#v %#v %v", found, user, err)
+	}
+}
+
+func TestFromNil(t *testing.T) {
+	if apitoken.From(nil) != nil {
+		t.Fatal("From(nil) must be nil")
+	}
+}
