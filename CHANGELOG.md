@@ -2,6 +2,12 @@
 
 All notable changes to `github.com/zatrano/packages` are documented in this file.
 
+## 2.0.2 - 2026-09-07
+
+Require `github.com/zatrano/framework/v2 v2.0.2`. Bind `apitoken` on Register so `From(app)` works. Document Enabled ∩ Imported. Tests for hashing, health, redisx, and testing.
+
+This packages module is still not tagged `v2.x`.
+
 ## 2.0.1 - 2026-09-06
 
 Require `github.com/zatrano/framework/v2 v2.0.1` (GOPROXY-valid kernel module). This packages module is still not tagged `v2.x`.
