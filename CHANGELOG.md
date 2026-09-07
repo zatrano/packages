@@ -2,6 +2,10 @@
 
 All notable changes to `github.com/zatrano/packages` are documented in this file.
 
+## 2.0.22 - 2026-09-07
+
+Require `github.com/zatrano/framework/v2 v2.0.22`. This packages module is still not tagged `v2.x`.
+
 ## 2.0.21 - 2026-09-07
 
 Require `github.com/zatrano/framework/v2 v2.0.21`. This packages module is still not tagged `v2.x`.
@@ -76,7 +80,7 @@ Require `github.com/zatrano/framework/v2 v2.0.3` (registry data model on the ker
 
 ## 2.0.2 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.2`. Bind `apitoken` on Register so `From(app)` works. Document Enabled ∩ Imported. Tests for hashing, health, redisx, and testing.
+Require `github.com/zatrano/framework/v2 v2.0.2`. Bind `apitoken` on Register so `From(app)` works. Document Enabled âˆ© Imported. Tests for hashing, health, redisx, and testing.
 
 This packages module is still not tagged `v2.x`.
 
