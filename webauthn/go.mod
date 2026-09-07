@@ -2,7 +2,7 @@ module github.com/zatrano/packages/webauthn
 
 go 1.25.0
 
-require github.com/zatrano/framework/v2 v2.0.9
+require github.com/zatrano/framework/v2 v2.0.10
 
 replace github.com/zatrano/framework/v2 => ../../framework
 
