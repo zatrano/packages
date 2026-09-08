@@ -14,6 +14,7 @@ func init() {
 		Description: "Personal access tokens",
 		Order:       52,
 		Requires:    []string{"auth"},
+		Optional:    []string{"database"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }

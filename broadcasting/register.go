@@ -11,6 +11,7 @@ func init() {
 		Key:         "broadcasting",
 		Description: "Event broadcasting",
 		Order:       90,
+		Optional:    []string{"auth"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

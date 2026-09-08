@@ -1,3 +1,4 @@
+// Package rag is an import-only library (no addon registration).
 package rag
 
 import (

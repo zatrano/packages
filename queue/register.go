@@ -11,6 +11,7 @@ func init() {
 		Key:         "queue",
 		Description: "Job queues",
 		Order:       40,
+		Optional:    []string{"database", "cache"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

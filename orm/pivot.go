@@ -9,13 +9,13 @@ import (
 
 // Attach inserts pivot rows linking parent to related ids.
 func Attach[Parent any](parent *Parent, pivotTable, foreignPivotKey, relatedPivotKey string, relatedIDs []any, extra ...map[string]any) error {
-	return AttachOn(DB, parent, pivotTable, foreignPivotKey, relatedPivotKey, relatedIDs, extra...)
+	return AttachOn(configuredDB(), parent, pivotTable, foreignPivotKey, relatedPivotKey, relatedIDs, extra...)
 }
 
 // AttachOn inserts pivot rows using the given connection/transaction.
 func AttachOn[Parent any](db query.DBTX, parent *Parent, pivotTable, foreignPivotKey, relatedPivotKey string, relatedIDs []any, extra ...map[string]any) error {
 	if db == nil {
-		db = DB
+		db = configuredDB()
 	}
 	parentID, err := KeyValue(parent)
 	if err != nil {
@@ -36,7 +36,7 @@ func AttachOn[Parent any](db query.DBTX, parent *Parent, pivotTable, foreignPivo
 		for k, v := range extras {
 			attrs[k] = v
 		}
-		if _, err := query.New(db, Driver, pivotTable).Insert(attrs); err != nil {
+		if _, err := query.New(db, configuredDriver(), pivotTable).Insert(attrs); err != nil {
 			return err
 		}
 	}
@@ -45,19 +45,19 @@ func AttachOn[Parent any](db query.DBTX, parent *Parent, pivotTable, foreignPivo
 
 // Detach removes pivot rows for the given related ids (or all when ids empty).
 func Detach[Parent any](parent *Parent, pivotTable, foreignPivotKey, relatedPivotKey string, relatedIDs ...any) (int64, error) {
-	return DetachOn(DB, parent, pivotTable, foreignPivotKey, relatedPivotKey, relatedIDs...)
+	return DetachOn(configuredDB(), parent, pivotTable, foreignPivotKey, relatedPivotKey, relatedIDs...)
 }
 
 // DetachOn removes pivot rows using the given connection/transaction.
 func DetachOn[Parent any](db query.DBTX, parent *Parent, pivotTable, foreignPivotKey, relatedPivotKey string, relatedIDs ...any) (int64, error) {
 	if db == nil {
-		db = DB
+		db = configuredDB()
 	}
 	parentID, err := KeyValue(parent)
 	if err != nil {
 		return 0, err
 	}
-	q := query.New(db, Driver, pivotTable).Where(foreignPivotKey, parentID)
+	q := query.New(db, configuredDriver(), pivotTable).Where(foreignPivotKey, parentID)
 	if len(relatedIDs) > 0 {
 		q.WhereIn(relatedPivotKey, relatedIDs)
 	}
@@ -86,7 +86,7 @@ func Toggle[Parent any](parent *Parent, pivotTable, foreignPivotKey, relatedPivo
 		if err != nil {
 			return err
 		}
-		rows, err := query.New(tx, Driver, pivotTable).Where(foreignPivotKey, parentID).Get()
+		rows, err := query.New(tx, configuredDriver(), pivotTable).Where(foreignPivotKey, parentID).Get()
 		if err != nil {
 			return err
 		}
@@ -186,7 +186,7 @@ func syncOn[Parent any](
 	if err != nil {
 		return err
 	}
-	rows, err := query.New(db, Driver, pivotTable).Where(foreignPivotKey, parentID).Get()
+	rows, err := query.New(db, configuredDriver(), pivotTable).Where(foreignPivotKey, parentID).Get()
 	if err != nil {
 		return err
 	}

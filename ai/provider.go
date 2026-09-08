@@ -59,6 +59,9 @@ func (p *ServiceProvider) Register(app contracts.App) error {
 	if cfg["max_tokens"] == nil {
 		cfg["max_tokens"] = app.Config().GetInt("ai.max_tokens", env.GetInt("AI_MAX_TOKENS", 0))
 	}
+	if cfg["log_prompts"] == nil {
+		cfg["log_prompts"] = app.Config().GetString("ai.log_prompts", env.Get("AI_LOG_PROMPTS", "false"))
+	}
 	if cfg["providers"] == nil {
 		if raw := app.Config().Get("ai.providers"); raw != nil {
 			cfg["providers"] = raw

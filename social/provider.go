@@ -29,10 +29,10 @@ func (p *ServiceProvider) Register(app contracts.App) error {
 	cfg := app.Config()
 	redirectBase := strings.TrimRight(cfg.GetString("app.url", "http://localhost:8080"), "/")
 
-	githubID := firstNonEmpty(cfg.GetString("social.github_client_id"), env.Get("GITHUB_CLIENT_ID", "github-client-id"))
-	githubSecret := firstNonEmpty(cfg.GetString("social.github_client_secret"), env.Get("GITHUB_CLIENT_SECRET", "github-client-secret"))
-	googleID := firstNonEmpty(cfg.GetString("social.google_client_id"), env.Get("GOOGLE_CLIENT_ID", "google-client-id"))
-	googleSecret := firstNonEmpty(cfg.GetString("social.google_client_secret"), env.Get("GOOGLE_CLIENT_SECRET", "google-client-secret"))
+	githubID := firstNonEmpty(cfg.GetString("social.github_client_id"), env.Get("GITHUB_CLIENT_ID"))
+	githubSecret := firstNonEmpty(cfg.GetString("social.github_client_secret"), env.Get("GITHUB_CLIENT_SECRET"))
+	googleID := firstNonEmpty(cfg.GetString("social.google_client_id"), env.Get("GOOGLE_CLIENT_ID"))
+	googleSecret := firstNonEmpty(cfg.GetString("social.google_client_secret"), env.Get("GOOGLE_CLIENT_SECRET"))
 
 	if app.IsProduction() && IsPlaceholder(googleID, googleSecret) && IsPlaceholder(githubID, githubSecret) {
 		return fmt.Errorf("social: OAuth credentials are required in production (set GOOGLE_CLIENT_ID/SECRET and/or GITHUB_CLIENT_ID/SECRET)")

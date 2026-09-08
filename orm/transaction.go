@@ -11,13 +11,14 @@ import (
 // Use QueryTx / query.New(tx, ...) inside fn so ORM operations participate.
 // On success the transaction is committed; on error it is rolled back.
 func Transaction(fn func(tx *sql.Tx) error) (err error) {
-	if DB == nil {
+	db, _ := configuredConn()
+	if db == nil {
 		return fmt.Errorf("orm database is not configured")
 	}
 	if fn == nil {
 		return fmt.Errorf("transaction callback is nil")
 	}
-	tx, err := DB.Begin()
+	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
@@ -62,7 +63,7 @@ func TransactionOn(connection string, fn func(tx *sql.Tx) error) (err error) {
 			return resolveErr
 		}
 	} else {
-		db = DB
+		db, _ = configuredConn()
 	}
 	if db == nil {
 		return fmt.Errorf("orm database is not configured")

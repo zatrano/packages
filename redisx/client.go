@@ -1,3 +1,5 @@
+// Package redisx is a Redis client helper library. It is not a bootable
+// service: cache owns Connect and publishes the client as "redis".
 package redisx
 
 import (

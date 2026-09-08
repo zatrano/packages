@@ -12,6 +12,7 @@ func init() {
 		Key:         "notification",
 		Description: "Notifications",
 		Order:       100,
+		Optional:    []string{"view", "broadcasting", "localization", "database"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

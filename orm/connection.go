@@ -52,7 +52,7 @@ func dbAndDriver[T any]() (*sql.DB, string) {
 			return db, driver
 		}
 	}
-	return DB, Driver
+	return configuredConn()
 }
 
 // tableQuery starts a low-level query builder on the connection for model T.

@@ -75,7 +75,7 @@ func AttachMorph[Parent any](
 	relatedIDs []any,
 	extra ...map[string]any,
 ) error {
-	return AttachMorphOn(DB, parent, pivotTable, relatedPivotKey, morphTypeCol, morphIDCol, typeValue, relatedIDs, extra...)
+	return AttachMorphOn(configuredDB(), parent, pivotTable, relatedPivotKey, morphTypeCol, morphIDCol, typeValue, relatedIDs, extra...)
 }
 
 // AttachMorphOn inserts polymorphic pivot rows on the given connection/transaction.
@@ -87,7 +87,7 @@ func AttachMorphOn[Parent any](
 	extra ...map[string]any,
 ) error {
 	if db == nil {
-		db = DB
+		db = configuredDB()
 	}
 	parentID, err := KeyValue(parent)
 	if err != nil {
@@ -109,7 +109,7 @@ func AttachMorphOn[Parent any](
 		for k, v := range extras {
 			attrs[k] = v
 		}
-		if _, err := query.New(db, Driver, pivotTable).Insert(attrs); err != nil {
+		if _, err := query.New(db, configuredDriver(), pivotTable).Insert(attrs); err != nil {
 			return err
 		}
 	}
@@ -122,7 +122,7 @@ func DetachMorph[Parent any](
 	pivotTable, relatedPivotKey, morphTypeCol, morphIDCol, typeValue string,
 	relatedIDs ...any,
 ) (int64, error) {
-	return DetachMorphOn(DB, parent, pivotTable, relatedPivotKey, morphTypeCol, morphIDCol, typeValue, relatedIDs...)
+	return DetachMorphOn(configuredDB(), parent, pivotTable, relatedPivotKey, morphTypeCol, morphIDCol, typeValue, relatedIDs...)
 }
 
 // DetachMorphOn removes polymorphic pivot rows on the given connection/transaction.
@@ -133,13 +133,13 @@ func DetachMorphOn[Parent any](
 	relatedIDs ...any,
 ) (int64, error) {
 	if db == nil {
-		db = DB
+		db = configuredDB()
 	}
 	parentID, err := KeyValue(parent)
 	if err != nil {
 		return 0, err
 	}
-	q := query.New(db, Driver, pivotTable).
+	q := query.New(db, configuredDriver(), pivotTable).
 		Where(morphTypeCol, typeValue).
 		Where(morphIDCol, parentID)
 	if len(relatedIDs) > 0 {

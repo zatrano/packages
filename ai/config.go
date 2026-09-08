@@ -13,6 +13,7 @@ func DefaultConfig() map[string]any {
 		"timeout":             env.GetInt("AI_TIMEOUT", 30),
 		"temperature":         env.Get("AI_TEMPERATURE", ""),
 		"max_tokens":          env.GetInt("AI_MAX_TOKENS", 0),
+		"log_prompts":         env.Get("AI_LOG_PROMPTS", "false"),
 		"retry_max":           env.GetInt("AI_RETRY_MAX", 2),
 		"retry_initial_ms":    env.GetInt("AI_RETRY_INITIAL_MS", 200),
 		"retry_max_ms":        env.GetInt("AI_RETRY_MAX_MS", 2000),

@@ -46,7 +46,7 @@ func (m *Manager) BootConfig(cfg map[string]any, log LogFn) error {
 	m.SetDefaults(defs)
 
 	if log != nil {
-		m.Extend("log", LogDriver{Log: log, Inner: FakeDriver{}})
+		m.Extend("log", LogDriver{Log: log, Inner: FakeDriver{}, LogPrompts: asBool(cfg["log_prompts"], false)})
 	}
 
 	providers := MapStringAny(cfg["providers"])

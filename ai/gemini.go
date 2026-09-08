@@ -43,6 +43,13 @@ func (d *GeminiDriver) Capabilities() []Capability {
 	return []Capability{CapChat, CapEmbed, CapStream, CapVision}
 }
 
+func (d *GeminiDriver) authorize(req *http.Request) {
+	if d == nil || req == nil || d.APIKey == "" {
+		return
+	}
+	req.Header.Set("x-goog-api-key", d.APIKey)
+}
+
 func (d *GeminiDriver) Health(ctx context.Context) error {
 	if ctx == nil {
 		ctx = context.Background()
@@ -51,7 +58,7 @@ func (d *GeminiDriver) Health(ctx context.Context) error {
 	if base == "" {
 		base = "https://generativelanguage.googleapis.com"
 	}
-	u := base + "/v1beta/models?key=" + url.QueryEscape(d.APIKey)
+	u := base + "/v1beta/models"
 	client := d.HTTPClient
 	if client == nil {
 		client = http.DefaultClient
@@ -60,6 +67,7 @@ func (d *GeminiDriver) Health(ctx context.Context) error {
 	if err != nil {
 		return HealthError(d.Name(), err)
 	}
+	d.authorize(req)
 	resp, err := client.Do(req)
 	if err != nil {
 		return HealthError(d.Name(), err)
@@ -109,8 +117,8 @@ func (d *GeminiDriver) Chat(ctx context.Context, req ChatRequest) (*ChatResponse
 	if err != nil {
 		return nil, err
 	}
-	endpoint := fmt.Sprintf("%s/v1beta/models/%s:generateContent?key=%s",
-		base, url.PathEscape(model), url.QueryEscape(d.APIKey))
+	endpoint := fmt.Sprintf("%s/v1beta/models/%s:generateContent",
+		base, url.PathEscape(model))
 	client := d.HTTPClient
 	if client == nil {
 		client = http.DefaultClient
@@ -120,6 +128,7 @@ func (d *GeminiDriver) Chat(ctx context.Context, req ChatRequest) (*ChatResponse
 		return nil, err
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
+	d.authorize(httpReq)
 	resp, err := client.Do(httpReq)
 	if err != nil {
 		return nil, wrapTransportError(d.Name(), err)
@@ -246,13 +255,14 @@ func (d *GeminiDriver) Embed(ctx context.Context, req EmbedRequest) (*EmbedRespo
 		if err != nil {
 			return nil, err
 		}
-		endpoint := fmt.Sprintf("%s/v1beta/models/%s:embedContent?key=%s",
-			base, url.PathEscape(model), url.QueryEscape(d.APIKey))
+		endpoint := fmt.Sprintf("%s/v1beta/models/%s:embedContent",
+			base, url.PathEscape(model))
 		httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 		if err != nil {
 			return nil, err
 		}
 		httpReq.Header.Set("Content-Type", "application/json")
+		d.authorize(httpReq)
 		resp, err := client.Do(httpReq)
 		if err != nil {
 			return nil, wrapTransportError(d.Name(), err)
@@ -320,8 +330,8 @@ func (d *GeminiDriver) ChatStream(ctx context.Context, req ChatRequest) (<-chan 
 	if err != nil {
 		return nil, err
 	}
-	endpoint := fmt.Sprintf("%s/v1beta/models/%s:streamGenerateContent?alt=sse&key=%s",
-		base, url.PathEscape(model), url.QueryEscape(d.APIKey))
+	endpoint := fmt.Sprintf("%s/v1beta/models/%s:streamGenerateContent?alt=sse",
+		base, url.PathEscape(model))
 	client := d.HTTPClient
 	if client == nil {
 		client = http.DefaultClient
@@ -332,6 +342,7 @@ func (d *GeminiDriver) ChatStream(ctx context.Context, req ChatRequest) (<-chan 
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("Accept", "text/event-stream")
+	d.authorize(httpReq)
 	resp, err := client.Do(httpReq)
 	if err != nil {
 		return nil, wrapTransportError(d.Name(), err)

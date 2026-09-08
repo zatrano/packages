@@ -9,7 +9,7 @@ import (
 func init() {
 	addons.Register(addons.Meta{
 		Name:        "observability",
-		Key:         "metrics",
+		Key:         "metrics", // container key kept for From()/Instance compatibility
 		Description: "Metrics collector",
 		Order:       19,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },

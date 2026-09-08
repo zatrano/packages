@@ -13,9 +13,6 @@ import (
 // GitHub builds a real GitHub OAuth provider (falls back to stub when credentials are placeholders).
 // In production stub fallback is disabled (see SetAllowStubProviders).
 func GitHub(cfg Config) Provider {
-	if cfg.ClientID == "" {
-		cfg.ClientID = "github-client-id"
-	}
 	if len(cfg.Scopes) == 0 {
 		cfg.Scopes = []string{"read:user", "user:email"}
 	}

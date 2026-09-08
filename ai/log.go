@@ -8,10 +8,11 @@ import (
 // LogFn is a printf-style logger (compatible with packages/log Infof).
 type LogFn func(format string, args ...any)
 
-// LogDriver wraps another driver and logs prompt/reply (or error).
+// LogDriver wraps another driver and logs prompt/reply (or error) when LogPrompts is true.
 type LogDriver struct {
-	Log   LogFn
-	Inner Driver
+	Log        LogFn
+	Inner      Driver
+	LogPrompts bool
 }
 
 func (LogDriver) Name() string { return "log" }
@@ -44,12 +45,18 @@ func (d LogDriver) Chat(ctx context.Context, req ChatRequest) (*ChatResponse, er
 	}
 	resp, err := inner.Chat(ctx, req)
 	if d.Log != nil {
-		prompt := truncate(lastUser(req.Messages), 120)
-		if err != nil {
-			d.Log("ai: driver=log model=%s prompt=%q err=%v", req.Model, prompt, err)
-		} else if resp != nil {
-			d.Log("ai: driver=log model=%s prompt=%q reply=%q tokens=%d",
-				req.Model, prompt, truncate(resp.Message.Content, 120), resp.Usage.TotalTokens)
+		if d.LogPrompts {
+			prompt := truncate(lastUser(req.Messages), 120)
+			if err != nil {
+				d.Log("ai: driver=log model=%s prompt=%q err=%v", req.Model, prompt, err)
+			} else if resp != nil {
+				d.Log("ai: driver=log model=%s prompt=%q reply=%q tokens=%d",
+					req.Model, prompt, truncate(resp.Message.Content, 120), resp.Usage.TotalTokens)
+			}
+		} else if err != nil {
+			d.Log("ai: driver=log model=%s err=%v", req.Model, err)
+		} else {
+			d.Log("ai: driver=log model=%s", req.Model)
 		}
 	}
 	return resp, err
@@ -66,7 +73,11 @@ func (d LogDriver) ChatStream(ctx context.Context, req ChatRequest) (<-chan Stre
 		return nil, &Error{Kind: KindInvalid, Provider: "log", Err: fmt.Errorf("inner driver does not support streaming")}
 	}
 	if d.Log != nil {
-		d.Log("ai: driver=log stream model=%s prompt=%q", req.Model, truncate(lastUser(req.Messages), 120))
+		if d.LogPrompts {
+			d.Log("ai: driver=log stream model=%s prompt=%q", req.Model, truncate(lastUser(req.Messages), 120))
+		} else {
+			d.Log("ai: driver=log stream model=%s", req.Model)
+		}
 	}
 	return sd.ChatStream(ctx, req)
 }

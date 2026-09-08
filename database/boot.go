@@ -73,7 +73,7 @@ func boot(app contracts.App) error {
 	if err != nil {
 		return err
 	}
-	orm.Configure(db, driver)
+	orm.Configure(db, driver) // database service owns the ORM connection for this app
 	orm.SetConnectionResolver(func(name string) (*sql.DB, string, error) {
 		conn, err := mgr.Connection(name)
 		if err != nil {

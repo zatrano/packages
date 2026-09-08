@@ -23,12 +23,16 @@
 <p align="center">
   Active line: <a href="https://github.com/zatrano/packages/tree/main"><code>main</code></a>
   ·
-  <code>go get github.com/zatrano/packages@main</code>
+  this tree <code>1.7.0</code> (unreleased)
+  ·
+  last published tag <code>v1.6.6</code>
 </p>
 
 ---
 
 This module is [github.com/zatrano/packages](https://github.com/zatrano/packages). It is not the kernel.
+
+It is a **v1** Go module: the import path has no `/v2` suffix. Framework `v2.0.28` and packages `1.x` are independent semantic versions. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
 The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
 
@@ -77,11 +81,14 @@ sess := session.From(app)
 From the app CLI:
 
 ```bash
-go get github.com/zatrano/packages@main
+go get github.com/zatrano/framework/v2@v2.0.28
+go get github.com/zatrano/packages@v1.7.0
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
+
+`v1.7.0` is the version of this tree; use the last published tag (`v1.6.6`) until `v1.7.0` is tagged. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -146,7 +153,7 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`orm`](orm) | service | Models, relations, eager loading, soft deletes |
 | [`factory`](factory) | library | Model factories for tests and seeders |
 | [`cache`](cache) | service | Temporary key/value store (file / memory / redis) |
-| [`redisx`](redisx) | service | Shared Redis client used by cache and queue |
+| [`redisx`](redisx) | library | Redis client helper; cache owns the connection |
 | [`mongo`](mongo) | heavy | Document store client, not SQL ORM (own `go.mod`) |
 | [`search`](search) | service | In-memory search index |
 | [`hashid`](hashid) | service | Obfuscate numeric IDs for public URLs |
@@ -259,11 +266,13 @@ database/driver/mongo/
 
 ## Local development
 
-Clone next to the framework as `framework` (or `ZATRANO` via junction):
+This repository may use a sibling framework checkout and `go.work`:
 
 ```text
 replace github.com/zatrano/framework/v2 => ../framework
 ```
+
+That replace is **development-only**. Public consumers resolve `github.com/zatrano/framework/v2@v2.0.28` from the module proxy; they do not clone this tree next to the framework.
 
 ```bash
 go test ./...

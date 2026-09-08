@@ -2,7 +2,7 @@ module github.com/zatrano/packages/mongo
 
 go 1.25.0
 
-require github.com/zatrano/framework/v2 v2.0.27
+require github.com/zatrano/framework/v2 v2.0.28
 
 replace github.com/zatrano/framework/v2 => ../../framework
 

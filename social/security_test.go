@@ -113,3 +113,15 @@ func TestStubProviderRejectedWhenDisallowed(t *testing.T) {
 		t.Fatal("expected placeholder detection")
 	}
 }
+
+func TestEmptyCredentialsAreNotLiveProviders(t *testing.T) {
+	SetAllowStubProviders(true)
+	t.Cleanup(func() { SetAllowStubProviders(true) })
+
+	if _, ok := GitHub(Config{}).(*githubProvider); ok {
+		t.Fatal("empty GitHub credentials must not create a live provider")
+	}
+	if _, ok := Google(Config{}).(*googleProvider); ok {
+		t.Fatal("empty Google credentials must not create a live provider")
+	}
+}

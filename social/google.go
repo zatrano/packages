@@ -13,9 +13,6 @@ import (
 // Google builds a real Google OAuth 2.0 provider (falls back to stub when credentials are placeholders).
 // In production stub fallback is disabled (see SetAllowStubProviders).
 func Google(cfg Config) Provider {
-	if cfg.ClientID == "" {
-		cfg.ClientID = "google-client-id"
-	}
 	if len(cfg.Scopes) == 0 {
 		cfg.Scopes = []string{"openid", "profile", "email"}
 	}

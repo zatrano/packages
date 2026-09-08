@@ -10,6 +10,7 @@ func init() {
 		Name:        "backup",
 		Key:         "backup",
 		Description: "Database backup/restore (SQLite + native dump tools)",
+		Optional:    []string{"database"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         backupCLI,
 	})

@@ -1,3 +1,4 @@
+// Package agent is an import-only library (no addon registration).
 package agent
 
 import (

@@ -127,8 +127,11 @@ func TestGeminiChat(t *testing.T) {
 		if !strings.Contains(r.URL.Path, ":generateContent") {
 			t.Fatalf("path %s", r.URL.Path)
 		}
-		if r.URL.Query().Get("key") != "gk" {
-			t.Fatal("key")
+		if r.Header.Get("x-goog-api-key") != "gk" {
+			t.Fatal("api key header")
+		}
+		if r.URL.Query().Get("key") != "" {
+			t.Fatal("api key must not be in the query string")
 		}
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"candidates": []map[string]any{{
@@ -171,6 +174,12 @@ func TestGeminiHealth(t *testing.T) {
 		if !strings.HasSuffix(r.URL.Path, "/v1beta/models") {
 			t.Fatalf("%s", r.URL.Path)
 		}
+		if r.Header.Get("x-goog-api-key") != "k" {
+			t.Fatal("api key header")
+		}
+		if r.URL.RawQuery != "" && r.URL.Query().Get("key") != "" {
+			t.Fatal("api key must not be in the query string")
+		}
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"models":[]}`))
 	}))
@@ -187,6 +196,12 @@ func TestGeminiEmbed(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.URL.Path, ":embedContent") {
 			t.Fatalf("%s", r.URL.Path)
+		}
+		if r.Header.Get("x-goog-api-key") != "k" {
+			t.Fatal("api key header")
+		}
+		if r.URL.Query().Get("key") != "" {
+			t.Fatal("api key must not be in the query string")
 		}
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"embedding": map[string]any{"values": []float64{0.1, 0.2}},

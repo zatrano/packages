@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/zatrano/packages/database/query"
@@ -13,10 +14,14 @@ import (
 )
 
 // DB is the active database connection used by ORM.
+// The database service owns this connection via Configure during Register.
+// Do not treat this as an application-wide service locator.
 var DB *sql.DB
 
 // Driver is the active database driver name.
 var Driver string
+
+var connMu sync.RWMutex
 
 // Model is the base model embedded into application models.
 type Model struct {
@@ -42,10 +47,29 @@ type Querier[T any] struct {
 	loaders          []func([]T) error
 }
 
-// Configure sets the global database connection for ORM.
+// Configure sets the database connection used by ORM.
+// The database service calls this from Register; tests may call it directly.
 func Configure(db *sql.DB, driver string) {
+	connMu.Lock()
+	defer connMu.Unlock()
 	DB = db
 	Driver = driver
+}
+
+func configuredConn() (*sql.DB, string) {
+	connMu.RLock()
+	defer connMu.RUnlock()
+	return DB, Driver
+}
+
+func configuredDB() *sql.DB {
+	db, _ := configuredConn()
+	return db
+}
+
+func configuredDriver() string {
+	_, driver := configuredConn()
+	return driver
 }
 
 // Table resolves the table name for a model type.

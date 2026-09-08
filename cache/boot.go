@@ -26,7 +26,7 @@ func boot(app contracts.App) error {
 	})
 	if redisErr == nil {
 		stores["redis"] = NewRedisStore(redisClient, "zatrano_cache:")
-		app.Container().Instance("redis", redisClient)
+		app.Container().Instance("redis", redisClient) // cache owns Redis; queue reads this binding
 	} else if app.Logger() != nil {
 		app.Logger().Debugf("redis unavailable, skipping redis cache/queue: %v", redisErr)
 	}

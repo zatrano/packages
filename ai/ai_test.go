@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -86,20 +87,37 @@ func TestLogDriver(t *testing.T) {
 	var logged string
 	d := ai.LogDriver{
 		Log: func(format string, args ...any) {
-			logged = strings.TrimSpace(strings.ReplaceAll(format, "%q", "%s"))
-			_ = args
-			logged = "ok"
+			logged = fmt.Sprintf(format, args...)
 		},
 	}
 	resp, err := d.Chat(context.Background(), ai.ChatRequest{
 		Model:    "m1",
-		Messages: []ai.Message{{Role: "user", Content: "hello"}},
+		Messages: []ai.Message{{Role: "user", Content: "secret-prompt"}},
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp == nil || logged != "ok" {
-		t.Fatalf("resp=%v logged=%q", resp, logged)
+	if resp == nil {
+		t.Fatal("expected response")
+	}
+	if strings.Contains(logged, "secret-prompt") {
+		t.Fatalf("default log leaked prompt: %q", logged)
+	}
+	if !strings.Contains(logged, "model=m1") {
+		t.Fatalf("logged=%q", logged)
+	}
+
+	logged = ""
+	d.LogPrompts = true
+	_, err = d.Chat(context.Background(), ai.ChatRequest{
+		Model:    "m1",
+		Messages: []ai.Message{{Role: "user", Content: "secret-prompt"}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(logged, "secret-prompt") {
+		t.Fatalf("opt-in log missing prompt: %q", logged)
 	}
 }
 

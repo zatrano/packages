@@ -10,7 +10,7 @@ import (
 func init() {
 	addons.Register(addons.Meta{
 		Name:        "ratelimit",
-		Key:         "rateLimiter",
+		Key:         "rateLimiter", // container key kept for From()/Instance compatibility
 		Description: "Rate limiter",
 		Order:       17,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },

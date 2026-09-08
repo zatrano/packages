@@ -9,7 +9,7 @@ import (
 )
 
 func TestPDFBytes(t *testing.T) {
-	doc := pdf.New("ZATRANO", "Hello PDF", "Phase 26")
+	doc := pdf.New("ZATRANO", "Hello PDF", "Sample body")
 	raw := doc.Bytes()
 	if !bytes.HasPrefix(raw, []byte("%PDF-1.4")) {
 		t.Fatal("missing header")

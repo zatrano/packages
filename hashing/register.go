@@ -8,7 +8,7 @@ import (
 func init() {
 	addons.Register(addons.Meta{
 		Name:        "hashing",
-		Key:         "hash",
+		Key:         "hash", // container key kept for From()/Instance compatibility
 		Description: "Password hashing",
 		Order:       15,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },

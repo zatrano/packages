@@ -2,6 +2,22 @@
 
 All notable changes to `github.com/zatrano/packages` are documented in this file.
 
+This module is versioned independently of `github.com/zatrano/framework/v2`.
+Historical `2.0.x` headings below recorded the framework pin, not a packages `/v2` module.
+
+## 1.7.0 Unreleased
+
+Require `github.com/zatrano/framework/v2 v2.0.28`. Public module path stays `github.com/zatrano/packages` (no `/v2` suffix). Last published tag remains `v1.6.6` until this line is tagged.
+
+### Changed
+
+- Enablement graph: declare real `Requires` / `Optional` (auth, apitoken, queue, notification, backup, broadcasting, database). Optional names are not auto-enabled.
+- `rag` and `agent` are import-only libraries (no addon `Register` / no-op `ServiceProvider`).
+- `redisx` is a library. Cache owns the Redis client and publishes `"redis"`; queue reads that binding.
+- Webhooks, filesystem signed URLs, HashID salt, and social OAuth fail closed on missing or placeholder secrets.
+- ORM connection (`Configure` / `DB`) is mutex-guarded. The database service still owns the connection.
+- AI `LogDriver` does not log prompts or replies unless `log_prompts` is opted in. Gemini sends the API key in `x-goog-api-key`, not the query string.
+
 ## 2.0.27 - 2026-09-08
 
 Require `github.com/zatrano/framework/v2 v2.0.27`. This packages module is still not tagged `v2.x`.

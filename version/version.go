@@ -8,7 +8,8 @@ import (
 
 var (
 	mu      sync.RWMutex
-	current = "2.0.27"
+	// Fallback is the application/framework VERSION, not this module's tag.
+	current = "2.0.28"
 )
 
 // Set overrides the runtime version (tests / build injection).
