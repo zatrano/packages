@@ -51,7 +51,7 @@ func Then[Parent, Child any](
 				return err
 			}
 		}
-		return Nested[Parent, Child](field, childLoaders...)(parents)
+		return Nested[Parent](field, childLoaders...)(parents)
 	}
 }
 

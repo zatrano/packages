@@ -104,7 +104,7 @@ func WhereHasThroughFn[Parent, Through, Related any](
 	fn func(*Querier[Related]),
 	localKey ...string,
 ) *Querier[Parent] {
-	return applyThroughExists[Parent, Through, Related](q, false, throughForeignKey, relatedForeignKey, fn, localKey...)
+	return applyThroughExists[Parent, Through](q, false, throughForeignKey, relatedForeignKey, fn, localKey...)
 }
 
 func applyThroughExists[Parent, Through, Related any](
