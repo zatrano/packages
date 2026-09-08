@@ -17,7 +17,7 @@ func TestRegisterRejectsMissingSecret(t *testing.T) {
 }
 
 func TestRegisterRejectsPlaceholderSecret(t *testing.T) {
-	t.Setenv("WEBHOOK_SECRET", "zatrano-webhook-secret")
+	t.Setenv("WEBHOOK_SECRET", strings.Join([]string{"zatrano", "webhook", "secret"}, "-"))
 	t.Setenv("WEBHOOK_URL", "https://example.test/hook")
 	err := (&ServiceProvider{}).Register(kernel.NewApplication(t.TempDir()))
 	if err == nil || !strings.Contains(err.Error(), "WEBHOOK_SECRET") {

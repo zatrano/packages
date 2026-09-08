@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	mu      sync.RWMutex
+	mu sync.RWMutex
 	// Fallback is the application/framework VERSION, not this module's tag.
 	current = "2.0.28"
 )

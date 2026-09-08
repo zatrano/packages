@@ -72,11 +72,11 @@ func TestApitokenTransitiveRequires(t *testing.T) {
 
 func TestOptionalNotInRequires(t *testing.T) {
 	cases := map[string][]string{
-		"queue":         {"database", "cache"},
-		"notification":  {"view", "broadcasting", "localization", "database"},
-		"backup":        {"database"},
-		"broadcasting":  {"auth"},
-		"database":      {"events"},
+		"queue":        {"database", "cache"},
+		"notification": {"view", "broadcasting", "localization", "database"},
+		"backup":       {"database"},
+		"broadcasting": {"auth"},
+		"database":     {"events"},
 	}
 	for name, optional := range cases {
 		meta, ok := addons.Lookup(name)

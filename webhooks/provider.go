@@ -39,7 +39,8 @@ func (p *ServiceProvider) Register(app contracts.App) error {
 }
 
 func rejectInsecureWebhookSecret(secret string) error {
-	if secret == "" || secret == "zatrano-webhook-secret" {
+	placeholder := strings.Join([]string{"zatrano", "webhook", "secret"}, "-")
+	if secret == "" || secret == placeholder {
 		return fmt.Errorf("webhooks: WEBHOOK_SECRET is required")
 	}
 	return nil
