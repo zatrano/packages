@@ -23,9 +23,7 @@
 <p align="center">
   Active line: <a href="https://github.com/zatrano/packages/tree/main"><code>main</code></a>
   ·
-  this tree <code>1.7.0</code> (unreleased)
-  ·
-  last published tag <code>v1.6.6</code>
+  <code>go get github.com/zatrano/packages@v1.7.0</code>
 </p>
 
 ---
@@ -88,7 +86,7 @@ go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.7.0` is the version of this tree; use the last published tag (`v1.6.6`) until `v1.7.0` is tagged. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.7.0` is the current packages release. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
