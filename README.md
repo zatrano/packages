@@ -23,7 +23,7 @@
 <p align="center">
   Active line: <a href="https://github.com/zatrano/packages/tree/main"><code>main</code></a>
   ·
-  <code>go get github.com/zatrano/packages@v1.7.0</code>
+  next tag: <code>v1.7.1</code> (unreleased)
 </p>
 
 ---
@@ -80,13 +80,13 @@ From the app CLI:
 
 ```bash
 go get github.com/zatrano/framework/v2@v2.0.28
-go get github.com/zatrano/packages@v1.7.0
+go get github.com/zatrano/packages@v1.7.1
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.7.0` is the current packages release. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.7.1` is the next packages tag and is not published yet. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -260,7 +260,15 @@ database/driver/oracle/
 database/driver/mongo/
 ```
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite.
+Public consumption of a nested driver (after that module is tagged correctly) is a separate `go get`, for example:
+
+```text
+go get github.com/zatrano/packages/database/driver/sqlite@v1.0.0
+```
+
+The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version.
+
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. The root `github.com/zatrano/packages` module must not require those nested module paths.
 
 ## Local development
 

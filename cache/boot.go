@@ -18,6 +18,7 @@ func boot(app contracts.App) error {
 		"file":   fileStore,
 		"memory": NewMemoryStore(),
 	}
+	want := env.Get("CACHE_STORE", "file")
 	redisClient, redisErr := redisx.Connect(redisx.Config{
 		Host:     env.Get("REDIS_HOST", "127.0.0.1"),
 		Port:     env.Get("REDIS_PORT", "6379"),
@@ -27,10 +28,15 @@ func boot(app contracts.App) error {
 	if redisErr == nil {
 		stores["redis"] = NewRedisStore(redisClient, "zatrano_cache:")
 		app.Container().Instance("redis", redisClient) // cache owns Redis; queue reads this binding
+	} else if want == "redis" {
+		return fmt.Errorf("cache: store %q requested but redis is unavailable: %w", want, redisErr)
 	} else if app.Logger() != nil {
 		app.Logger().Debugf("redis unavailable, skipping redis cache/queue: %v", redisErr)
 	}
-	mgr := NewManager(env.Get("CACHE_STORE", "file"), stores)
+	mgr := NewManager(want, stores)
+	if mgr.Store() == nil {
+		return fmt.Errorf("cache: store %q is not available", want)
+	}
 	app.Container().Instance("cache", mgr)
 	if raw, err := app.Make("health"); err == nil {
 		if h, ok := raw.(contracts.Health); ok && h != nil {

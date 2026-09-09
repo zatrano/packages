@@ -140,6 +140,66 @@ func TestLibrariesNotRegistered(t *testing.T) {
 	}
 }
 
+func TestNegativePathMissingRequires(t *testing.T) {
+	cases := []struct {
+		name     string
+		meta     addons.Meta
+		selected string
+	}{
+		{name: "auth without hashing", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "database", "session"}}},
+		{name: "auth without database", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "database", "session"}}},
+		{name: "auth without session", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "database", "session"}}},
+		{name: "orm without database", selected: "orm", meta: addons.Meta{Name: "orm", Requires: []string{"database"}}},
+		{name: "flash without session", selected: "flash", meta: addons.Meta{Name: "flash", Requires: []string{"session"}}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			lookup := func(name string) (addons.Meta, bool) {
+				if name == tc.meta.Name {
+					return tc.meta, true
+				}
+				return addons.Meta{}, false
+			}
+			if _, err := addons.Expand([]string{tc.selected}, lookup); err == nil {
+				t.Fatal("expected missing Requires to fail")
+			}
+		})
+	}
+}
+
+func TestNegativePathOptionalAbsent(t *testing.T) {
+	cases := []addons.Meta{
+		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "events"}},
+		{Name: "queue", Optional: []string{"database", "cache"}},
+		{Name: "notification", Optional: []string{"view", "broadcasting", "localization", "database"}},
+		{Name: "backup", Optional: []string{"database"}},
+		{Name: "broadcasting", Optional: []string{"auth"}},
+	}
+	for _, meta := range cases {
+		t.Run(meta.Name, func(t *testing.T) {
+			lookup := func(name string) (addons.Meta, bool) {
+				if name == meta.Name {
+					return meta, true
+				}
+				for _, req := range meta.Requires {
+					if name == req {
+						return addons.Meta{Name: req}, true
+					}
+				}
+				return addons.Meta{}, false
+			}
+			got, err := addons.Expand([]string{meta.Name}, lookup)
+			if err != nil {
+				t.Fatal(err)
+			}
+			names := metaNames(got)
+			if containsAny(names, meta.Optional...) {
+				t.Fatalf("optional names leaked into closure: %v", names)
+			}
+		})
+	}
+}
+
 func metaNames(metas []addons.Meta) []string {
 	out := make([]string, 0, len(metas))
 	for _, m := range metas {

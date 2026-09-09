@@ -32,6 +32,13 @@ func TestGoModPinsReleasedFramework(t *testing.T) {
 	if !strings.Contains(text, "replace github.com/zatrano/framework/v2 => ../framework") {
 		t.Fatal("development replace must remain in the packages module")
 	}
+	if i := strings.Index(text, "require ("); i >= 0 {
+		if j := strings.Index(text[i:], "\n)"); j >= 0 {
+			if strings.Contains(text[i:i+j], "github.com/zatrano/packages/database/driver/") {
+				t.Fatal("root require must not include nested database drivers")
+			}
+		}
+	}
 }
 
 func TestPublicFrameworkModuleResolvesWithoutSibling(t *testing.T) {

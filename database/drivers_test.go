@@ -7,8 +7,6 @@ import (
 	"github.com/zatrano/packages/database"
 	"github.com/zatrano/packages/database/query"
 	"github.com/zatrano/packages/database/schema"
-
-	_ "github.com/zatrano/packages/database/driver/sqlite"
 )
 
 func TestBuildDSNAllDrivers(t *testing.T) {

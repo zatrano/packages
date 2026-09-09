@@ -1,6 +1,8 @@
 package queue
 
 import (
+	"fmt"
+
 	"github.com/zatrano/framework/v2/contracts"
 	"github.com/zatrano/framework/v2/kernel/env"
 	"github.com/zatrano/packages/database"
@@ -8,6 +10,7 @@ import (
 )
 
 func boot(app contracts.App) error {
+	want := env.Get("QUEUE_CONNECTION", "sync")
 	queues := map[string]Queue{"sync": NewSyncQueue()}
 	if dbMgr := database.From(app); dbMgr != nil {
 		if db, err := dbMgr.DB(); err == nil {
@@ -22,7 +25,10 @@ func boot(app contracts.App) error {
 			queues["redis"] = NewRedisQueue(client, "zatrano:queues:default")
 		}
 	}
-	mgr := NewManager(env.Get("QUEUE_CONNECTION", "sync"), queues)
+	mgr := NewManager(want, queues)
+	if mgr.Queue() == nil {
+		return fmt.Errorf("queue: connection %q is not available", want)
+	}
 	app.Container().Instance("queue", mgr)
 	return nil
 }

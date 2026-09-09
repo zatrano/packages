@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/zatrano/packages/database"
+
+	_ "modernc.org/sqlite"
 )
 
 func TestTransactionCommitAndRollback(t *testing.T) {
