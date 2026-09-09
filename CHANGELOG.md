@@ -5,7 +5,11 @@ All notable changes to `github.com/zatrano/packages` are documented in this file
 This module is versioned independently of `github.com/zatrano/framework/v2`.
 Historical `2.0.x` headings below recorded the framework pin, not a packages `/v2` module.
 
-## 1.7.1 Unreleased
+## Unreleased
+
+README describes published `v1.7.1` as the current stable packages release (not an unreleased next tag). Nested-module publication remains a separate tagging operation.
+
+## 1.7.1 - 2026-09-09
 
 Correction release after `v1.7.0`. That tag stays published and must not be moved.
 
@@ -14,7 +18,7 @@ Correction release after `v1.7.0`. That tag stays published and must not be move
 - Root `go.mod` no longer requires `github.com/zatrano/packages/database/driver/sqlite`. That nested driver is a separate module, linked by `db:setup`, and was not publicly resolvable (`unknown revision database/driver/sqlite/v1.0.0`). Nested Go tags must follow the module path (`database/driver/sqlite/v1.0.0`), not a `packages/` prefix.
 - Cache and queue fail closed when `CACHE_STORE=redis` or `QUEUE_CONNECTION=redis` but no usable Redis binding exists. Default `file` / `sync` still boot if Redis is absent. Cache remains the Redis connection owner; queue only consumes `"redis"`; `redisx` stays a library.
 
-In-tree ORM/query tests may still use public `modernc.org/sqlite`. This section is unreleased until `v1.7.1` is tagged.
+In-tree ORM/query tests may still use public `modernc.org/sqlite`.
 
 ## 1.7.0 - 2026-09-09
 

@@ -21,16 +21,16 @@
 </p>
 
 <p align="center">
-  Active line: <a href="https://github.com/zatrano/packages/tree/main"><code>main</code></a>
+  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.7.1"><code>v1.7.1</code></a>
   ·
-  next tag: <code>v1.7.1</code> (unreleased)
+  Framework pin: <code>github.com/zatrano/framework/v2@v2.0.28</code>
 </p>
 
 ---
 
 This module is [github.com/zatrano/packages](https://github.com/zatrano/packages). It is not the kernel.
 
-It is a **v1** Go module: the import path has no `/v2` suffix. Framework `v2.0.28` and packages `1.x` are independent semantic versions. Nested package `VERSION` files (drivers, auth, …) are informational only.
+It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.7.1`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
 The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
 
@@ -86,7 +86,7 @@ go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.7.1` is the next packages tag and is not published yet. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.7.1` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -266,9 +266,9 @@ Public consumption of a nested driver (after that module is tagged correctly) is
 go get github.com/zatrano/packages/database/driver/sqlite@v1.0.0
 ```
 
-The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version.
+The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.7.1`.
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. The root `github.com/zatrano/packages` module must not require those nested module paths.
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.7.1` does not require those nested module paths.
 
 ## Local development
 
