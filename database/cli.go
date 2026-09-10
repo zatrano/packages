@@ -361,10 +361,14 @@ func (m *%s) TableName() string {
 	return "%s"
 }
 
+func (m *%s) Fillable() []string {
+	return []string{"translations"}
+}
+
 func (m *%s) Casts() map[string]string {
 	return map[string]string{"translations": "json"}
 }
-%s`, name, name, table, name, connMethod)
+%s`, name, name, table, name, name, connMethod)
 	case "columns":
 		return fmt.Sprintf(`package models
 
@@ -379,7 +383,11 @@ type %s struct {
 func (m *%s) TableName() string {
 	return "%s"
 }
-%s`, name, name, table, connMethod)
+
+func (m *%s) Fillable() []string {
+	return []string{"name_tr", "name_en"}
+}
+%s`, name, name, table, name, connMethod)
 	default:
 		return fmt.Sprintf(`package models
 
@@ -393,7 +401,11 @@ type %s struct {
 func (m *%s) TableName() string {
 	return "%s"
 }
-%s`, name, name, table, connMethod)
+
+func (m *%s) Fillable() []string {
+	return []string{"name"}
+}
+%s`, name, name, table, name, connMethod)
 	}
 }
 

@@ -49,6 +49,10 @@ func (m *User) TableName() string {
 	return "users"
 }
 
+func (m *User) Fillable() []string {
+	return []string{"name", "email", "password", "avatar"}
+}
+
 // AuthID implements auth.Authenticatable.
 func (m *User) AuthID() any {
 	if m == nil {

@@ -12,6 +12,7 @@ func init() {
 		Description: "Input validation",
 		Order:       132,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		CLI:         Commands,
 	})
 }
 

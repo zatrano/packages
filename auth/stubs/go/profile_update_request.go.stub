@@ -1,0 +1,14 @@
+package requests
+
+import "github.com/zatrano/packages/validation"
+
+type ProfileUpdateRequest struct {
+	validation.Base
+}
+
+func (ProfileUpdateRequest) Rules() map[string]string {
+	return map[string]string{
+		"name":  "required|min:2",
+		"email": "required|email",
+	}
+}

@@ -1,0 +1,14 @@
+package requests
+
+import "github.com/zatrano/packages/validation"
+
+type LoginRequest struct {
+	validation.Base
+}
+
+func (LoginRequest) Rules() map[string]string {
+	return map[string]string{
+		"email":    "required|email",
+		"password": "required|min:4",
+	}
+}

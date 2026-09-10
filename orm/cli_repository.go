@@ -45,7 +45,8 @@ import (
 	"github.com/zatrano/packages/orm"
 )
 
-// %s provides data access for models.%s.
+// %s is an optional concrete seam around orm for models.%s.
+// Default persistence is orm.Query[T](); do not add a repository interface.
 type %s struct{}
 
 // New%s creates a %s.

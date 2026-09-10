@@ -1,0 +1,13 @@
+package requests
+
+import "github.com/zatrano/packages/validation"
+
+type TwoFactorChallengeRequest struct {
+	validation.Base
+}
+
+func (TwoFactorChallengeRequest) Rules() map[string]string {
+	return map[string]string{
+		"code": "required",
+	}
+}

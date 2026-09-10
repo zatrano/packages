@@ -79,3 +79,10 @@ func TestCommandsIncludeDatabaseCLI(t *testing.T) {
 		}
 	}
 }
+
+func TestModelStubIncludesFillable(t *testing.T) {
+	body := modelStub("Post", "posts", "", "")
+	if !strings.Contains(body, `func (m *Post) Fillable()`) || !strings.Contains(body, `"name"`) {
+		t.Fatalf("default model stub must declare Fillable:\n%s", body)
+	}
+}
