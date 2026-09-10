@@ -143,12 +143,12 @@ func TestIfInequalityOperators(t *testing.T) {
 func TestUnsupportedIfFailsFast(t *testing.T) {
 	dir := t.TempDir()
 	_ = os.WriteFile(filepath.Join(dir, "bad.html"), []byte(`
-@if($a && $b)
+@if($a = $b)
 x
 @endif
 `), 0o644)
 	engine := view.New(dir)
-	_, err := engine.Render("bad", map[string]any{"a": true, "b": true})
+	_, err := engine.Render("bad", map[string]any{"a": 1, "b": 2, "c": 3})
 	if err == nil || !strings.Contains(err.Error(), "unsupported") {
 		t.Fatalf("expected unsupported compile error, got %v", err)
 	}

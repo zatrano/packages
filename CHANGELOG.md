@@ -7,6 +7,10 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+### Added
+
+- View expressions (`@if` / `@elseif` / `{{ }}` / `{!! !!}`) compile ternary (`? :`), null coalescing (`??`), elvis (`?:`), concat (`.`), `xor` / `**`, indexing, and common helpers (`empty`, `isset`, `count`, `in_array`, `str_contains`, `filled`, `blank`, `data_get`, …).
+
 Nested-module publication remains a separate tagging operation.
 
 ## 1.7.2 - 2026-09-10

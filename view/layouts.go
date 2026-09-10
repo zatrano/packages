@@ -334,7 +334,7 @@ func (e *Engine) expandEach(content string, seen []string, bags map[string]*stac
 			return "<!-- each error: " + err.Error() + " -->"
 		}
 		partial = rewriteNamedRangeAlias(partial, alias)
-		partial = rewriteForeachParentLookups(partial, alias)
+		partial = rewriteForeachParentLookups(partial, alias, nil)
 		var sb strings.Builder
 		sb.WriteString(fmt.Sprintf(`{{ if not (empty (dataGet . %s)) }}`, tplLit(collection)))
 		sb.WriteString(fmt.Sprintf(`{{ range $__zfi, $%s := dataGet $ "%s" }}`, alias, collection))
