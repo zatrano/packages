@@ -1,6 +1,7 @@
 package validation_test
 
 import (
+	"errors"
 	stdhttp "net/http"
 	"net/http/httptest"
 	"net/url"
@@ -190,6 +191,101 @@ func TestNamedErrorBagFlashAndForm(t *testing.T) {
 	bags := validation.ErrorBagsFromSession(req)
 	if _, ok := bags["login"]; !ok {
 		t.Fatalf("errorBags missing login: %#v", bags)
+	}
+}
+
+type uniqueEmailRequest struct {
+	validation.Base
+}
+
+func (uniqueEmailRequest) Rules() map[string]string {
+	return map[string]string{
+		"email": "required|unique:users,email",
+	}
+}
+
+type existsProductRequest struct {
+	validation.Base
+}
+
+func (existsProductRequest) Rules() map[string]string {
+	return map[string]string{
+		"product_id": "required|exists:products,id",
+	}
+}
+
+func formPOST(t *testing.T, values url.Values) *http.Request {
+	t.Helper()
+	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(values.Encode())))
+	req.Raw().Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return req
+}
+
+func TestValidateFormUniqueCheckerUnavailableMustNotPass(t *testing.T) {
+	validation.SetDefaultPresenceChecker(nil)
+	t.Cleanup(func() { validation.SetDefaultPresenceChecker(nil) })
+
+	form := url.Values{}
+	form.Set("email", "a@example.com")
+	_, err := validation.ValidateForm(formPOST(t, form), uniqueEmailRequest{})
+	if err == nil {
+		t.Fatal("ValidateForm unique must not pass when no PresenceChecker is bound")
+	}
+	ve, ok := err.(validation.ValidationException)
+	if !ok || !ve.Errors.Has("email") {
+		t.Fatalf("expected ValidationException with email, got %T %v", err, err)
+	}
+}
+
+func TestValidateFormUniqueDatabaseErrorMustNotPass(t *testing.T) {
+	validation.SetDefaultPresenceChecker(func(table, column, value string) (bool, error) {
+		return false, errors.New("database unavailable")
+	})
+	t.Cleanup(func() { validation.SetDefaultPresenceChecker(nil) })
+
+	form := url.Values{}
+	form.Set("email", "a@example.com")
+	_, err := validation.ValidateForm(formPOST(t, form), uniqueEmailRequest{})
+	if err == nil {
+		t.Fatal("ValidateForm unique must not pass when the checker errors")
+	}
+}
+
+func TestValidateFormUniqueAbsentPassesExistingFails(t *testing.T) {
+	store := map[string]bool{presenceKey("users", "email", "taken@example.com"): true}
+	validation.SetDefaultPresenceChecker(mapPresence(store))
+	t.Cleanup(func() { validation.SetDefaultPresenceChecker(nil) })
+
+	form := url.Values{}
+	form.Set("email", "new@example.com")
+	data, err := validation.ValidateForm(formPOST(t, form), uniqueEmailRequest{})
+	if err != nil || data["email"] != "new@example.com" {
+		t.Fatalf("absent unique must pass via ValidateForm, data=%v err=%v", data, err)
+	}
+
+	form.Set("email", "taken@example.com")
+	_, err = validation.ValidateForm(formPOST(t, form), uniqueEmailRequest{})
+	if err == nil {
+		t.Fatal("existing unique must fail via ValidateForm")
+	}
+}
+
+func TestValidateFormExistsExistingPassesAbsentFails(t *testing.T) {
+	store := map[string]bool{presenceKey("products", "id", "9"): true}
+	validation.SetDefaultPresenceChecker(mapPresence(store))
+	t.Cleanup(func() { validation.SetDefaultPresenceChecker(nil) })
+
+	form := url.Values{}
+	form.Set("product_id", "9")
+	data, err := validation.ValidateForm(formPOST(t, form), existsProductRequest{})
+	if err != nil || data["product_id"] != "9" {
+		t.Fatalf("existing exists must pass via ValidateForm, data=%v err=%v", data, err)
+	}
+
+	form.Set("product_id", "404")
+	_, err = validation.ValidateForm(formPOST(t, form), existsProductRequest{})
+	if err == nil {
+		t.Fatal("absent exists must fail via ValidateForm")
 	}
 }
 

@@ -7,6 +7,10 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+### Fixed
+
+- `unique` / `exists` fail closed when no PresenceChecker is bound, the rule is missing a table or column, or the checker returns an error. An infrastructure failure is no longer treated as a successful lookup. The database package's default checker also returns an error for empty table or column instead of `(false, nil)`.
+
 README describes published `v1.7.1` as the current stable packages release (not an unreleased next tag). Nested-module publication remains a separate tagging operation.
 
 ## 1.7.1 - 2026-09-09

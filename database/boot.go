@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 
 	"github.com/zatrano/framework/v2/contracts"
@@ -95,7 +96,7 @@ func boot(app contracts.App) error {
 		table = strings.TrimSpace(table)
 		column = strings.TrimSpace(column)
 		if table == "" || column == "" {
-			return false, nil
+			return false, fmt.Errorf("validation presence check requires table and column")
 		}
 		row, err := query.New(db, driver, table).Where(column, value).First()
 		if err != nil {

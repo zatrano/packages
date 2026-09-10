@@ -49,6 +49,8 @@ func (e Errors) Message() map[string]string {
 type RuleFunc func(v *Validator, field, value, param string) bool
 
 // PresenceChecker looks up whether a value exists in storage (unique/exists).
+// A nil checker, a checker error, or an incomplete table/column must not
+// be treated as a successful unique/exists check (fail-closed).
 type PresenceChecker func(table, column, value string) (exists bool, err error)
 
 var defaultPresenceChecker PresenceChecker
@@ -1004,14 +1006,17 @@ func (v *Validator) checkPresence(param, value string, unique bool) bool {
 		checker = defaultPresenceChecker
 	}
 	if checker == nil {
-		return true
+		return false
 	}
 	parts := strings.Split(param, ",")
 	if len(parts) < 2 {
-		return true
+		return false
 	}
 	table := strings.TrimSpace(parts[0])
 	column := strings.TrimSpace(parts[1])
+	if table == "" || column == "" {
+		return false
+	}
 	exists, err := checker(table, column, value)
 	if err != nil {
 		return false
