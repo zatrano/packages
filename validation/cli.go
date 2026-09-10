@@ -23,7 +23,7 @@ type MakeRequestCommand struct {
 	app contracts.App
 }
 
-func (c *MakeRequestCommand) Name() string        { return "make:request" }
+func (c *MakeRequestCommand) Name() string { return "make:request" }
 func (c *MakeRequestCommand) Description() string {
 	return "Create a form request (--store, --update, --index)"
 }
