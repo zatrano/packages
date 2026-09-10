@@ -138,7 +138,7 @@ func (e *Engine) compile(name string) (*template.Template, error) {
 		return nil, err
 	}
 
-	parsed, err := e.compileBladeLike(resolved)
+	parsed, err := e.compileView(resolved)
 	if err != nil {
 		return nil, fmt.Errorf("view [%s] compile error: %w", name, err)
 	}
@@ -164,8 +164,8 @@ func (e *Engine) pathFor(name string) string {
 	return filepath.Join(e.directory, name)
 }
 
-// compileBladeLike converts a small Blade-like syntax into Go templates.
-func (e *Engine) compileBladeLike(input string) (string, error) {
+// compileView converts view directives into Go templates.
+func (e *Engine) compileView(input string) (string, error) {
 	out := input
 
 	// Preserve verbatim blocks from further compilation.

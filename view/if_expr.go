@@ -156,7 +156,7 @@ func (l *ifLexer) next() ifTok {
 		l.i += len("__ZPARENT__.")
 		part, ok := l.ident()
 		if !ok {
-			l.err = fmt.Errorf("expected path after __ZPARENT__.")
+			l.err = fmt.Errorf("expected path after __ZPARENT__ prefix")
 			return ifTok{kind: ifTokEOF}
 		}
 		return ifTok{kind: ifTokParent, path: l.dotted(part)}

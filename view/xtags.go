@@ -400,7 +400,7 @@ func extractPropsKeys(content string) map[string]bool {
 	inner := strings.TrimSpace(match[1])
 	inner = strings.TrimPrefix(inner, "[")
 	inner = strings.TrimSuffix(inner, "]")
-	for _, entry := range splitBladeMapEntries(inner) {
+	for _, entry := range splitMapEntries(inner) {
 		kv := strings.SplitN(entry, "=>", 2)
 		key := strings.Trim(strings.TrimSpace(kv[0]), `'"`)
 		if key != "" {
@@ -412,8 +412,7 @@ func extractPropsKeys(content string) map[string]bool {
 
 func isPropKey(key string, propKeys map[string]bool) bool {
 	if len(propKeys) == 0 {
-		// Without @props, treat non-class/id/style/data/aria as props heuristically:
-		// actually Laravel puts undefined in attributes; known @props go to props.
+		// Without @props, treat non-class/id/style/data/aria as props heuristically.
 		// With no @props, all become both available as vars AND attributes — use attributes for HTML-ish.
 		switch {
 		case key == "class", key == "id", key == "style":
@@ -428,7 +427,7 @@ func isPropKey(key string, propKeys map[string]bool) bool {
 }
 
 func splitQuotedList(expr string) []string {
-	parts := splitBladeMapEntries(expr)
+	parts := splitMapEntries(expr)
 	out := make([]string, 0, len(parts))
 	for _, p := range parts {
 		p = strings.Trim(strings.TrimSpace(p), `'"`)

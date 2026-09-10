@@ -266,8 +266,8 @@ func dict(values ...any) map[string]any {
 	return out
 }
 
-// parseBladeMapExpr parses ['k' => $var, 'a' => 'lit'] into template dict call args source.
-func parseBladeMapExpr(expr string) string {
+// parseMapExpr parses ['k' => $var, 'a' => 'lit'] into template dict call args source.
+func parseMapExpr(expr string) string {
 	expr = strings.TrimSpace(expr)
 	expr = strings.TrimPrefix(expr, "[")
 	expr = strings.TrimSuffix(expr, "]")
@@ -275,7 +275,7 @@ func parseBladeMapExpr(expr string) string {
 	if expr == "" {
 		return `dict`
 	}
-	parts := splitBladeMapEntries(expr)
+	parts := splitMapEntries(expr)
 	args := make([]string, 0, len(parts)*2)
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
@@ -290,7 +290,7 @@ func parseBladeMapExpr(expr string) string {
 		val := strings.TrimSpace(kv[1])
 		key = strings.Trim(key, `'"`)
 		args = append(args, tplLit(key))
-		args = append(args, bladeValueExpr(val))
+		args = append(args, mapValueExpr(val))
 	}
 	if len(args) == 0 {
 		return `dict`
@@ -298,7 +298,7 @@ func parseBladeMapExpr(expr string) string {
 	return `dict ` + strings.Join(args, " ")
 }
 
-func splitBladeMapEntries(expr string) []string {
+func splitMapEntries(expr string) []string {
 	var parts []string
 	var b strings.Builder
 	depth := 0
@@ -341,7 +341,7 @@ func splitBladeMapEntries(expr string) []string {
 	return parts
 }
 
-func bladeValueExpr(val string) string {
+func mapValueExpr(val string) string {
 	val = strings.TrimSpace(val)
 	if strings.HasPrefix(val, "$") {
 		path := strings.TrimPrefix(val, "$")

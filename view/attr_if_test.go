@@ -10,7 +10,7 @@ import (
 func TestIfInsideHTMLAttributeCompilesWithBackticks(t *testing.T) {
 	e := New(t.TempDir())
 	src := `<button class="@if($save_disabled)opacity-50 cursor-not-allowed@endif" href="@if($status == 'draft')/edit@else/view@endif">x</button>`
-	compiled, err := e.compileBladeLike(src)
+	compiled, err := e.compileView(src)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -186,7 +186,7 @@ func (e *Engine) expandIncludes(content string, seen []string, bags map[string]*
 			}
 			return "<!-- include error: " + err.Error() + " -->"
 		}
-		dictCall := parseBladeMapExpr(match[2])
+		dictCall := parseMapExpr(match[2])
 		return fmt.Sprintf(`{{ with mergeDict . (%s) }}%s{{ end }}`, dictCall, partial)
 	})
 	if firstErr != nil {
@@ -240,7 +240,7 @@ func (e *Engine) wrapConditionalInclude(when bool, cond, name, dataExpr string, 
 		return "<!-- include conditional error: " + err.Error() + " -->"
 	}
 	if dataExpr != "" {
-		dictCall := parseBladeMapExpr(dataExpr)
+		dictCall := parseMapExpr(dataExpr)
 		partial = fmt.Sprintf(`{{ with mergeDict . (%s) }}%s{{ end }}`, dictCall, partial)
 	}
 	if when {
@@ -294,8 +294,8 @@ func (e *Engine) expandComponents(content string, seen []string, bags map[string
 
 		args := []string{}
 		if strings.TrimSpace(dataExpr) != "" {
-			// flatten parseBladeMapExpr dict call into merge
-			args = append(args, parseBladeMapExpr(dataExpr))
+			// flatten parseMapExpr dict call into merge
+			args = append(args, parseMapExpr(dataExpr))
 		} else {
 			args = append(args, "dict")
 		}
@@ -490,7 +490,7 @@ func extractSections(content string) map[string]string {
 	}
 	for _, match := range reSectionShortVar.FindAllStringSubmatch(content, -1) {
 		if len(match) == 3 {
-			// Keep Blade echo so later compile turns $var into dataGet.
+			// Keep {{ $var }} so later compile turns it into dataGet.
 			sections[match[1]] = "{{ $" + match[2] + " }}"
 		}
 	}

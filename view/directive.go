@@ -18,7 +18,7 @@ var (
 	reEndProduction = regexp.MustCompile(`(?i)@endproduction\b`)
 )
 
-// Directive registers a custom Blade-like directive replacer on the engine.
+// Directive registers a custom directive replacer on the engine.
 func (e *Engine) Directive(name string, replacer func(args string) string) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
@@ -122,7 +122,7 @@ func expandProps(content string) string {
 	if len(match) != 2 {
 		return content
 	}
-	dictCall := parseBladeMapExpr(match[1])
+	dictCall := parseMapExpr(match[1])
 	body := strings.TrimSpace(reProps.ReplaceAllString(content, ""))
 	return `{{ with mergeDefaults . (` + dictCall + `) }}` + body + `{{ end }}`
 }
