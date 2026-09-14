@@ -7,14 +7,11 @@ import (
 )
 
 func TestCatalogToolkitAddons(t *testing.T) {
-	if len(Catalog) != 7 {
-		t.Fatalf("toolkit catalog=%d want 7", len(Catalog))
+	if len(Catalog) != 10 {
+		t.Fatalf("catalog=%d want 10 (3 experimental intelligence + 7 toolkit)", len(Catalog))
 	}
 	seen := map[string]bool{}
 	for _, p := range Catalog {
-		if p.Layer != kernel.LayerAddon || p.Kind != kernel.KindLibrary {
-			t.Errorf("%s layer=%s kind=%s", p.Name, p.Layer, p.Kind)
-		}
 		if p.Description == "" {
 			t.Errorf("%s missing description", p.Name)
 		}
@@ -22,8 +19,19 @@ func TestCatalogToolkitAddons(t *testing.T) {
 			t.Errorf("duplicate %s", p.Name)
 		}
 		seen[p.Name] = true
+		switch p.Name {
+		case "ai", "rag", "agent":
+			if p.Layer != kernel.LayerIntelligence || p.Stability != "experimental" {
+				t.Errorf("%s want intelligence experimental, layer=%s stability=%s", p.Name, p.Layer, p.Stability)
+			}
+		default:
+			if p.Layer != kernel.LayerAddon || p.Kind != kernel.KindLibrary {
+				t.Errorf("%s layer=%s kind=%s", p.Name, p.Layer, p.Kind)
+			}
+		}
 	}
 	for _, name := range []string{
+		"ai", "rag", "agent",
 		"toolkit/arr", "toolkit/color", "toolkit/date", "toolkit/html",
 		"toolkit/money", "toolkit/num", "toolkit/str",
 	} {
