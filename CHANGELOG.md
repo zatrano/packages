@@ -7,12 +7,21 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.8.0 - 2026-09-15
+
+Why now: Publish toolkit libraries and experimental AI/RAG/agent labels so framework v2.4.0 consumers can import them without tracking `main`.
+
 ### Added
 
 - `toolkit/{arr,color,date,html,money,num,str}`: general-purpose helpers moved out of the kernel (`kernel/support/...`). Opt-in libraries (`LayerAddon`). Import `github.com/zatrano/packages/toolkit/str` (and siblings). No kernel re-export. Validation `IsSemver` uses `toolkit/str`.
 - View expressions (`@if` / `@elseif` / `{{ }}` / `{!! !!}`) compile ternary (`? :`), null coalescing (`??`), elvis (`?:`), concat (`.`), `xor` / `**`, indexing, and common helpers (`empty`, `isset`, `count`, `in_array`, `str_contains`, `filled`, `blank`, `data_get`, …).
+- `ai`, `rag`, and `agent` are catalogued as `Stability: experimental` until they complete the same security review as the rest of the ecosystem.
 
-Nested-module publication remains a separate tagging operation.
+### Changed
+
+- OAuth, ORM, and WebAuthn check `crypto/rand` errors instead of discarding them.
+
+This module still requires `github.com/zatrano/framework/v2 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
 
 ## 1.7.2 - 2026-09-10
 
