@@ -341,7 +341,10 @@ func (u *userEntity) WebAuthnCredentials() []webauthnlib.Credential { return u.c
 
 func randomID() string {
 	b := make([]byte, 16)
-	_, _ = rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic("webauthn: " + err.Error())
+	}
 	return base64.RawURLEncoding.EncodeToString(b)
 }
 

@@ -456,7 +456,10 @@ func validRedirect(allowed []string, redirect string) bool {
 
 func randomToken(n int) string {
 	b := make([]byte, n)
-	_, _ = rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic("oauth: " + err.Error())
+	}
 	return hex.EncodeToString(b)
 }
 
@@ -483,7 +486,10 @@ func parseBasicAuth(header string) (string, string, bool) {
 // PKCEChallengeS256 returns a code_verifier and S256 code_challenge pair for tests/clients.
 func PKCEChallengeS256() (verifier, challenge string) {
 	b := make([]byte, 32)
-	_, _ = rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic("oauth: " + err.Error())
+	}
 	verifier = base64.RawURLEncoding.EncodeToString(b)
 	sum := sha256.Sum256([]byte(verifier))
 	challenge = base64.RawURLEncoding.EncodeToString(sum[:])

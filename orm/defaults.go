@@ -75,7 +75,10 @@ func ensureKey[T any](attrs map[string]any) map[string]any {
 func newULID() string {
 	ms := uint64(time.Now().UnixMilli())
 	var buf [16]byte
-	_, _ = rand.Read(buf[:])
+	_, err := rand.Read(buf[:])
+	if err != nil {
+		panic("orm: " + err.Error())
+	}
 	// 48-bit time + 80-bit random encoded as 26 Crockford base32 chars.
 	const alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 	out := make([]byte, 26)
