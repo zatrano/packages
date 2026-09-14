@@ -239,6 +239,13 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`qr`](qr) | heavy | QR code images (own `go.mod`) |
 | [`resources`](resources) | library | API resource transformers |
 | [`testing`](testing) | library | Feature tests (`Get("/").AssertOK()`) |
+| [`toolkit/arr`](toolkit/arr) | library | Array/slice helpers (moved from kernel `support/arr`) |
+| [`toolkit/color`](toolkit/color) | library | Color helpers |
+| [`toolkit/date`](toolkit/date) | library | Date/time helpers |
+| [`toolkit/html`](toolkit/html) | library | HTML helpers |
+| [`toolkit/money`](toolkit/money) | library | Money helpers |
+| [`toolkit/num`](toolkit/num) | library | Number helpers |
+| [`toolkit/str`](toolkit/str) | library | String helpers (moved from kernel `support/str`) |
 
 `bootutil` is an internal coerce/CLI helper. It is not a consumer package.
 

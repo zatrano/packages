@@ -11,7 +11,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/zatrano/framework/v2/kernel/support/str"
+	"github.com/zatrano/packages/toolkit/str"
 	"github.com/zatrano/framework/v2/kernel/support/uuid"
 )
 

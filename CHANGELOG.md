@@ -9,6 +9,7 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ### Added
 
+- `toolkit/{arr,color,date,html,money,num,str}`: general-purpose helpers moved out of the kernel (`kernel/support/...`). Opt-in libraries (`LayerAddon`). Import `github.com/zatrano/packages/toolkit/str` (and siblings). No kernel re-export. Validation `IsSemver` uses `toolkit/str`.
 - View expressions (`@if` / `@elseif` / `{{ }}` / `{!! !!}`) compile ternary (`? :`), null coalescing (`??`), elvis (`?:`), concat (`.`), `xor` / `**`, indexing, and common helpers (`empty`, `isset`, `count`, `in_array`, `str_contains`, `filled`, `blank`, `data_get`, …).
 
 Nested-module publication remains a separate tagging operation.
