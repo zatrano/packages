@@ -34,6 +34,8 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.7.2`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
+Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z` (nested: `scripts/release.sh --dry-run database/driver/sqlite/vX.Y.Z`).
+
 The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
 
 The two modules cannot be merged: this one already requires the framework.
