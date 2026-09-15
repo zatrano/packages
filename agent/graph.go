@@ -26,6 +26,8 @@ type GraphNode struct {
 }
 
 // Graph runs agents with conditional edges (branching).
+// For processes that include non-agent steps (HTTP, SQL, RAG, human wait),
+// use packages/workflow and agent.AsExecutor instead.
 type Graph struct {
 	Start   string
 	Nodes   map[string]GraphNode

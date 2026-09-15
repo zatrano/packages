@@ -7,8 +7,8 @@ import (
 )
 
 func TestCatalogToolkitAddons(t *testing.T) {
-	if len(Catalog) != 10 {
-		t.Fatalf("catalog=%d want 10 (3 experimental intelligence + 7 toolkit)", len(Catalog))
+	if len(Catalog) != 25 {
+		t.Fatalf("catalog=%d want 25 (4 experimental intelligence + 21 toolkit)", len(Catalog))
 	}
 	seen := map[string]bool{}
 	for _, p := range Catalog {
@@ -20,7 +20,7 @@ func TestCatalogToolkitAddons(t *testing.T) {
 		}
 		seen[p.Name] = true
 		switch p.Name {
-		case "ai", "rag", "agent":
+		case "ai", "rag", "agent", "workflow":
 			if p.Layer != kernel.LayerIntelligence || p.Stability != "experimental" {
 				t.Errorf("%s want intelligence experimental, layer=%s stability=%s", p.Name, p.Layer, p.Stability)
 			}
@@ -31,9 +31,11 @@ func TestCatalogToolkitAddons(t *testing.T) {
 		}
 	}
 	for _, name := range []string{
-		"ai", "rag", "agent",
-		"toolkit/arr", "toolkit/color", "toolkit/date", "toolkit/html",
-		"toolkit/money", "toolkit/num", "toolkit/str",
+		"ai", "rag", "agent", "workflow",
+		"toolkit/arr", "toolkit/bloom", "toolkit/circuit", "toolkit/collection", "toolkit/color",
+		"toolkit/concurrency", "toolkit/cron", "toolkit/date", "toolkit/debug",
+		"toolkit/enums", "toolkit/hashid", "toolkit/html", "toolkit/jsonschema", "toolkit/lock", "toolkit/markdown", "toolkit/money", "toolkit/num",
+		"toolkit/process", "toolkit/str", "toolkit/timing", "toolkit/zip",
 	} {
 		if !seen[name] {
 			t.Errorf("missing %s", name)

@@ -48,3 +48,6 @@ _ = resp
 | `FormatContext` | Prompt-ready hit dump |
 
 Implement `VectorStore` for Postgres/pgvector, Redis, etc. without changing the pipeline.
+
+This package is a retrieval library. It does not implement agents or workflows. Workflow does not import `rag`; an application may call `Pipeline` from a `workflow.Named` function. `agent.RAGRetrieve` is the agent-side adapter. There is no workflow `RetrieveExecutor`.
+

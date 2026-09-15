@@ -1,0 +1,16 @@
+{
+  "or_continue_with": "Veya şununla devam et",
+  "continue_google": "Google",
+  "provider_google": "Google",
+  "social_not_configured": ":provider girişi yapılandırılmamış.",
+  "social_start_failed": ":provider girişi başlatılamadı.",
+  "social_cancelled": ":provider girişi iptal edildi veya reddedildi.",
+  "social_invalid_response": "Geçersiz :provider giriş yanıtı.",
+  "social_state_failed": ":provider oturum doğrulaması başarısız.",
+  "social_load_failed": ":provider hesabı yüklenemedi.",
+  "social_link_failed": "Hesap oluşturulamadı veya bağlanamadı.",
+  "social_user_load_failed": "Bağlı kullanıcı yüklenemedi.",
+  "social_login_failed": "Giriş başarısız.",
+  "social_signed_in": ":provider ile giriş yapıldı.",
+  "social_account_created": ":provider ile hesap oluşturuldu."
+}

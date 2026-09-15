@@ -16,6 +16,7 @@ func init() {
 		Key:         "social",
 		Description: "Social OAuth login (GitHub/Google)",
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		ConfigFiles: map[string]string{"social.go": publishedSocialConfig},
 	})
 }
 

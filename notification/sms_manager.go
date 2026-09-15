@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// SmsManager resolves SMS drivers (Twilio, HTTP, memory, …) like billing gateways.
+// SmsManager resolves SMS drivers (Twilio, HTTP, memory, …) like cache stores.
 type SmsManager struct {
 	mu            sync.RWMutex
 	from          string

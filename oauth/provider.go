@@ -15,6 +15,7 @@ func init() {
 		Key:         "oauth",
 		Description: "OAuth2 authorization server",
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		ConfigFiles: map[string]string{"oauth.go": publishedOAuthConfig},
 	})
 }
 

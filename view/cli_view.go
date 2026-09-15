@@ -62,7 +62,25 @@ func (c *MakeViewCommand) Handle(args []string) error {
 			parts[i] = strings.ToLower(part)
 		}
 	}
-	rel := strings.Join(parts, string(os.PathSeparator))
+	isAuth := strings.EqualFold(parts[0], "auth")
+	layoutName := "layout.app"
+	if isAuth {
+		if !layoutSet {
+			layout = "auth"
+		}
+		layoutName = "layout." + layout
+	} else if layoutSet {
+		layoutName = "layout." + layout
+	}
+	relParts := parts
+	if isAuth {
+		if parts[0] != "auth" {
+			relParts = append([]string{"auth"}, parts...)
+		}
+	} else if parts[0] != "web" {
+		relParts = append([]string{"web"}, parts...)
+	}
+	rel := strings.Join(relParts, string(os.PathSeparator))
 	dir := filepath.Join(dirs.ViewsDirForCreate(c.app), filepath.Dir(rel))
 	if filepath.Dir(rel) == "." {
 		dir = dirs.ViewsDirForCreate(c.app)
@@ -72,25 +90,19 @@ func (c *MakeViewCommand) Handle(args []string) error {
 	}
 	base := filepath.Base(rel)
 	path := filepath.Join(dir, base+".html")
-	isAuth := strings.HasPrefix(strings.ToLower(strings.ReplaceAll(name, "\\", "/")), "auth/") ||
-		strings.HasPrefix(strings.ToLower(name), "auth.") ||
-		strings.EqualFold(parts[0], "auth")
-	if isAuth && !layoutSet {
-		layout = "auth"
-	}
 	title := bootutil.ToExported(strings.ReplaceAll(base, "-", " "))
 	var content string
 	if isAuth {
-		content = fmt.Sprintf(`@extends('layouts.%s')
+		content = fmt.Sprintf(`@extends('%s')
 
 @section('title', '%s')
 
 @section('content')
   <h1>%s</h1>
 @endsection
-`, layout, base, title)
+`, layoutName, base, title)
 	} else {
-		content = fmt.Sprintf(`@extends('layouts.%s')
+		content = fmt.Sprintf(`@extends('%s')
 
 @section('title', '%s')
 
@@ -100,7 +112,7 @@ func (c *MakeViewCommand) Handle(args []string) error {
     @csrf
   </form>
 @endsection
-`, layout, base, title)
+`, layoutName, base, title)
 	}
 	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 		return err

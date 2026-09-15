@@ -1,0 +1,202 @@
+package api
+
+import (
+	"errors"
+
+	"github.com/zatrano/framework/v2/contracts"
+	reqauth "__MODULE__/app/http/requests/auth"
+	"__MODULE__/app/services"
+	pkgauth "github.com/zatrano/packages/auth"
+	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/packages/localization"
+	"github.com/zatrano/packages/validation"
+)
+
+type AuthController struct {
+	App contracts.App
+}
+
+func (c *AuthController) svc() *services.AuthService {
+	return services.NewAuthService(c.App)
+}
+
+func (c *AuthController) lang(key string, replace ...map[string]string) string {
+	if tr := localization.From(c.App); tr != nil {
+		return tr.Get(key, replace...)
+	}
+	return key
+}
+
+func (c *AuthController) authMsg(err error) string {
+	if err == nil {
+		return ""
+	}
+	return c.lang(err.Error())
+}
+
+func (c *AuthController) validateForm(req *http.Request, form validation.FormRequest) (map[string]string, *http.Response) {
+	data, err := validation.ValidateForm(req, form)
+	if err != nil {
+		return nil, validation.ResponseFor(req, err)
+	}
+	return data, nil
+}
+
+func (c *AuthController) Login(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.LoginRequest{})
+	if fail != nil {
+		return fail
+	}
+	remember, _ := req.BooleanOK("remember")
+	ok, err := c.svc().Manager().Attempt(req, map[string]string{
+		"email": data["email"], "password": data["password"],
+	}, remember)
+	if err != nil {
+		if errors.Is(err, pkgauth.ErrTwoFactorRequired) {
+			return http.JSON(map[string]any{"two_factor": true}).Status(423)
+		}
+		if errors.Is(err, pkgauth.ErrLockout) {
+			return http.JSON(map[string]any{"message": c.lang("auth.lockout")}).Status(429)
+		}
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(500)
+	}
+	if !ok {
+		return http.JSON(map[string]any{"message": c.lang("auth.invalid_credentials")}).Status(401)
+	}
+	return http.JSON(map[string]any{"message": c.lang("auth.welcome_back")})
+}
+
+func (c *AuthController) Logout(req *http.Request) *http.Response {
+	_ = c.svc().Manager().Logout(req)
+	return http.JSON(map[string]any{"message": c.lang("auth.logged_out")})
+}
+
+func (c *AuthController) Register(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.RegisterRequest{})
+	if fail != nil {
+		return fail
+	}
+	user, err := c.svc().Manager().Register(req, map[string]any{
+		"name": data["name"], "email": data["email"], "password": data["password"],
+	})
+	if err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"message": c.lang("auth.account_ready"), "id": user.AuthID()}).Status(201)
+}
+
+func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.ProfileUpdateRequest{})
+	if fail != nil {
+		return fail
+	}
+	if err := c.svc().Manager().UpdateProfile(req, data["name"], data["email"]); err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"message": c.lang("auth.profile_updated")})
+}
+
+func (c *AuthController) ChangePassword(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.ChangePasswordRequest{})
+	if fail != nil {
+		return fail
+	}
+	if err := c.svc().Manager().ChangePassword(req, data["current_password"], data["password"]); err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"message": c.lang("auth.password_updated")})
+}
+
+func (c *AuthController) EnableTwoFactor(req *http.Request) *http.Response {
+	secret, url, codes, err := c.svc().Manager().EnableTwoFactor(c.svc().Manager().User(req))
+	if err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"secret": secret, "url": url, "recovery_codes": codes})
+}
+
+func (c *AuthController) ConfirmTwoFactor(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.TwoFactorConfirmRequest{})
+	if fail != nil {
+		return fail
+	}
+	if err := c.svc().Manager().ConfirmTwoFactor(c.svc().Manager().User(req), data["code"]); err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"ok": true})
+}
+
+func (c *AuthController) DisableTwoFactor(req *http.Request) *http.Response {
+	if err := c.svc().Manager().DisableTwoFactor(c.svc().Manager().User(req), pkgauth.NormalizePasswordField(req)); err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"ok": true})
+}
+
+func (c *AuthController) RegenerateRecoveryCodes(req *http.Request) *http.Response {
+	codes, err := c.svc().Manager().ReplaceRecoveryCodes(c.svc().Manager().User(req))
+	if err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"recovery_codes": codes})
+}
+
+func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
+	if err := c.svc().Manager().LogoutOtherDevices(req, pkgauth.NormalizePasswordField(req)); err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
+	}
+	return http.JSON(map[string]any{"ok": true})
+}
+
+func (c *AuthController) Forgot(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.ForgotPasswordRequest{})
+	if fail != nil {
+		return fail
+	}
+	resetURL := "/auth/reset-password"
+	if err := c.svc().Passwords().SendResetLink(data["email"], resetURL); err != nil {
+		if errors.Is(err, pkgauth.ErrResetThrottled) {
+			return http.JSON(map[string]any{"message": c.lang("auth.reset_throttled")}).Status(429)
+		}
+	}
+	return http.JSON(map[string]any{"message": c.lang("auth.reset_link_if_exists")})
+}
+
+func (c *AuthController) Reset(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.ResetPasswordRequest{})
+	if fail != nil {
+		return fail
+	}
+	if err := c.svc().Passwords().Reset(data["email"], data["token"], data["password"]); err != nil {
+		return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(400)
+	}
+	return http.JSON(map[string]any{"message": c.lang("auth.password_reset")})
+}
+
+func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.ConfirmPasswordRequest{})
+	if fail != nil {
+		return fail
+	}
+	if !c.svc().Manager().ConfirmPassword(req, data["password"]) {
+		return http.JSON(map[string]any{"message": c.lang("auth.invalid_password")}).Status(422)
+	}
+	pkgauth.MarkPasswordConfirmed(req)
+	return http.JSON(map[string]any{"confirmed": true})
+}
+
+func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {
+	data, fail := c.validateForm(req, reqauth.TwoFactorChallengeRequest{})
+	if fail != nil {
+		return fail
+	}
+	rememberDevice, _ := req.BooleanOK("remember_device")
+	ok, err := c.svc().Manager().ChallengeTwoFactor(req, data["code"], rememberDevice)
+	if err != nil || !ok {
+		if errors.Is(err, pkgauth.ErrLockout) {
+			return http.JSON(map[string]any{"message": c.lang("auth.lockout")}).Status(429)
+		}
+		return http.JSON(map[string]any{"message": c.lang("auth.invalid_code")}).Status(422)
+	}
+	return http.JSON(map[string]any{"authenticated": true})
+}

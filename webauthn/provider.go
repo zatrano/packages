@@ -14,6 +14,7 @@ func init() {
 		Description: "WebAuthn/passkeys (separate module)",
 		Heavy:       true,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		ConfigFiles: map[string]string{"webauthn.go": publishedWebAuthnConfig},
 	})
 }
 

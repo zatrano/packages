@@ -67,6 +67,13 @@ a.Retrieve = agent.RAGRetrieve{Pipeline: ragPipeline, TopK: 5}
 | `RegisterWebFetch` / `RegisterFileSearch` | HTTPS fetch + sandboxed file search |
 | `Catalog` / `Runner` / `PushRun` | Queue-backed `agent.run` jobs |
 | `ResultStore` / `MemoryResultStore` / `JSONFileResultStore` | Persist outcomes by job ID |
-| `Chain` / `CatalogChain` | Sequential multi-agent runs |
-| `Graph` / `RouteIf` / `RouteContains` | Branching multi-agent graph |
+| `Chain` / `CatalogChain` | Sequential multi-agent runs (agent-only sugar; generic processes use `workflow`) |
+| `Graph` / `RouteIf` / `RouteContains` | Branching multi-agent graph (agent-only; generic graphs use `workflow`) |
+| `AsExecutor` | Expose an Agent as `workflow.Executor` (envelope in/out, transcript stays inside) |
+| `Authorizer` / `FuncAuthorizer` | Tool allow-list before handler execution. **Nil allows every registered tool** (compatibility default). Set an Authorizer in production. |
+| `Timeout` | Agent-level deadline (distinct from `ai` request timeout) |
 | `Result` | Final response + step count + transcript + typed `ToolResults` |
+
+`RAGRetrieve` is an **agent-side** adapter (`agent` → `rag`). Workflow does not import RAG.
+
+Human approval and generic process graphs belong in [`workflow`](../workflow) (top-level in-process pause/resume, **not** durable execution). MCP/A2A are not implemented.

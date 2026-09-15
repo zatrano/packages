@@ -1,20 +1,23 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/packages/bootutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/packages/bootutil"
+	"github.com/zatrano/packages/view/starter"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
 	return bootutil.CLI(
 		&MakeAuthCommand{app: app},
-		&MakeDashboardCommand{app: app},
+		&MakePanelCommand{app: app},
 	)
 }
 
@@ -25,38 +28,49 @@ type MakeAuthCommand struct {
 
 func (c *MakeAuthCommand) Name() string { return "make:auth" }
 func (c *MakeAuthCommand) Description() string {
-	return "Scaffold full auth (views, layout, controllers, model, migrations, routes, provider)"
+	return "Scaffold the auth HTTP surface (controllers/auth/{web,api}, routes/auth/{web,api}, views)"
 }
 
 func (c *MakeAuthCommand) Handle(args []string) error {
 	force := false
 	viewsOnly := false
-	socialProviders := []string{"google", "github"} // default both when social stubs enabled
 	socialFlagSet := false
+	var socialProviders []string
 	for _, arg := range args {
 		switch {
 		case arg == "--force" || arg == "-f":
 			force = true
 		case arg == "--views":
 			viewsOnly = true
+		case arg == "--social":
+			socialFlagSet = true
+			socialProviders = appendUnique(socialProviders, "google")
 		case strings.HasPrefix(arg, "--social="):
 			socialFlagSet = true
 			raw := strings.TrimSpace(strings.TrimPrefix(arg, "--social="))
-			socialProviders = nil
+			if raw == "" {
+				return fmt.Errorf("--social requires a provider (example: --social=google)")
+			}
 			for _, p := range strings.Split(raw, ",") {
 				p = strings.ToLower(strings.TrimSpace(p))
-				if p == "google" || p == "github" {
-					socialProviders = appendUnique(socialProviders, p)
+				if p == "" {
+					continue
 				}
+				if p != "google" {
+					return fmt.Errorf("unknown social provider %q (only google)", p)
+				}
+				socialProviders = appendUnique(socialProviders, p)
+			}
+			if len(socialProviders) == 0 {
+				return fmt.Errorf("--social requires a provider (example: --social=google)")
 			}
 		}
 	}
 	if !socialFlagSet {
-		socialProviders = []string{"google", "github"}
+		socialProviders = nil
 	}
-	wantGoogle := containsStr(socialProviders, "google")
-	wantGitHub := containsStr(socialProviders, "github")
-	wantSocial := !viewsOnly && (wantGoogle || wantGitHub)
+	wantSocial := socialFlagSet
+	wantSocialGo := !viewsOnly && wantSocial
 
 	type filePair struct {
 		stub string
@@ -64,7 +78,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	}
 
 	pairs := []filePair{
-		{"layouts/auth.html", []string{"views", "layouts", "auth.html"}},
+		{"layouts/auth.html", []string{"views", "layout", "auth.html"}},
+		{"layouts/mail.html", []string{"views", "layout", "mail.html"}},
 		{"auth/login.html", []string{"views", "auth", "login.html"}},
 		{"auth/register.html", []string{"views", "auth", "register.html"}},
 		{"auth/forgot-password.html", []string{"views", "auth", "forgot-password.html"}},
@@ -76,6 +91,9 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		{"auth/two-factor-challenge.html", []string{"views", "auth", "two-factor-challenge.html"}},
 		{"auth/two-factor.html", []string{"views", "auth", "two-factor.html"}},
 		{"auth/logout-other-devices.html", []string{"views", "auth", "logout-other-devices.html"}},
+		{"mail/auth/password-reset.html", []string{"views", "mail", "auth", "password-reset.html"}},
+		{"mail/auth/verify-email.html", []string{"views", "mail", "auth", "verify-email.html"}},
+		{"mail/auth/password-changed.html", []string{"views", "mail", "auth", "password-changed.html"}},
 		{"lang/en/auth.json", []string{"lang", "en", "auth.json"}},
 		{"lang/tr/auth.json", []string{"lang", "tr", "auth.json"}},
 	}
@@ -85,32 +103,37 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			filePair{"go/user_model.go.stub", []string{"app", "models", "user.go"}},
 			filePair{"go/user_factory.go.stub", []string{"database", "factories", "user_factory.go"}},
 			filePair{"go/user_resource.go.stub", []string{"app", "http", "resources", "user_resource.go"}},
-			filePair{"go/auth_controller.go.stub", []string{"app", "http", "controllers", "web", "auth_controller.go"}},
-			filePair{"go/login_request.go.stub", []string{"app", "http", "requests", "login_request.go"}},
-			filePair{"go/register_request.go.stub", []string{"app", "http", "requests", "register_request.go"}},
-			filePair{"go/profile_update_request.go.stub", []string{"app", "http", "requests", "profile_update_request.go"}},
-			filePair{"go/change_password_request.go.stub", []string{"app", "http", "requests", "change_password_request.go"}},
-			filePair{"go/forgot_password_request.go.stub", []string{"app", "http", "requests", "forgot_password_request.go"}},
-			filePair{"go/reset_password_request.go.stub", []string{"app", "http", "requests", "reset_password_request.go"}},
-			filePair{"go/confirm_password_request.go.stub", []string{"app", "http", "requests", "confirm_password_request.go"}},
-			filePair{"go/two_factor_challenge_request.go.stub", []string{"app", "http", "requests", "two_factor_challenge_request.go"}},
-			filePair{"go/two_factor_confirm_request.go.stub", []string{"app", "http", "requests", "two_factor_confirm_request.go"}},
+			filePair{"go/auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "web", "auth_controller.go"}},
+			filePair{"go/api_auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "api", "auth_controller.go"}},
+			filePair{"go/auth_service.go.stub", []string{"app", "services", "auth.go"}},
+			filePair{"go/login_request.go.stub", []string{"app", "http", "requests", "auth", "login_request.go"}},
+			filePair{"go/register_request.go.stub", []string{"app", "http", "requests", "auth", "register_request.go"}},
+			filePair{"go/profile_update_request.go.stub", []string{"app", "http", "requests", "auth", "profile_update_request.go"}},
+			filePair{"go/change_password_request.go.stub", []string{"app", "http", "requests", "auth", "change_password_request.go"}},
+			filePair{"go/forgot_password_request.go.stub", []string{"app", "http", "requests", "auth", "forgot_password_request.go"}},
+			filePair{"go/reset_password_request.go.stub", []string{"app", "http", "requests", "auth", "reset_password_request.go"}},
+			filePair{"go/confirm_password_request.go.stub", []string{"app", "http", "requests", "auth", "confirm_password_request.go"}},
+			filePair{"go/two_factor_challenge_request.go.stub", []string{"app", "http", "requests", "auth", "two_factor_challenge_request.go"}},
+			filePair{"go/two_factor_confirm_request.go.stub", []string{"app", "http", "requests", "auth", "two_factor_confirm_request.go"}},
 			filePair{"go/authenticate_middleware.go.stub", []string{"app", "http", "middleware", "authenticate.go"}},
-			filePair{"go/routes_auth.go.stub", []string{"routes", "auth.go"}},
+			filePair{"go/routes_auth.go.stub", []string{"app", "routes", "auth", "web", "auth.go"}},
+			filePair{"go/routes_auth_api.go.stub", []string{"app", "routes", "auth", "api", "auth.go"}},
 			filePair{"go/auth_service_provider.go.stub", []string{"app", "providers", "auth_service_provider.go"}},
 			filePair{"go/migration_auth.go.stub", []string{"database", "migrations", "create_auth_tables.go"}},
 		)
-		if wantSocial {
+		if wantSocialGo {
 			pairs = append(pairs,
 				filePair{"go/social_account_model.go.stub", []string{"app", "models", "social_account.go"}},
-				filePair{"go/social_auth_controller.go.stub", []string{"app", "http", "controllers", "web", "social_auth_controller.go"}},
+				filePair{"go/social_auth_service.go.stub", []string{"app", "services", "social.go"}},
+				filePair{"go/social_auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "web", "social_auth_controller.go"}},
+				filePair{"go/api_social_auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "api", "social_auth_controller.go"}},
 				filePair{"go/migration_social_accounts.go.stub", []string{"database", "migrations", "create_social_accounts_table.go"}},
 			)
 		}
 	}
 
 	created, skipped := 0, 0
-	var routesAuthPath, loginViewPath, registerViewPath string
+	var routesAuthPath, routesAuthAPIPath, loginViewPath, registerViewPath, layoutAuthPath, langEnPath, langTrPath string
 	for _, pair := range pairs {
 		body, err := readStub(c.app, pair.stub)
 		if err != nil {
@@ -148,59 +171,100 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		switch pair.stub {
 		case "go/routes_auth.go.stub":
 			routesAuthPath = dst
+		case "go/routes_auth_api.go.stub":
+			routesAuthAPIPath = dst
 		case "auth/login.html":
 			loginViewPath = dst
 		case "auth/register.html":
 			registerViewPath = dst
+		case "layouts/auth.html":
+			layoutAuthPath = dst
+		case "lang/en/auth.json":
+			langEnPath = dst
+		case "lang/tr/auth.json":
+			langTrPath = dst
 		}
 	}
 
-	if !viewsOnly && routesAuthPath != "" {
-		if err := filterAuthSocialRoutes(routesAuthPath, wantGoogle, wantGitHub); err != nil {
-			return err
+	if wantSocial {
+		if !viewsOnly && routesAuthPath != "" {
+			if err := injectAuthSocialWebRoutes(routesAuthPath); err != nil {
+				return err
+			}
+		}
+		if !viewsOnly && routesAuthAPIPath != "" {
+			if err := injectAuthSocialAPIRoutes(routesAuthAPIPath); err != nil {
+				return err
+			}
+		}
+		if loginViewPath != "" {
+			if err := injectAuthSocialLinks(loginViewPath); err != nil {
+				return err
+			}
+		}
+		if registerViewPath != "" {
+			if err := injectAuthSocialLinks(registerViewPath); err != nil {
+				return err
+			}
+		}
+		if layoutAuthPath != "" {
+			if err := injectAuthSocialLayout(layoutAuthPath); err != nil {
+				return err
+			}
+		}
+		if langEnPath != "" {
+			if err := mergeAuthSocialLang(c.app, langEnPath, "lang/en/social.json"); err != nil {
+				return err
+			}
+		}
+		if langTrPath != "" {
+			if err := mergeAuthSocialLang(c.app, langTrPath, "lang/tr/social.json"); err != nil {
+				return err
+			}
 		}
 	}
-	if loginViewPath != "" {
-		if err := filterAuthSocialLinks(loginViewPath, wantGoogle, wantGitHub); err != nil {
-			return err
-		}
+	if !viewsOnly {
+		mod := bootutil.ConsumerModule(c.app)
+		provider := c.app.BasePath("app", "providers", "route_service_provider.go")
+		_ = bootutil.EnsureBlankImport(provider, mod+"/app/routes/auth/web")
+		_ = bootutil.EnsureBlankImport(provider, mod+"/app/routes/auth/api")
 	}
-	if registerViewPath != "" {
-		if err := filterAuthSocialLinks(registerViewPath, wantGoogle, wantGitHub); err != nil {
-			return err
-		}
+	if err := enableViewForAuth(c.app); err != nil {
+		return err
 	}
 
 	fmt.Printf("\nAuth scaffold ready (%d created, %d skipped).\n", created, skipped)
 	if viewsOnly {
-		fmt.Println("Mode: --views (layout + auth HTML only)")
+		fmt.Println("Mode: --views (auth HTML, layout, and mail templates only)")
 	} else {
 		fmt.Println("Next steps:")
-		fmt.Println("  1. In app/database/migrations/migrations.go add:")
+		fmt.Println("  1. Enable hashing, database, session, and auth (notification for mail). View is already enabled.")
+		fmt.Println("  2. In app/database/migrations/migrations.go add:")
 		migLine := "     &CreateUsersTable{}, &CreatePasswordResetTokensTable{}, &CreatePersonalAccessTokensTable{},"
-		if wantSocial {
+		if wantSocialGo {
 			migLine += " &CreateSocialAccountsTable{},"
 		}
 		fmt.Println(migLine)
-		fmt.Println("  2. In app/routes/web call: RegisterAuthWeb(app)")
-		fmt.Println("  3. In app/routes/api call: RegisterAuthAPI(app)  // mounts /api/v1/auth")
-		if wantSocial {
-			var envs []string
-			if wantGoogle {
-				envs = append(envs, "GOOGLE_*")
-			}
-			if wantGitHub {
-				envs = append(envs, "GITHUB_*")
-			}
-			fmt.Printf("  4. Set %s env vars for social login (optional)\n", strings.Join(envs, "/"))
-			fmt.Println("  5. Run: go run ./cmd/zatrano migrate")
+		fmt.Println("  3. Auth routes self-register from app/routes/auth/web and app/routes/auth/api.")
+		if wantSocialGo {
+			fmt.Println("  4. Set GOOGLE_* env vars for social login")
+			fmt.Println("  5. Run: go run ./cmd/app migrate")
 		} else {
-			fmt.Println("  4. Run: go run ./cmd/zatrano migrate")
+			fmt.Println("  4. Run: go run ./cmd/app migrate")
 		}
 	}
 	fmt.Println("Use --force to overwrite existing files. Use --views for views only.")
-	fmt.Println("Use --social=google|github|google,github to select OAuth providers.")
 	return nil
+}
+
+func enableViewForAuth(app contracts.App) error {
+	if err := bootutil.EnsureEnabledAddon(app, "view"); err != nil {
+		return err
+	}
+	if err := bootutil.EnsureBlankImport(app.BasePath("bootstrap", "addons.go"), "github.com/zatrano/packages/view"); err != nil {
+		return err
+	}
+	return starter.Write(app)
 }
 
 var (
@@ -303,61 +367,119 @@ func appendUnique(list []string, v string) []string {
 	return append(list, v)
 }
 
-func filterAuthSocialRoutes(path string, wantGoogle, wantGitHub bool) error {
+func injectAuthSocialWebRoutes(path string) error {
 	body, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	lines := strings.Split(string(body), "\n")
-	var out []string
-	for _, line := range lines {
-		lower := strings.ToLower(line)
-		isGoogle := strings.Contains(lower, "google")
-		isGitHub := strings.Contains(lower, "github")
-		if strings.Contains(line, "social :=") || strings.Contains(line, "social:=") {
-			if !wantGoogle && !wantGitHub {
-				continue
-			}
-			out = append(out, line)
-			continue
-		}
-		if isGoogle && !wantGoogle && (strings.Contains(line, "router.Get") || strings.Contains(line, "social.")) {
-			continue
-		}
-		if isGitHub && !wantGitHub && (strings.Contains(line, "router.Get") || strings.Contains(line, "social.")) {
-			continue
-		}
-		out = append(out, line)
+	text := strings.ReplaceAll(string(body), "\r\n", "\n")
+	if strings.Contains(text, "SocialAuthController") {
+		return nil
 	}
-	// Drop unused social controller binding when no provider routes remain.
-	if !wantGoogle && !wantGitHub {
-		filtered := out[:0]
-		for _, line := range out {
-			if strings.Contains(line, "SocialAuthController") {
-				continue
-			}
-			filtered = append(filtered, line)
-		}
-		out = filtered
-	}
-	return os.WriteFile(path, []byte(strings.Join(out, "\n")), 0o644)
+	text = strings.Replace(text, "ctrl := &authctrl.AuthController{App: app}",
+		"ctrl := &authctrl.AuthController{App: app}\n	social := &authctrl.SocialAuthController{App: app}", 1)
+	text = strings.Replace(text, "r.Post(\"/logout\", ctrl.Logout).As(\"logout\")",
+		"r.Post(\"/logout\", ctrl.Logout).As(\"logout\")\n\n		r.Get(\"/google/login\", social.GoogleRedirect).As(\"login.google\")\n		r.Get(\"/google/callback\", social.GoogleCallback).As(\"login.google.callback\")", 1)
+	return os.WriteFile(path, []byte(text), 0o644)
 }
 
-func filterAuthSocialLinks(path string, wantGoogle, wantGitHub bool) error {
+func injectAuthSocialAPIRoutes(path string) error {
 	body, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	text := string(body)
-	if !wantGoogle {
-		text = regexp.MustCompile(`(?m)^[ \t]*<a href="/login/google">.*</a>[ \t]*\r?\n`).ReplaceAllString(text, "")
+	text := strings.ReplaceAll(string(body), "\r\n", "\n")
+	if strings.Contains(text, "SocialAuthController") {
+		return nil
 	}
-	if !wantGitHub {
-		text = regexp.MustCompile(`(?m)^[ \t]*<a href="/login/github">.*</a>[ \t]*\r?\n`).ReplaceAllString(text, "")
-	}
-	if !wantGoogle && !wantGitHub {
-		text = regexp.MustCompile(`(?m)^[ \t]*<p class="auth-divider">.*</p>[ \t]*\r?\n`).ReplaceAllString(text, "")
-		text = regexp.MustCompile(`(?ms)[ \t]*<div class="auth-social">.*?</div>[ \t]*\r?\n`).ReplaceAllString(text, "")
-	}
+	text = strings.Replace(text, "ctrl := &apictrl.AuthController{App: app}",
+		"ctrl := &apictrl.AuthController{App: app}\n	social := &apictrl.SocialAuthController{App: app}", 1)
+	text = strings.Replace(text, "r.Post(\"/register\", ctrl.Register).As(\"api.v1.register\").Through(ratelimit.From(app).Named(\"login\"))",
+		"r.Post(\"/register\", ctrl.Register).As(\"api.v1.register\").Through(ratelimit.From(app).Named(\"login\"))\n			r.Get(\"/google\", social.GoogleRedirect).As(\"api.v1.login.google\")\n			r.Get(\"/google/callback\", social.GoogleCallback).As(\"api.v1.login.google.callback\")\n			r.Post(\"/google/callback\", social.GoogleCallback).As(\"api.v1.login.google.callback.store\")", 1)
 	return os.WriteFile(path, []byte(text), 0o644)
+}
+
+func injectAuthSocialLinks(path string) error {
+	body, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	text := strings.ReplaceAll(string(body), "\r\n", "\n")
+	if strings.Contains(text, "auth-social") {
+		return nil
+	}
+	snippet := "    <p class=\"auth-divider\">@lang('auth.or_continue_with')</p>\n    <div class=\"auth-social\">\n        <a href=\"/auth/google/login\">@lang('auth.continue_google')</a>\n    </div>\n"
+	text = strings.Replace(text, "    <p class=\"auth-links\">", snippet+"    <p class=\"auth-links\">", 1)
+	return os.WriteFile(path, []byte(text), 0o644)
+}
+
+func injectAuthSocialLayout(path string) error {
+	body, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	text := strings.ReplaceAll(string(body), "\r\n", "\n")
+	if strings.Contains(text, ".auth-social") {
+		return nil
+	}
+	css := `        .auth-divider {
+            margin: 0.35rem 0 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        .auth-social {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.65rem;
+        }
+        .auth-social a {
+            display: block;
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            color: var(--text);
+            text-decoration: none;
+            font-family: Syne, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .auth-social a:hover {
+            border-color: color-mix(in srgb, var(--brand) 35%, var(--line));
+            color: var(--brand);
+        }
+`
+	text = strings.Replace(text, "        .auth-links {", css+"        .auth-links {", 1)
+	return os.WriteFile(path, []byte(text), 0o644)
+}
+
+func mergeAuthSocialLang(app contracts.App, dst, stub string) error {
+	extraBody, err := readStub(app, stub)
+	if err != nil {
+		return err
+	}
+	var extra map[string]string
+	if err := json.Unmarshal(extraBody, &extra); err != nil {
+		return err
+	}
+	baseBody, err := os.ReadFile(dst)
+	if err != nil {
+		return err
+	}
+	var base map[string]string
+	if err := json.Unmarshal(baseBody, &base); err != nil {
+		return err
+	}
+	if base == nil {
+		base = map[string]string{}
+	}
+	for k, v := range extra {
+		base[k] = v
+	}
+	out, err := json.MarshalIndent(base, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(dst, append(out, '\n'), 0o644)
 }

@@ -31,6 +31,7 @@ type StepTrace struct {
 }
 
 // Chain runs agents sequentially, feeding each step the previous output.
+// Prefer workflow.Sequential with agent.AsExecutor when steps are not all agents.
 type Chain struct {
 	Steps []ChainStep
 }

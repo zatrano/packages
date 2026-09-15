@@ -18,6 +18,7 @@ import (
 	_ "github.com/zatrano/packages/queue"
 	_ "github.com/zatrano/packages/rag"
 	_ "github.com/zatrano/packages/redisx"
+	_ "github.com/zatrano/packages/workflow"
 )
 
 func TestAuthRequiresClosure(t *testing.T) {
@@ -75,7 +76,6 @@ func TestOptionalNotInRequires(t *testing.T) {
 		"queue":        {"database", "cache"},
 		"notification": {"view", "broadcasting", "localization", "database"},
 		"backup":       {"database"},
-		"broadcasting": {"auth"},
 		"database":     {"events"},
 	}
 	for name, optional := range cases {
@@ -133,7 +133,7 @@ func TestExpandDeterministic(t *testing.T) {
 }
 
 func TestLibrariesNotRegistered(t *testing.T) {
-	for _, name := range []string{"rag", "agent", "redisx"} {
+	for _, name := range []string{"rag", "agent", "workflow", "redisx"} {
 		if _, ok := addons.Lookup(name); ok {
 			t.Fatalf("%s must not register as an addon", name)
 		}
@@ -173,7 +173,6 @@ func TestNegativePathOptionalAbsent(t *testing.T) {
 		{Name: "queue", Optional: []string{"database", "cache"}},
 		{Name: "notification", Optional: []string{"view", "broadcasting", "localization", "database"}},
 		{Name: "backup", Optional: []string{"database"}},
-		{Name: "broadcasting", Optional: []string{"auth"}},
 	}
 	for _, meta := range cases {
 		t.Run(meta.Name, func(t *testing.T) {

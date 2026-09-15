@@ -7,6 +7,40 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.9.0 - 2026-09-15
+
+Why now: Pin the catalog freeze so applications can import toolkit libraries, nested pagination/TOTP/OTP, and experimental `workflow` without tracking `main`.
+
+### Breaking
+
+- Removed the `billing` addon.
+- `enums` is now `toolkit/enums` (import-only, like `toolkit/str`). There is no `make:enum` and no `package:enable enums`.
+- Moved `collection`, `bloom`, `concurrency`, `cron`, `debug`, `process`, and `timing` under `toolkit/` (same import-only rule).
+- Moved `markdown` to `toolkit/markdown` and `archive/zipx` to `toolkit/zip` (`package zipx`). `schedule` uses `toolkit/cron`; the nested `schedule/cron` copy is gone.
+- Removed the `useragent` addon. Parse with `http.ParseUserAgent` / `req.Agent()` in the kernel (the framework cannot import this module).
+- Moved `jsonschema` to `toolkit/jsonschema`. `circuit` is `toolkit/circuit` (`New` / `Breaker`); no `package:enable circuit`, no `From(app)`.
+- Removed `octane`, `pulse`, and `inspector`.
+- Removed `version` (`app.Version()` / kernel CLI remain). Go.mod pin tests live at module root.
+- Removed `search`, `shorturl`, `sitemap`, `wellknown`, `geo`, and `docs`.
+- ORM paginators live in `orm/pagination`. There is no standalone `pagination` package.
+- TOTP lives in `auth/totp` (MFA). Numeric codes live in `notification/otp`. There is no standalone `totp` or `otp` package.
+- `hashid` and `lock` are `toolkit/hashid` and `toolkit/lock` (import-only; no enablement).
+- Removed `bus`, `features`, and `tenancy`. GraphQL no longer ships a demo `feature` query.
+- `make:dashboard` (and its stubs) are removed; use `make:panel`.
+
+### Added
+
+- `workflow` is catalogued as an experimental intelligence library (import-only; agents enter with `agent.AsExecutor`).
+
+### Changed
+
+- Broadcasting no longer declares Optional `auth` (private channels resolve `auth` at request time). Official addon Requires/Optional graph is cycle-tested.
+- `make:auth` writes `controllers/auth/{web,api}`, `routes/auth/{web,api}`, `views/auth` pages, `views/layout/{auth,mail}`, and `views/mail/auth`. Default output has no social files, routes, views, or lang keys. `--social` / `--social=google` adds them. GitHub is not generated.
+- `package:enable view` (and `make:auth`) write `views/layout/app.html` and `views/web/welcome.html` when missing, and switch the starter `HomeController` from `http.HTML` to `http.View("web.welcome")`.
+- `make:panel {name}` scaffolds a named HTML surface.
+
+This module still requires `github.com/zatrano/framework/v2 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
+
 ## 1.8.0 - 2026-09-15
 
 Why now: Publish toolkit libraries and experimental AI/RAG/agent labels so framework v2.4.0 consumers can import them without tracking `main`.

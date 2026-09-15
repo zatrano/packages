@@ -1,0 +1,190 @@
+package services
+
+import (
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/zatrano/framework/v2/contracts"
+	"__MODULE__/app/models"
+	pkgauth "github.com/zatrano/packages/auth"
+	"github.com/zatrano/packages/hashing"
+	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/packages/orm"
+	"github.com/zatrano/packages/social"
+)
+
+// SocialAuthService is the shared Google OAuth seam for web and API controllers.
+type SocialAuthService struct {
+	App contracts.App
+}
+
+func NewSocialAuthService(app contracts.App) *SocialAuthService {
+	return &SocialAuthService{App: app}
+}
+
+func (s *SocialAuthService) Redirect(provider string) (url, state string, err error) {
+	if s == nil || s.App == nil || social.From(s.App) == nil {
+		return "", "", fmt.Errorf("auth.social_not_configured")
+	}
+	return social.From(s.App).Redirect(provider)
+}
+
+func (s *SocialAuthService) User(provider, code string) (*social.User, error) {
+	if s == nil || s.App == nil || social.From(s.App) == nil {
+		return nil, fmt.Errorf("auth.social_not_configured")
+	}
+	return social.From(s.App).User(provider, code)
+}
+
+func (s *SocialAuthService) Persist(socialUser *social.User) (*social.PersistResult, *models.User, error) {
+	result, err := social.Persist(&ormSocialPersistence{}, socialUser)
+	if err != nil || result == nil || result.UserID == 0 {
+		return nil, nil, fmt.Errorf("auth.social_link_failed")
+	}
+	user, err := orm.Find[models.User](result.UserID)
+	if err != nil || user == nil {
+		return nil, nil, fmt.Errorf("auth.social_user_load_failed")
+	}
+	return result, user, nil
+}
+
+func (s *SocialAuthService) Login(req *http.Request, user *models.User) error {
+	if s == nil || s.App == nil {
+		return fmt.Errorf("auth.guard_unavailable")
+	}
+	return pkgauth.From(s.App).Login(req, user)
+}
+
+func (s *SocialAuthService) ValidateState(state string) {
+	if s == nil || s.App == nil || social.From(s.App) == nil {
+		return
+	}
+	_ = social.From(s.App).ValidateState(state)
+}
+
+type ormSocialPersistence struct{}
+
+func (p *ormSocialPersistence) FindUserIDByProvider(provider, providerID string) (int64, error) {
+	uid := models.ProviderUIDFor(strings.ToLower(provider), providerID)
+	rows, err := orm.Query[models.SocialAccount]().Where("provider_uid", uid).Limit(1).Get()
+	if err != nil {
+		return 0, err
+	}
+	if len(rows) == 0 {
+		return 0, nil
+	}
+	return rows[0].UserID, nil
+}
+
+func (p *ormSocialPersistence) FindUserIDByEmail(email string) (int64, error) {
+	rows, err := orm.Query[models.User]().Where("email", email).Limit(1).Get()
+	if err != nil {
+		return 0, err
+	}
+	if len(rows) == 0 {
+		return 0, nil
+	}
+	return rows[0].ID, nil
+}
+
+func (p *ormSocialPersistence) CreateUser(name, email, avatar string, emailVerified bool) (int64, error) {
+	plain, err := randomOAuthPassword(24)
+	if err != nil {
+		return 0, err
+	}
+	hashed, err := hashing.Hash(plain)
+	if err != nil {
+		return 0, err
+	}
+	user := &models.User{
+		Name:     name,
+		Email:    email,
+		Password: hashed,
+		Avatar:   avatar,
+	}
+	if emailVerified {
+		now := time.Now().UTC()
+		user.EmailVerifiedAt = &now
+	}
+	if err := orm.Save(user); err != nil {
+		return 0, err
+	}
+	return user.ID, nil
+}
+
+func (p *ormSocialPersistence) SyncUser(userID int64, name, avatar string, emailVerified bool) error {
+	user, err := orm.Find[models.User](userID)
+	if err != nil || user == nil {
+		return fmt.Errorf("user %d not found", userID)
+	}
+	changed := false
+	if name != "" && strings.TrimSpace(user.Name) == "" {
+		user.Name = name
+		changed = true
+	}
+	if avatar != "" && user.Avatar != avatar {
+		user.Avatar = avatar
+		changed = true
+	}
+	if emailVerified && !user.HasVerifiedEmail() {
+		user.MarkEmailAsVerified()
+		changed = true
+	}
+	if !changed {
+		return nil
+	}
+	return orm.Save(user)
+}
+
+func (p *ormSocialPersistence) UpsertAccount(userID int64, socialUser *social.User) error {
+	provider := strings.ToLower(strings.TrimSpace(socialUser.Provider))
+	providerID := strings.TrimSpace(socialUser.ID)
+	uid := models.ProviderUIDFor(provider, providerID)
+	name := strings.TrimSpace(socialUser.Name)
+	email := strings.ToLower(strings.TrimSpace(socialUser.Email))
+	avatar := strings.TrimSpace(socialUser.Avatar)
+	token := strings.TrimSpace(socialUser.Token)
+	rows, err := orm.Query[models.SocialAccount]().Where("provider_uid", uid).Limit(1).Get()
+	if err != nil {
+		return err
+	}
+	var account *models.SocialAccount
+	if len(rows) > 0 {
+		account = &rows[0]
+	} else {
+		account = &models.SocialAccount{
+			UserID:      userID,
+			Provider:    provider,
+			ProviderID:  providerID,
+			ProviderUID: uid,
+		}
+	}
+	account.UserID = userID
+	account.Provider = provider
+	account.ProviderID = providerID
+	account.ProviderUID = uid
+	if name != "" {
+		account.Name = &name
+	}
+	if email != "" {
+		account.Email = &email
+	}
+	if avatar != "" {
+		account.Avatar = &avatar
+	}
+	if token != "" {
+		account.AccessToken = &token
+	}
+	return orm.Save(account)
+}
+
+func randomOAuthPassword(n int) (string, error) {
+	buf := make([]byte, n)
+	if _, err := rand.Read(buf); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(buf), nil
+}

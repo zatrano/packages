@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.8.0"><code>v1.8.0</code></a>
+  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.9.0"><code>v1.9.0</code></a>
   ·
   Framework pin: <code>github.com/zatrano/framework/v2@v2.0.28</code>
 </p>
@@ -30,13 +30,13 @@
 
 This module is [github.com/zatrano/packages](https://github.com/zatrano/packages). It is not the kernel.
 
-`ai`, `rag`, and `agent` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
+`ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.8.0`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
+It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.9.0`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z` (nested: `scripts/release.sh --dry-run database/driver/sqlite/vX.Y.Z`).
 
-The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth, billing, and the import-only helpers.
+The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth and the import-only helpers.
 
 The two modules cannot be merged: this one already requires the framework.
 
@@ -44,8 +44,8 @@ The two modules cannot be merged: this one already requires the framework.
   github.com/zatrano/framework/v2          github.com/zatrano/packages
   ────────────────────────────          ──────────────────────────
   kernel/http  kernel/routing           session  auth  database  view
-  contracts    bootstrap.App()          queue    ai    oauth     billing
-  zatrano new                           collection  totp  resources
+  contracts    bootstrap.App()          queue    ai    oauth     social
+  zatrano new                           toolkit   resources
           │                                        ▲
           │         blank-import                   │
           └────────────────────────────────────────┘
@@ -83,21 +83,21 @@ sess := session.From(app)
 From the app CLI:
 
 ```bash
-go get github.com/zatrano/framework/v2@v2.0.28
-go get github.com/zatrano/packages@v1.8.0
+go get github.com/zatrano/framework/v2@v2.5.0
+go get github.com/zatrano/packages@v1.9.0
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.8.0` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.9.0` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
 | Kind | In the binary when | Examples |
 | --- | --- | --- |
 | **Service** | Blank-import **and** list in `EnabledAddons` (`Enabled ∩ Imported`) | `auth`, `database`, `queue`, `ai`, `oauth` |
-| **Library** | You `import` it in your code | `collection`, `totp`, `resources`, `rag` |
+| **Library** | You `import` it in your code | `toolkit/str`, `resources`, `rag` |
 | **Heavy** | Own `go.mod`, only when needed | `webauthn`, `mongo`, `qr`, SQL drivers |
 
 Resolve services with `From(app)` helpers. Do not expect `app.Auth()` on the kernel.
@@ -140,8 +140,6 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`apitoken`](apitoken) | service | Personal access tokens (Bearer) |
 | [`social`](social) | service | GitHub/Google OAuth **client** login |
 | [`oauth`](oauth) | service | OAuth2 **authorization server** (not social login) |
-| [`otp`](otp) | service | Short numeric OTPs (you deliver via SMS/mail) |
-| [`totp`](totp) | library | Authenticator-app TOTP secrets and codes |
 | [`webauthn`](webauthn) | heavy | Passkey registration and login (own `go.mod`) |
 | [`consent`](consent) | library | Cookie-consent helpers |
 | [`fingerprint`](fingerprint) | library | Device fingerprint helpers |
@@ -157,9 +155,6 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`cache`](cache) | service | Temporary key/value store (file / memory / redis) |
 | [`redisx`](redisx) | library | Redis client helper; cache owns the connection |
 | [`mongo`](mongo) | heavy | Document store client, not SQL ORM (own `go.mod`) |
-| [`search`](search) | service | In-memory search index |
-| [`hashid`](hashid) | service | Obfuscate numeric IDs for public URLs |
-| [`enums`](enums) | service | String-backed enums with labels |
 
 ### Async
 
@@ -170,9 +165,6 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`notification`](notification) | service | Mail, SMS, push, database inbox, broadcast — this is how you send email |
 | [`broadcasting`](broadcasting) | service | Channel events to log/file/null drivers (not a WebSocket server) |
 | [`schedule`](schedule) | service | Cron-like tasks via `schedule:run` (no long-running daemon) |
-| [`bus`](bus) | service | Sync command bus (`Dispatch` → handler). Not a queue |
-| [`lock`](lock) | service | Process-local atomic locks (not distributed) |
-| [`cron`](cron) | library | Cron expression parse and match |
 
 ### HTTP extras
 
@@ -186,11 +178,7 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`observability`](observability) | service | Metrics collection |
 | [`idempotency`](idempotency) | library | Idempotent POST keys |
 | [`negotiate`](negotiate) | library | `Accept` content negotiation |
-| [`timing`](timing) | library | Server-Timing measurements |
 | [`websocket`](websocket) | library | WebSocket upgrade helpers |
-| [`useragent`](useragent) | library | Parse browser/OS from User-Agent |
-| [`geo`](geo) | service | Resolve client geolocation |
-| [`wellknown`](wellknown) | service | `/.well-known` and `security.txt` |
 
 ### Intelligence
 
@@ -199,61 +187,56 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`ai`](ai) | service | Chat / completion providers |
 | [`rag`](rag) | library | Chunking, embed pipeline, vector store helpers |
 | [`agent`](agent) | library | Agent loop, tools, conversation memory |
+| [`workflow`](workflow) | library | Generic process graphs (`agent.AsExecutor`; not durable) |
 
 ### Product addons
 
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`billing`](billing) | service | Subscriptions / Stripe-style billing and webhooks |
 | [`audit`](audit) | service | Request and audit event logging |
 | [`backup`](backup) | service | Database backup/restore via native CLIs |
 | [`graphql`](graphql) | service | GraphQL schema and queries |
-| [`inspector`](inspector) | service | Request inspector toolbar data |
-| [`features`](features) | service | In-memory feature flags and % rollouts |
-| [`octane`](octane) | service | Concurrent request metrics + `GOMAXPROCS` hint. Not a multi-process app server |
-| [`pulse`](pulse) | service | Metrics pulse dashboard |
-| [`shorturl`](shorturl) | service | Create and resolve short URLs |
-| [`sitemap`](sitemap) | service | Build XML sitemaps |
-| [`tenancy`](tenancy) | service | Resolve current tenant from header/query/host (no auto DB isolation) |
 | [`webhooks`](webhooks) | service | Signed outbound webhook delivery |
-| [`circuit`](circuit) | service | Circuit breaker around flaky dependencies |
-| [`docs`](docs) | service | Markdown documentation repository (docs sites) |
-| [`version`](version) | service | Runtime version helper |
 
 ### Libraries
 
 | Package | Kind | What it does |
 | --- | --- | --- |
 | [`api`](api) | library | API versioning helpers |
-| [`archive/zipx`](archive/zipx) | library | ZIP create and extract |
-| [`bloom`](bloom) | library | Bloom filter |
 | [`browser`](browser) | library | Headless browser test helpers |
-| [`collection`](collection) | library | In-memory collections (`Filter`, `Map`, …) |
-| [`concurrency`](concurrency) | library | Parallel tasks: `Run` / `Map` / `Pool` |
-| [`debug`](debug) | library | Dump helpers |
 | [`export`](export) | library | CSV/XLSX import and export |
 | [`image`](image) | library | Resize and encode images |
 | [`jsonapi`](jsonapi) | library | JSON:API document helpers |
-| [`jsonschema`](jsonschema) | library | JSON Schema validation |
-| [`markdown`](markdown) | library | Markdown → HTML |
 | [`openapi`](openapi) | library | OpenAPI generate/serve helpers |
-| [`pagination`](pagination) | library | Page metadata for list endpoints |
 | [`pdf`](pdf) | library | PDF generate and inline view |
-| [`process`](process) | library | Run OS commands |
 | [`qr`](qr) | heavy | QR code images (own `go.mod`) |
 | [`resources`](resources) | library | API resource transformers |
 | [`testing`](testing) | library | Feature tests (`Get("/").AssertOK()`) |
 | [`toolkit/arr`](toolkit/arr) | library | Array/slice helpers (moved from kernel `support/arr`) |
+| [`toolkit/bloom`](toolkit/bloom) | library | Bloom filter |
+| [`toolkit/circuit`](toolkit/circuit) | library | Circuit breaker (`New` / `Breaker` / `Execute`) |
+| [`toolkit/collection`](toolkit/collection) | library | In-memory collections (`Filter`, `Map`, …) |
 | [`toolkit/color`](toolkit/color) | library | Color helpers |
+| [`toolkit/concurrency`](toolkit/concurrency) | library | Parallel tasks: `Run` / `Map` / `Pool` |
+| [`toolkit/cron`](toolkit/cron) | library | Cron expression parse and match |
 | [`toolkit/date`](toolkit/date) | library | Date/time helpers |
+| [`toolkit/debug`](toolkit/debug) | library | Dump helpers |
+| [`toolkit/enums`](toolkit/enums) | library | String-backed enums with labels |
+| [`toolkit/hashid`](toolkit/hashid) | library | Obfuscated reversible public IDs |
 | [`toolkit/html`](toolkit/html) | library | HTML helpers |
+| [`toolkit/jsonschema`](toolkit/jsonschema) | library | JSON Schema subset validation |
+| [`toolkit/lock`](toolkit/lock) | library | Process-local named locks |
+| [`toolkit/markdown`](toolkit/markdown) | library | Markdown → HTML |
 | [`toolkit/money`](toolkit/money) | library | Money helpers |
 | [`toolkit/num`](toolkit/num) | library | Number helpers |
+| [`toolkit/process`](toolkit/process) | library | Run OS commands |
 | [`toolkit/str`](toolkit/str) | library | String helpers (moved from kernel `support/str`) |
+| [`toolkit/timing`](toolkit/timing) | library | Server-Timing measurements |
+| [`toolkit/zip`](toolkit/zip) | library | ZIP create and extract (`package zipx`) |
 
 `bootutil` is an internal coerce/CLI helper. It is not a consumer package.
 
-The name list lives in the framework CLI catalog (`console/catalog.go`). Kernel `kernel/catalog.go` is primitives only. This tree is the code.
+The name list lives in the framework CLI catalog (`console/describe/catalog.go`). Kernel `kernel/catalog.go` is primitives only. This tree is the code.
 
 ## Nested modules
 
@@ -277,9 +260,9 @@ Public consumption of a nested driver (after that module is tagged correctly) is
 go get github.com/zatrano/packages/database/driver/sqlite@v1.0.0
 ```
 
-The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.8.0`.
+The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.9.0`.
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.8.0` does not require those nested module paths.
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.9.0` does not require those nested module paths.
 
 ## Local development
 
@@ -300,7 +283,6 @@ Work lands on **`main`**, same default branch as the framework.
 ## Import path
 
 ```go
-import "github.com/zatrano/packages/billing"
 import "github.com/zatrano/packages/auth"
 import "github.com/zatrano/framework/v2/kernel/http"   // kernel, not this module
 ```

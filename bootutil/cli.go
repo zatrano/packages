@@ -69,63 +69,6 @@ func ScaffoldDest(app contracts.App, parts []string) string {
 	}
 }
 
-// ConsoleStubsDir locates framework console/stubs via go.mod replace or sibling trees.
-func ConsoleStubsDir(app contracts.App) string {
-	if app == nil {
-		return ""
-	}
-	root := app.BasePath()
-	var candidates []string
-	if p := goModReplace(root, "github.com/zatrano/framework/v2"); p != "" {
-		candidates = append(candidates, filepath.Join(p, "console", "stubs"))
-	}
-	candidates = append(candidates,
-		filepath.Join(filepath.Dir(root), "framework", "console", "stubs"),
-		filepath.Join(filepath.Dir(root), "ZATRANO", "console", "stubs"),
-		app.BasePath("console", "stubs"),
-		app.BasePath("packages", "console", "stubs"),
-		filepath.Join(filepath.Dir(root), "packages", "console", "stubs"),
-	)
-	for _, candidate := range candidates {
-		if info, err := os.Stat(filepath.Join(candidate, "layouts", "auth.html")); err == nil && !info.IsDir() {
-			return candidate
-		}
-		if info, err := os.Stat(filepath.Join(candidate, "layouts", "dashboard.html")); err == nil && !info.IsDir() {
-			return candidate
-		}
-	}
-	return ""
-}
-
-func goModReplace(root, module string) string {
-	f, err := os.Open(filepath.Join(root, "go.mod"))
-	if err != nil {
-		return ""
-	}
-	defer f.Close()
-	prefix := "replace " + module + " => "
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if !strings.HasPrefix(line, prefix) {
-			continue
-		}
-		p := strings.TrimSpace(strings.TrimPrefix(line, prefix))
-		if i := strings.Index(p, "//"); i >= 0 {
-			p = strings.TrimSpace(p[:i])
-		}
-		p = strings.Trim(p, `"`)
-		if p == "" {
-			return ""
-		}
-		if !filepath.IsAbs(p) {
-			p = filepath.Join(root, filepath.FromSlash(p))
-		}
-		return filepath.FromSlash(p)
-	}
-	return ""
-}
-
 func modulePath(root string) (string, error) {
 	f, err := os.Open(filepath.Join(root, "go.mod"))
 	if err != nil {
@@ -165,4 +108,78 @@ func ToExported(name string) string {
 		runes[0] = runes[0] - 'a' + 'A'
 	}
 	return string(runes)
+}
+
+// EnsureBlankImport inserts `_ "importPath"` into the first import block of a Go file.
+func EnsureBlankImport(filePath, importPath string) error {
+	importPath = strings.TrimSpace(importPath)
+	if filePath == "" || importPath == "" {
+		return nil
+	}
+	body, err := os.ReadFile(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	text := string(body)
+	quoted := `"` + importPath + `"`
+	if strings.Contains(text, quoted) {
+		return nil
+	}
+	line := "\t_ " + quoted + "\n"
+	const marker = "import ("
+	idx := strings.Index(text, marker)
+	if idx < 0 {
+		return nil
+	}
+	insert := idx + len(marker)
+	if insert < len(text) && text[insert] == '\r' {
+		insert++
+	}
+	if insert < len(text) && text[insert] == '\n' {
+		insert++
+	}
+	out := text[:insert] + line + text[insert:]
+	return os.WriteFile(filePath, []byte(out), 0o644)
+}
+
+// EnsureEnabledAddon inserts name into bootstrap/enabled.go EnabledAddons when missing.
+func EnsureEnabledAddon(app contracts.App, name string) error {
+	if app == nil {
+		return nil
+	}
+	name = strings.ToLower(strings.TrimSpace(name))
+	if name == "" {
+		return nil
+	}
+	path := app.BasePath("bootstrap", "enabled.go")
+	body, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	text := string(body)
+	quoted := `"` + name + `"`
+	if strings.Contains(text, quoted) {
+		return nil
+	}
+	const marker = "var EnabledAddons = []string{"
+	idx := strings.Index(text, marker)
+	if idx < 0 {
+		return nil
+	}
+	insert := idx + len(marker)
+	if insert < len(text) && text[insert] == '\r' {
+		insert++
+	}
+	if insert < len(text) && text[insert] == '\n' {
+		insert++
+	}
+	line := "\t" + quoted + ",\n"
+	out := text[:insert] + line + text[insert:]
+	return os.WriteFile(path, []byte(out), 0o644)
 }

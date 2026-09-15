@@ -16,6 +16,7 @@ func init() {
 		Description: "MongoDB client (separate module)",
 		Heavy:       true,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		ConfigFiles: map[string]string{"mongo.go": publishedMongoConfig},
 	})
 }
 

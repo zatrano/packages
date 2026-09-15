@@ -1,0 +1,30 @@
+package services
+
+import (
+	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/packages/auth"
+)
+
+// AuthService is the shared application auth seam. HTTP surfaces call this
+// type; they do not duplicate register/login/reset flows.
+type AuthService struct {
+	App contracts.App
+}
+
+func NewAuthService(app contracts.App) *AuthService {
+	return &AuthService{App: app}
+}
+
+func (s *AuthService) Manager() *auth.Manager {
+	if s == nil || s.App == nil {
+		return nil
+	}
+	return auth.From(s.App)
+}
+
+func (s *AuthService) Passwords() *auth.PasswordBroker {
+	if s == nil || s.App == nil {
+		return nil
+	}
+	return auth.Passwords(s.App)
+}

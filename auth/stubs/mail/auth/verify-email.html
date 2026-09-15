@@ -1,0 +1,10 @@
+@extends('layout.mail')
+
+@section('title')
+@lang('auth.mail_verify_subject')
+@endsection
+
+@section('content')
+<p>@lang('auth.mail_verify_intro')</p>
+<p><a href="{{ $link }}">@lang('auth.mail_verify_action')</a></p>
+@endsection

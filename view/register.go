@@ -13,6 +13,7 @@ func init() {
 		Order:       129,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
+		Scaffold:    WriteStarterViews,
 	})
 }
 

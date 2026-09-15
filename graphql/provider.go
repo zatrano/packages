@@ -3,7 +3,6 @@ package graphql
 import (
 	"github.com/zatrano/framework/v2/bootstrap/addons"
 	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/packages/features"
 )
 
 func init() {
@@ -29,14 +28,6 @@ func (p *ServiceProvider) Register(app contracts.App) error {
 			msg = "hello"
 		}
 		return msg, nil
-	})
-	schema.Query("feature", func(args map[string]any) (any, error) {
-		f := features.From(app)
-		if f == nil {
-			return false, nil
-		}
-		name, _ := args["name"].(string)
-		return f.Active(name), nil
 	})
 	schema.Mutation("ping", func(args map[string]any) (any, error) {
 		return map[string]any{"pong": true}, nil

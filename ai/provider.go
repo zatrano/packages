@@ -16,6 +16,7 @@ func init() {
 		Key:         "ai",
 		Description: "AI chat providers",
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
+		ConfigFiles: map[string]string{"ai.go": publishedAIConfig},
 	})
 }
 

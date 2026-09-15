@@ -1,0 +1,44 @@
+package api
+
+import (
+	approutes "__MODULE__/app/routes"
+	apictrl "__MODULE__/app/http/controllers/auth/api"
+
+	apipkg "github.com/zatrano/framework/v2/api"
+	"github.com/zatrano/packages/auth"
+	"github.com/zatrano/packages/ratelimit"
+	"github.com/zatrano/framework/v2/kernel/routing"
+)
+
+func init() {
+	routing.RegisterAPI(registerAuthAPI)
+}
+
+func registerAuthAPI(router *routing.Router) {
+	app := approutes.Current()
+	if app == nil || router == nil {
+		return
+	}
+	ctrl := &apictrl.AuthController{App: app}
+
+	apipkg.Version(router, "v1", func(api *routing.Router) {
+		api.Group("/auth", func(r *routing.Router) {
+			r.Post("/login", ctrl.Login).As("api.v1.login").Through(ratelimit.From(app).Named("login"))
+			r.Post("/register", ctrl.Register).As("api.v1.register").Through(ratelimit.From(app).Named("login"))
+			r.Post("/password/forgot", ctrl.Forgot).As("api.v1.password.forgot").Through(ratelimit.From(app).Named("login"))
+			r.Post("/password/reset", ctrl.Reset).As("api.v1.password.reset")
+			r.Post("/two-factor/challenge", ctrl.TwoFactorChallenge).As("api.v1.auth.two-factor.challenge")
+			r.Group("", func(g *routing.Router) {
+				g.Post("/logout", ctrl.Logout).As("api.v1.logout")
+				g.Post("/profile", ctrl.UpdateProfile).As("api.v1.profile.update")
+				g.Post("/password/change", ctrl.ChangePassword).As("api.v1.password.change")
+				g.Post("/logout-other-devices", ctrl.LogoutOtherDevices).As("api.v1.auth.logout-other-devices")
+				g.Post("/two-factor/enable", ctrl.EnableTwoFactor).As("api.v1.auth.two-factor.enable")
+				g.Post("/two-factor/confirm", ctrl.ConfirmTwoFactor).As("api.v1.auth.two-factor.confirm")
+				g.Post("/two-factor/disable", ctrl.DisableTwoFactor).As("api.v1.auth.two-factor.disable")
+				g.Post("/two-factor/recovery-codes", ctrl.RegenerateRecoveryCodes).As("api.v1.auth.two-factor.recovery-codes")
+				g.Post("/confirm-password", ctrl.ConfirmPassword).As("api.v1.auth.confirm-password")
+			}, auth.Middleware(auth.From(app)))
+		})
+	})
+}

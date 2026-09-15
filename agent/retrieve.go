@@ -12,6 +12,7 @@ type RAGRetrieve struct {
 	Pipeline *rag.Pipeline
 	TopK     int
 	MaxChars int
+	Rerank   rag.Reranker // optional; when set, uses Pipeline.QueryWith
 }
 
 // Retrieve implements Retriever.
@@ -23,7 +24,15 @@ func (r RAGRetrieve) Retrieve(ctx context.Context, query string) (string, error)
 	if topK <= 0 {
 		topK = 5
 	}
-	hits, err := r.Pipeline.Query(ctx, query, topK)
+	var (
+		hits []rag.Hit
+		err  error
+	)
+	if r.Rerank != nil {
+		hits, err = r.Pipeline.QueryWith(ctx, query, rag.QueryOptions{TopK: topK, Rerank: r.Rerank})
+	} else {
+		hits, err = r.Pipeline.Query(ctx, query, topK)
+	}
 	if err != nil {
 		return "", err
 	}

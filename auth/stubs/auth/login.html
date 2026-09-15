@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+@extends('layout.auth')
 
 @section('title')
 @lang('auth.login')
@@ -19,11 +19,6 @@
         @lang('auth.remember_me')
     </label>
     <button class="auth-btn" type="submit">@lang('auth.login')</button>
-    <p class="auth-divider">@lang('auth.or_continue_with')</p>
-    <div class="auth-social">
-        <a href="/auth/google/login">@lang('auth.continue_google')</a>
-        <a href="/auth/github/login">@lang('auth.continue_github')</a>
-    </div>
     <p class="auth-links"><a href="/auth/forgot-password">@lang('auth.forgot_password')</a></p>
     <p class="auth-links"><a href="/auth/register">@lang('auth.register')</a></p>
     @if($flash.error)

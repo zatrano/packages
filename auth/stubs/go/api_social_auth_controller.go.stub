@@ -1,0 +1,130 @@
+package api
+
+import (
+	"strings"
+	"unicode"
+	"unicode/utf8"
+
+	"github.com/zatrano/framework/v2/contracts"
+	"__MODULE__/app/services"
+	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/packages/localization"
+)
+
+const sessionOAuthStatePrefix = "oauth_state_"
+
+// SocialAuthController handles Google OAuth login/register for the JSON surface.
+type SocialAuthController struct {
+	App contracts.App
+}
+
+func (c *SocialAuthController) svc() *services.SocialAuthService {
+	return services.NewSocialAuthService(c.App)
+}
+
+func (c *SocialAuthController) lang(key string, replace ...map[string]string) string {
+	if tr := localization.From(c.App); tr != nil {
+		return tr.Get(key, replace...)
+	}
+	return key
+}
+
+func (c *SocialAuthController) providerLabel(provider string) string {
+	p := strings.ToLower(strings.TrimSpace(provider))
+	if p == "google" {
+		return c.lang("auth.provider_google")
+	}
+	if p == "" {
+		return provider
+	}
+	r, size := utf8.DecodeRuneInString(p)
+	if r == utf8.RuneError {
+		return provider
+	}
+	return string(unicode.ToUpper(r)) + p[size:]
+}
+
+func (c *SocialAuthController) providerReplace(provider string) map[string]string {
+	return map[string]string{"provider": c.providerLabel(provider)}
+}
+
+func (c *SocialAuthController) fail(key string, status int, replace ...map[string]string) *http.Response {
+	return http.JSON(map[string]any{"message": c.lang(key, replace...)}).Status(status)
+}
+
+func (c *SocialAuthController) GoogleRedirect(req *http.Request) *http.Response {
+	return c.redirect(req, "google")
+}
+
+func (c *SocialAuthController) GoogleCallback(req *http.Request) *http.Response {
+	return c.callback(req, "google")
+}
+
+func (c *SocialAuthController) redirect(req *http.Request, provider string) *http.Response {
+	repl := c.providerReplace(provider)
+	url, state, err := c.svc().Redirect(provider)
+	if err != nil {
+		return c.fail("auth.social_not_configured", 503, repl)
+	}
+	if sess := req.Session(); sess != nil {
+		sess.Put(sessionOAuthStatePrefix+provider, state)
+	}
+	return http.JSON(map[string]any{"url": url, "state": state})
+}
+
+func (c *SocialAuthController) callback(req *http.Request, provider string) *http.Response {
+	repl := c.providerReplace(provider)
+	if errMsg := strings.TrimSpace(req.Query("error")); errMsg != "" {
+		desc := strings.TrimSpace(req.Query("error_description"))
+		if desc == "" {
+			desc = c.lang("auth.social_cancelled", repl)
+		}
+		return http.JSON(map[string]any{"message": desc}).Status(401)
+	}
+	state := strings.TrimSpace(req.Query("state"))
+	if state == "" {
+		state = strings.TrimSpace(req.Input("state"))
+	}
+	code := strings.TrimSpace(req.Query("code"))
+	if code == "" {
+		code = strings.TrimSpace(req.Input("code"))
+	}
+	if state == "" || code == "" {
+		return c.fail("auth.social_invalid_response", 422, repl)
+	}
+	if sess := req.Session(); sess != nil {
+		expected := ""
+		if v, ok := sess.Pull(sessionOAuthStatePrefix + provider).(string); ok {
+			expected = strings.TrimSpace(v)
+		}
+		if expected != "" && expected != state {
+			return c.fail("auth.social_state_failed", 401, repl)
+		}
+	}
+	c.svc().ValidateState(state)
+	socialUser, err := c.svc().User(provider, code)
+	if err != nil || socialUser == nil || strings.TrimSpace(socialUser.Email) == "" {
+		return c.fail("auth.social_load_failed", 401, repl)
+	}
+	result, user, err := c.svc().Persist(socialUser)
+	if err != nil || user == nil {
+		key := "auth.social_link_failed"
+		if err != nil {
+			key = err.Error()
+		}
+		return c.fail(key, 422)
+	}
+	if err := c.svc().Login(req, user); err != nil {
+		return c.fail("auth.social_login_failed", 401)
+	}
+	msg := c.lang("auth.social_signed_in", repl)
+	created := result != nil && result.Created
+	if created {
+		msg = c.lang("auth.social_account_created", repl)
+	}
+	return http.JSON(map[string]any{
+		"message": msg,
+		"created": created,
+		"id":      user.ID,
+	})
+}

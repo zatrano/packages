@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/zatrano/packages/ai"
 )
@@ -15,8 +16,12 @@ type Agent struct {
 	Tools    *Registry
 	Memory   Memory // optional; defaults to ephemeral BufferMemory per Run
 	Retrieve Retriever
-	System   string // optional system prompt prepended when memory is empty
-	MaxSteps int    // default 6
+	System   string        // optional system prompt prepended when memory is empty
+	MaxSteps int           // default 6
+	Timeout  time.Duration // 0 = none beyond ctx; distinct from ai.Defaults.Timeout
+	// Authorizer, when set, must allow a tool before the handler runs.
+	// Nil allows every registered tool (compatibility default; unsafe for untrusted models).
+	Authorizer Authorizer
 	// AllowToolsOnFinal keeps tools enabled on the last step (default false:
 	// last step uses ToolChoiceNone so the model must produce a text answer).
 	AllowToolsOnFinal bool
@@ -29,6 +34,11 @@ func (a *Agent) Run(ctx context.Context, userMessage string) (*Result, error) {
 	}
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	if a.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, a.Timeout)
+		defer cancel()
 	}
 	userMessage = strings.TrimSpace(userMessage)
 	if userMessage == "" {
@@ -70,6 +80,9 @@ func (a *Agent) Run(ctx context.Context, userMessage string) (*Result, error) {
 	var toolResults []ToolResult
 	steps := 0
 	for step := 1; step <= maxSteps; step++ {
+		if err := ctx.Err(); err != nil {
+			return &Result{Response: last, Steps: steps, Messages: mem.Messages(), ToolResults: toolResults}, err
+		}
 		steps = step
 		req := ai.ChatRequest{
 			Messages: mem.Messages(),
@@ -96,7 +109,7 @@ func (a *Agent) Run(ctx context.Context, userMessage string) (*Result, error) {
 			return nil, fmt.Errorf("agent: model requested tools but Tools registry is nil")
 		}
 		for _, call := range resp.Message.ToolCalls {
-			tr := a.Tools.ExecuteResult(ctx, call)
+			tr := a.dispatchTool(ctx, call)
 			toolResults = append(toolResults, tr)
 			mem.Append(ai.ToolResultMessage(call.ID, tr.Content()))
 		}
@@ -105,4 +118,18 @@ func (a *Agent) Run(ctx context.Context, userMessage string) (*Result, error) {
 		return nil, fmt.Errorf("agent: no response")
 	}
 	return &Result{Response: last, Steps: steps, Messages: mem.Messages(), ToolResults: toolResults}, fmt.Errorf("agent: max steps (%d) reached", maxSteps)
+}
+
+func (a *Agent) dispatchTool(ctx context.Context, call ai.ToolCall) ToolResult {
+	name := strings.TrimSpace(call.Function.Name)
+	if a.Authorizer != nil {
+		if err := a.Authorizer.Allow(ctx, name, call); err != nil {
+			msg := err.Error()
+			if msg == "" {
+				msg = "denied"
+			}
+			return ToolResult{ID: call.ID, Name: name, Status: ToolDenied, Error: msg}
+		}
+	}
+	return a.Tools.ExecuteResult(ctx, call)
 }
