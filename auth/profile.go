@@ -3,12 +3,13 @@ package auth
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/zatrano/framework/v2/kernel/http"
 )
 
 // UpdateProfile updates the authenticated user's name/email.
-// Changing email clears email_verified_at so verification can run again.
+// When AUTH_MUST_VERIFY_EMAIL is true, changing email clears email_verified_at and sends a new link.
 func (m *Manager) UpdateProfile(req *http.Request, name, email string) error {
 	user := m.User(req)
 	if user == nil {
@@ -24,7 +25,11 @@ func (m *Manager) UpdateProfile(req *http.Request, name, email string) error {
 	emailChanged := !strings.EqualFold(currentEmail, email)
 	attrs := map[string]any{"name": name, "email": email}
 	if emailChanged {
-		attrs["email_verified_at"] = nil
+		if m.MustVerifyEmail() {
+			attrs["email_verified_at"] = nil
+		} else {
+			attrs["email_verified_at"] = time.Now().UTC()
+		}
 		existing, err := m.Guard().Provider().RetrieveByCredentials(map[string]string{"email": email})
 		if err != nil {
 			return err
@@ -46,7 +51,7 @@ func (m *Manager) UpdateProfile(req *http.Request, name, email string) error {
 			generic.Attributes[k] = v
 		}
 	}
-	if emailChanged {
+	if emailChanged && m.MustVerifyEmail() {
 		_ = m.SendEmailVerification(user)
 	}
 	return nil

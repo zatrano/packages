@@ -39,6 +39,7 @@ func DefaultConfig() map[string]any {
 			"max_attempts":  env.GetInt("AUTH_LOCKOUT_ATTEMPTS", 5),
 			"decay_minutes": env.GetInt("AUTH_LOCKOUT_DECAY", 1),
 		},
+		"must_verify_email": env.GetBool("AUTH_MUST_VERIFY_EMAIL", false),
 		"two_factor": map[string]any{
 			"issuer":               env.Get("AUTH_2FA_ISSUER", env.Get("APP_NAME", "ZATRANO")),
 			"remember_device_days": env.GetInt("AUTH_2FA_REMEMBER_DEVICE_DAYS", 30),

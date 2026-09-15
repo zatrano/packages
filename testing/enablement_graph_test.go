@@ -172,7 +172,7 @@ func TestNegativePathMissingRequires(t *testing.T) {
 
 func TestNegativePathOptionalAbsent(t *testing.T) {
 	cases := []addons.Meta{
-		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "events"}},
+		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "events", "url"}},
 		{Name: "queue", Optional: []string{"database", "cache"}},
 		{Name: "notification", Optional: []string{"view", "broadcasting", "localization", "database"}},
 		{Name: "backup", Optional: []string{"database"}},

@@ -33,6 +33,7 @@ func boot(app contracts.App) error {
 		authManager.SetTwoFactorIssuer(issuer)
 	}
 	authManager.SetRememberDeviceDays(app.Config().GetInt("auth.two_factor.remember_device_days", 30))
+	authManager.SetMustVerifyEmail(app.Config().GetBool("auth.must_verify_email", false))
 	if c := cache.From(app); c != nil {
 		authManager.SetLockoutCache(c)
 	}

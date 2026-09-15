@@ -7,6 +7,21 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.10.0 - 2026-09-15
+
+Why now: Drop the `api` library (path versioning is kernel routing) and ship auth email-verify env plus JSON surface parity with web.
+
+### Breaking
+
+- Removed the `api` library. Path versioning is `routing.Version` in the kernel (`github.com/zatrano/framework/v2@v2.6.0`). `make:auth` JSON routes call `routing.Version`.
+
+### Added
+
+- `auth`: `AUTH_MUST_VERIFY_EMAIL` (default `false`) gates verification mail and `VerifyEmailMiddleware`. `package:enable auth` merges the env key; `make:auth` / `make:panel` wire the middleware.
+- `auth`: `make:auth` JSON surface includes verify/resend/`GET /user`/2FA status to match the web flows. Signed links use `url.From(app)` (`make:auth` enables `url`).
+
+Install with `go get github.com/zatrano/packages@v1.10.0`.
+
 ## 1.9.1 - 2026-09-15
 
 Why now: Restore the markdown `docs` addon and ship a single `seo` addon so applications that served sitemaps, robots.txt, and LLM discovery files can pin without tracking `main`.

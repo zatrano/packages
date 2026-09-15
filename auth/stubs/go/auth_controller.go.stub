@@ -10,6 +10,7 @@ import (
 	"github.com/zatrano/packages/flash"
 	"github.com/zatrano/framework/v2/kernel/http"
 	"github.com/zatrano/packages/localization"
+	"github.com/zatrano/packages/url"
 	"github.com/zatrano/packages/validation"
 )
 
@@ -294,8 +295,18 @@ func (c *AuthController) Forgot(req *http.Request) *http.Response {
 		return fail
 	}
 	email := data["email"]
-	resetURL := c.App.URL().To("/auth/reset-password")
-	if err := pkgauth.Passwords(c.App).SendResetLink(email, resetURL); err != nil {
+	resetURL := "/auth/reset-password"
+	if gen := url.From(c.App); gen != nil {
+		resetURL = gen.To("/auth/reset-password")
+	}
+	broker := pkgauth.Passwords(c.App)
+	if broker == nil {
+		if req.WantsJSON() {
+			return http.JSON(map[string]any{"message": c.lang("auth.guard_unavailable")}).Status(503)
+		}
+		return flash.WithError(req, c.lang("auth.guard_unavailable"), "/auth/forgot-password")
+	}
+	if err := broker.SendResetLink(email, resetURL); err != nil {
 		if errors.Is(err, pkgauth.ErrResetThrottled) {
 			if req.WantsJSON() {
 				return http.JSON(map[string]any{"message": c.lang("auth.reset_throttled")}).Status(429)
@@ -368,11 +379,7 @@ func (c *AuthController) Send(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) Verify(req *http.Request) *http.Response {
-	raw := req.Path()
-	if q := req.Raw().URL.RawQuery; q != "" {
-		raw += "?" + q
-	}
-	if !c.App.URL().HasValidSignature(raw) {
+	if !c.validSignature(req) {
 		return http.JSON(map[string]any{"message": "Invalid signature"}).Status(403)
 	}
 	id := req.Route("id")
@@ -443,4 +450,16 @@ func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {
 		return http.JSON(map[string]any{"authenticated": true})
 	}
 	return pkgauth.RedirectIntended(req, "/")
+}
+
+func (c *AuthController) validSignature(req *http.Request) bool {
+	if req == nil || req.Raw() == nil || req.Raw().URL == nil {
+		return false
+	}
+	raw := req.Path()
+	if q := req.Raw().URL.RawQuery; q != "" {
+		raw += "?" + q
+	}
+	gen := url.From(c.App)
+	return gen != nil && gen.HasValidSignature(raw)
 }

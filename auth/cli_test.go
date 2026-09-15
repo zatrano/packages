@@ -67,6 +67,61 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 			t.Fatalf("missing %s: %v", path, err)
 		}
 	}
+	webBody, err := os.ReadFile(filepath.Join(dir, "app", "routes", "auth", "web", "auth.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(webBody), "VerifyEmailMiddleware") {
+		t.Fatal("make:auth web routes must wrap account pages with VerifyEmailMiddleware")
+	}
+	apiBody, err := os.ReadFile(filepath.Join(dir, "app", "routes", "auth", "api", "auth.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(apiBody), "VerifyEmailMiddleware") {
+		t.Fatal("make:auth API routes must wrap account pages with VerifyEmailMiddleware")
+	}
+	if strings.Contains(string(apiBody), "github.com/zatrano/packages/api") {
+		t.Fatal("API versioning is kernel routing.Version, not packages/api")
+	}
+	if strings.Contains(string(apiBody), "github.com/zatrano/framework/v2/api") {
+		t.Fatal("there is no framework/v2/api package")
+	}
+	if !strings.Contains(string(apiBody), "routing.Version") {
+		t.Fatal("API routes must call routing.Version")
+	}
+	for _, needle := range []string{
+		`"/user"`,
+		`"/email/verify/{id}"`,
+		`"/email/verification-notification"`,
+		"ctrl.TwoFactor)",
+		"ctrl.Verify",
+		"ctrl.Send",
+		"ctrl.Notice",
+		"ctrl.User",
+	} {
+		if !strings.Contains(string(apiBody), needle) {
+			t.Fatalf("API routes missing %s", needle)
+		}
+	}
+	apiCtrl, err := os.ReadFile(filepath.Join(dir, "app", "http", "controllers", "auth", "api", "auth_controller.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctrlSrc := string(apiCtrl)
+	for _, needle := range []string{
+		"func (c *AuthController) Verify",
+		"func (c *AuthController) Send",
+		"func (c *AuthController) Notice",
+		"func (c *AuthController) User",
+		"func (c *AuthController) TwoFactor",
+		"verification_required",
+		"userJSON",
+	} {
+		if !strings.Contains(ctrlSrc, needle) {
+			t.Fatalf("API controller missing %s", needle)
+		}
+	}
 	absent := []string{
 		filepath.Join(dir, "app", "http", "controllers", "auth", "web", "social_auth_controller.go"),
 		filepath.Join(dir, "app", "http", "controllers", "auth", "api", "social_auth_controller.go"),
@@ -156,12 +211,18 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 	if !strings.Contains(string(enabled), `"view"`) {
 		t.Fatal("make:auth must enable view")
 	}
+	if !strings.Contains(string(enabled), `"url"`) {
+		t.Fatal("make:auth must enable url for signed verification links")
+	}
 	addonSrc, err := os.ReadFile(filepath.Join(dir, "bootstrap", "addons.go"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/view") {
 		t.Fatal("make:auth must blank-import view")
+	}
+	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/url") {
+		t.Fatal("make:auth must blank-import url")
 	}
 	home, err := os.ReadFile(filepath.Join(dir, "app", "http", "controllers", "web", "home_controller.go"))
 	if err != nil {
@@ -235,6 +296,14 @@ func TestMakePanelWritesSurface(t *testing.T) {
 		if _, err := os.Stat(path); err != nil {
 			t.Fatalf("missing %s: %v", path, err)
 		}
+	}
+	routes, err := os.ReadFile(filepath.Join(dir, "app", "routes", "dashboard", "dashboard.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(routes)
+	if !strings.Contains(text, "pkgauth.Middleware") || !strings.Contains(text, "VerifyEmailMiddleware") {
+		t.Fatal("make:panel must wrap the surface with auth.Middleware and VerifyEmailMiddleware")
 	}
 }
 

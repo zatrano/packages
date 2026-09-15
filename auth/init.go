@@ -12,7 +12,7 @@ func init() {
 		Description: "Authentication guards",
 		Order:       50,
 		Requires:    []string{"hashing", "database", "session"},
-		Optional:    []string{"cache", "notification", "authorization", "events"},
+		Optional:    []string{"cache", "notification", "authorization", "events", "url"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+## 1.4.0
+
+- `AUTH_MUST_VERIFY_EMAIL` (default `false`): when true, register/profile send verification mail and `VerifyEmailMiddleware` blocks unverified users. When false, register stamps `email_verified_at` and the middleware does not require confirmation. `make:auth` / `make:panel` wrap account and panel routes with the middleware.
+- `make:auth` API surface: `routing.Version` (kernel; there is no `packages/api`); JSON login/register return `user`; email verify/resend/`GET /user`/2FA status match the web flows. Signed links use `url.From(app)` (`make:auth` enables `url`).
+
 ## 1.3.0
 
 - User-facing errors return localization keys (`auth.email_taken`, `auth.lockout`, …)

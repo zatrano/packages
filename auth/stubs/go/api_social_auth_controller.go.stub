@@ -126,5 +126,6 @@ func (c *SocialAuthController) callback(req *http.Request, provider string) *htt
 		"message": msg,
 		"created": created,
 		"id":      user.ID,
+		"verified": user.HasVerifiedEmail(),
 	})
 }

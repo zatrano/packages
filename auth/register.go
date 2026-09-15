@@ -61,6 +61,9 @@ func (m *Manager) Register(req *http.Request, attrs map[string]any, login ...boo
 	}
 	payload["password"] = hashed
 	delete(payload, "password_confirmation")
+	if !m.MustVerifyEmail() {
+		payload["email_verified_at"] = time.Now().UTC()
+	}
 
 	user, err := creator.Create(payload)
 	if err != nil {
@@ -76,7 +79,9 @@ func (m *Manager) Register(req *http.Request, attrs map[string]any, login ...boo
 		}
 	}
 	m.dispatch(EventRegistered, RegisteredEvent{Request: req, User: user, Guard: m.Guard().name, At: time.Now().UTC()})
-	_ = m.SendEmailVerification(user)
+	if m.MustVerifyEmail() {
+		_ = m.SendEmailVerification(user)
+	}
 	return user, nil
 }
 

@@ -4,7 +4,6 @@ import (
 	approutes "__MODULE__/app/routes"
 	apictrl "__MODULE__/app/http/controllers/auth/api"
 
-	apipkg "github.com/zatrano/framework/v2/api"
 	"github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/ratelimit"
 	"github.com/zatrano/framework/v2/kernel/routing"
@@ -20,25 +19,33 @@ func registerAuthAPI(router *routing.Router) {
 		return
 	}
 	ctrl := &apictrl.AuthController{App: app}
+	a := auth.From(app)
 
-	apipkg.Version(router, "v1", func(api *routing.Router) {
+	routing.Version(router, "v1", func(api *routing.Router) {
 		api.Group("/auth", func(r *routing.Router) {
 			r.Post("/login", ctrl.Login).As("api.v1.login").Through(ratelimit.From(app).Named("login"))
 			r.Post("/register", ctrl.Register).As("api.v1.register").Through(ratelimit.From(app).Named("login"))
 			r.Post("/password/forgot", ctrl.Forgot).As("api.v1.password.forgot").Through(ratelimit.From(app).Named("login"))
 			r.Post("/password/reset", ctrl.Reset).As("api.v1.password.reset")
 			r.Post("/two-factor/challenge", ctrl.TwoFactorChallenge).As("api.v1.auth.two-factor.challenge")
+			r.Get("/email/verify/{id}", ctrl.Verify).As("api.v1.verification.verify")
 			r.Group("", func(g *routing.Router) {
 				g.Post("/logout", ctrl.Logout).As("api.v1.logout")
-				g.Post("/profile", ctrl.UpdateProfile).As("api.v1.profile.update")
-				g.Post("/password/change", ctrl.ChangePassword).As("api.v1.password.change")
-				g.Post("/logout-other-devices", ctrl.LogoutOtherDevices).As("api.v1.auth.logout-other-devices")
-				g.Post("/two-factor/enable", ctrl.EnableTwoFactor).As("api.v1.auth.two-factor.enable")
-				g.Post("/two-factor/confirm", ctrl.ConfirmTwoFactor).As("api.v1.auth.two-factor.confirm")
-				g.Post("/two-factor/disable", ctrl.DisableTwoFactor).As("api.v1.auth.two-factor.disable")
-				g.Post("/two-factor/recovery-codes", ctrl.RegenerateRecoveryCodes).As("api.v1.auth.two-factor.recovery-codes")
+				g.Get("/user", ctrl.User).As("api.v1.auth.user")
 				g.Post("/confirm-password", ctrl.ConfirmPassword).As("api.v1.auth.confirm-password")
-			}, auth.Middleware(auth.From(app)))
+				g.Get("/email/verify", ctrl.Notice).As("api.v1.verification.notice")
+				g.Post("/email/verification-notification", ctrl.Send).As("api.v1.verification.send")
+				g.Group("", func(gg *routing.Router) {
+					gg.Post("/profile", ctrl.UpdateProfile).As("api.v1.profile.update")
+					gg.Post("/password/change", ctrl.ChangePassword).As("api.v1.password.change")
+					gg.Post("/logout-other-devices", ctrl.LogoutOtherDevices).As("api.v1.auth.logout-other-devices")
+					gg.Get("/two-factor", ctrl.TwoFactor).As("api.v1.auth.two-factor")
+					gg.Post("/two-factor/enable", ctrl.EnableTwoFactor).As("api.v1.auth.two-factor.enable")
+					gg.Post("/two-factor/confirm", ctrl.ConfirmTwoFactor).As("api.v1.auth.two-factor.confirm")
+					gg.Post("/two-factor/disable", ctrl.DisableTwoFactor).As("api.v1.auth.two-factor.disable")
+					gg.Post("/two-factor/recovery-codes", ctrl.RegenerateRecoveryCodes).As("api.v1.auth.two-factor.recovery-codes")
+				}, auth.VerifyEmailMiddleware(a))
+			}, auth.Middleware(a))
 		})
 	})
 }

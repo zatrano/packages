@@ -145,6 +145,7 @@ import (
 	approutes "` + `__MODULE__/app/routes` + `"
 	` + pkg + `ctrl "` + `__MODULE__/app/http/controllers/` + pkg + `"
 
+	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/framework/v2/kernel/routing"
 )
 
@@ -157,9 +158,12 @@ func register` + exported + `(router *routing.Router) {
 	if app == nil || router == nil {
 		return
 	}
-	routing.Controller(router, &` + pkg + `ctrl.HomeController{}, func(r routing.RouteRegistrar, c *` + pkg + `ctrl.HomeController) {
-		r.Get("/` + pkg + `", c.Index).As("` + pkg + `.home")
-	})
+	a := pkgauth.From(app)
+	router.Group("", func(r *routing.Router) {
+		routing.Controller(r, &` + pkg + `ctrl.HomeController{}, func(rr routing.RouteRegistrar, c *` + pkg + `ctrl.HomeController) {
+			rr.Get("/` + pkg + `", c.Index).As("` + pkg + `.home")
+		})
+	}, pkgauth.Middleware(a), pkgauth.VerifyEmailMiddleware(a))
 }
 `
 }

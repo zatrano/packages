@@ -61,11 +61,14 @@ func VerifyEmailMiddleware(manager *Manager, guards ...string) routing.Middlewar
 				}
 				return http.Redirect("/auth/login")
 			}
-			if HasVerifiedEmail(user) {
+			if manager == nil || !manager.MustVerifyEmail() || HasVerifiedEmail(user) {
 				return next(req)
 			}
 			if req.WantsJSON() {
-				return http.JSON(map[string]any{"message": "Your email address is not verified."}).Status(403)
+				return http.JSON(map[string]any{
+					"message": "Your email address is not verified.",
+					"resend":  "/api/v1/auth/email/verification-notification",
+				}).Status(403)
 			}
 			return http.Redirect("/auth/email/verify")
 		}
@@ -118,6 +121,9 @@ func (m *Manager) MarkEmailAsVerified(req *http.Request, user Authenticatable) e
 // Delivery is asynchronous when wired through notification.Send.
 func (m *Manager) SendEmailVerification(user Authenticatable) error {
 	if m == nil || user == nil {
+		return nil
+	}
+	if !m.MustVerifyEmail() {
 		return nil
 	}
 	if HasVerifiedEmail(user) {

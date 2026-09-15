@@ -9,10 +9,13 @@ import "__MODULE__/app/models"
 //	resources.JSON(user, User)
 func User(user models.User) map[string]any {
 	return map[string]any{
-		"id":         user.ID,
-		"name":       user.Name,
-		"email":      user.Email,
-		"created_at": user.CreatedAt,
-		"updated_at": user.UpdatedAt,
+		"id":                user.ID,
+		"name":              user.Name,
+		"email":             user.Email,
+		"verified":          user.HasVerifiedEmail(),
+		"email_verified_at": user.EmailVerifiedAt,
+		"avatar":            user.Avatar,
+		"created_at":        user.CreatedAt,
+		"updated_at":        user.UpdatedAt,
 	}
 }

@@ -89,7 +89,7 @@ func ConfirmPasswordMiddleware(manager *Manager, within ...time.Duration) routin
 			if req.WantsJSON() {
 				return http.JSON(map[string]any{
 					"message": "Password confirmation required.",
-					"confirm": "/api/auth/confirm-password",
+					"confirm": "/api/v1/auth/confirm-password",
 				}).Status(423)
 			}
 			return http.Redirect("/auth/confirm-password")

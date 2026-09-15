@@ -6,6 +6,7 @@ import (
 	"fmt"
 	stdhttp "net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -107,6 +108,7 @@ func TestRegisterSendsEmailVerification(t *testing.T) {
 	provider := newMemoryUserProvider()
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
+	manager.SetMustVerifyEmail(true)
 
 	var gotURL string
 	var gotEmail string
@@ -132,6 +134,114 @@ func TestRegisterSendsEmailVerification(t *testing.T) {
 	if gotEmail != "ada@zatrano.test" || gotURL != "https://example.test/verify/1" {
 		t.Fatalf("verification not sent: email=%q url=%q", gotEmail, gotURL)
 	}
+}
+
+func TestRegisterSkipsVerificationWhenNotRequired(t *testing.T) {
+	provider := newMemoryUserProvider()
+	manager := auth.NewManager("web")
+	manager.Extend("web", auth.NewGuard("web", provider))
+
+	sent := false
+	manager.SetEmailVerificationSender(func(user auth.Authenticatable, verifyURL string) error {
+		sent = true
+		return nil
+	})
+
+	raw := httptest.NewRequest(stdhttp.MethodPost, "/register", nil)
+	req := http.NewRequest(raw)
+	req.SetSession(&memSession{data: map[string]any{}})
+
+	user, err := manager.Register(req, map[string]any{
+		"name": "Ada", "email": "ada@zatrano.test", "password": "secret1",
+	}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if sent {
+		t.Fatal("must not send verification when AUTH_MUST_VERIFY_EMAIL is false")
+	}
+	if !auth.HasVerifiedEmail(user) {
+		t.Fatal("register must mark email verified when confirmation is off")
+	}
+}
+
+func TestVerifyEmailMiddlewareHonorsMustVerifyEmail(t *testing.T) {
+	provider := newMemoryUserProvider()
+	manager := auth.NewManager("web")
+	manager.Extend("web", auth.NewGuard("web", provider))
+	user, err := provider.Create(map[string]any{"email": "ada@zatrano.test", "password": "x"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ok := auth.VerifyEmailMiddleware(manager)(func(req *http.Request) *http.Response {
+		return http.Text("ok")
+	})
+	raw := httptest.NewRequest(stdhttp.MethodGet, "/account", nil)
+	req := http.NewRequest(raw)
+	req.SetSession(&memSession{data: map[string]any{}})
+	if err := manager.Login(req, user); err != nil {
+		t.Fatal(err)
+	}
+
+	resp := ok(req)
+	if resp == nil || resp.StatusCode() != 200 {
+		t.Fatalf("flag false must allow unverified users, got %#v", resp)
+	}
+
+	manager.SetMustVerifyEmail(true)
+	resp = ok(req)
+	if resp == nil || resp.StatusCode() != 302 {
+		t.Fatalf("flag true must redirect unverified users, status=%v", statusOf(resp))
+	}
+
+	req.Raw().Header.Set("Accept", "application/json")
+	resp = ok(req)
+	if resp == nil || resp.StatusCode() != 403 {
+		t.Fatalf("JSON must 403 unverified users, status=%v", statusOf(resp))
+	}
+	body := string(resp.Content())
+	if !strings.Contains(body, "/api/v1/auth/email/verification-notification") {
+		t.Fatalf("JSON 403 must point at the API resend route, body=%s", body)
+	}
+}
+
+func TestUpdateProfileKeepsVerifiedWhenNotRequired(t *testing.T) {
+	provider := newMemoryUserProvider()
+	manager := auth.NewManager("web")
+	manager.Extend("web", auth.NewGuard("web", provider))
+
+	sent := false
+	manager.SetEmailVerificationSender(func(user auth.Authenticatable, verifyURL string) error {
+		sent = true
+		return nil
+	})
+
+	raw := httptest.NewRequest(stdhttp.MethodPost, "/profile", nil)
+	req := http.NewRequest(raw)
+	req.SetSession(&memSession{data: map[string]any{}})
+	user, err := manager.Register(req, map[string]any{
+		"name": "Ada", "email": "ada@zatrano.test", "password": "secret1",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := manager.UpdateProfile(req, "Ada", "ada2@zatrano.test"); err != nil {
+		t.Fatal(err)
+	}
+	if sent {
+		t.Fatal("must not send verification when confirmation is off")
+	}
+	if !auth.HasVerifiedEmail(user) {
+		t.Fatal("new email must stay verified when confirmation is off")
+	}
+}
+
+func statusOf(resp *http.Response) int {
+	if resp == nil {
+		return 0
+	}
+	return resp.StatusCode()
 }
 
 func TestPasswordChangedSender(t *testing.T) {

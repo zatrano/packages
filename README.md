@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.9.1"><code>v1.9.1</code></a>
+  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.10.0"><code>v1.10.0</code></a>
   ·
   Framework pin: <code>github.com/zatrano/framework/v2@v2.0.28</code>
 </p>
@@ -32,7 +32,7 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.9.1`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
+It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.10.0`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z` (nested: `scripts/release.sh --dry-run database/driver/sqlite/vX.Y.Z`).
 
@@ -83,14 +83,14 @@ sess := session.From(app)
 From the app CLI:
 
 ```bash
-go get github.com/zatrano/framework/v2@v2.5.1
-go get github.com/zatrano/packages@v1.9.1
+go get github.com/zatrano/framework/v2@v2.6.0
+go get github.com/zatrano/packages@v1.10.0
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.9.1` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.10.0` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -110,6 +110,7 @@ notification.From(app)
 ```
 
 There is no `mail` package. Send email through `notification` with `Channels: ["mail"]`.
+There is no `api` package. Path versioning is kernel `routing.Version`.
 
 ## Packages
 
@@ -202,7 +203,6 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`api`](api) | library | API versioning helpers |
 | [`browser`](browser) | library | Headless browser test helpers |
 | [`export`](export) | library | CSV/XLSX import and export |
 | [`image`](image) | library | Resize and encode images |
@@ -260,9 +260,9 @@ Public consumption of a nested driver (after that module is tagged correctly) is
 go get github.com/zatrano/packages/database/driver/sqlite@v1.0.0
 ```
 
-The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.9.1`.
+The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.10.0`.
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.9.1` does not require those nested module paths.
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.10.0` does not require those nested module paths.
 
 ## Local development
 

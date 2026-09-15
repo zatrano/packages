@@ -232,13 +232,16 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	if err := enableViewForAuth(c.app); err != nil {
 		return err
 	}
+	if err := enableURLForAuth(c.app); err != nil {
+		return err
+	}
 
 	fmt.Printf("\nAuth scaffold ready (%d created, %d skipped).\n", created, skipped)
 	if viewsOnly {
 		fmt.Println("Mode: --views (auth HTML, layout, and mail templates only)")
 	} else {
 		fmt.Println("Next steps:")
-		fmt.Println("  1. Enable hashing, database, session, and auth (notification for mail). View is already enabled.")
+		fmt.Println("  1. Enable hashing, database, session, and auth (notification for mail). View and url are already enabled.")
 		fmt.Println("  2. In app/database/migrations/migrations.go add:")
 		migLine := "     &CreateUsersTable{}, &CreatePasswordResetTokensTable{}, &CreatePersonalAccessTokensTable{},"
 		if wantSocialGo {
@@ -246,11 +249,12 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		}
 		fmt.Println(migLine)
 		fmt.Println("  3. Auth routes self-register from app/routes/auth/web and app/routes/auth/api.")
+		fmt.Println("  4. Set AUTH_MUST_VERIFY_EMAIL=true to require email confirmation (default false).")
 		if wantSocialGo {
-			fmt.Println("  4. Set GOOGLE_* env vars for social login")
-			fmt.Println("  5. Run: go run ./cmd/app migrate")
+			fmt.Println("  5. Set GOOGLE_* env vars for social login")
+			fmt.Println("  6. Run: go run ./cmd/app migrate")
 		} else {
-			fmt.Println("  4. Run: go run ./cmd/app migrate")
+			fmt.Println("  5. Run: go run ./cmd/app migrate")
 		}
 	}
 	fmt.Println("Use --force to overwrite existing files. Use --views for views only.")
@@ -265,6 +269,13 @@ func enableViewForAuth(app contracts.App) error {
 		return err
 	}
 	return starter.Write(app)
+}
+
+func enableURLForAuth(app contracts.App) error {
+	if err := bootutil.EnsureEnabledAddon(app, "url"); err != nil {
+		return err
+	}
+	return bootutil.EnsureBlankImport(app.BasePath("bootstrap", "addons.go"), "github.com/zatrano/packages/url")
 }
 
 var (

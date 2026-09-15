@@ -356,6 +356,7 @@ type Manager struct {
 	verifyURLGen            func(user Authenticatable) (string, error)
 	emailVerificationSender func(user Authenticatable, verifyURL string) error
 	passwordChangedSender   func(user Authenticatable) error
+	mustVerifyEmail         bool
 }
 
 // Crypt encrypts sensitive auth payloads (two-factor secrets).
@@ -403,6 +404,20 @@ func (m *Manager) GetDefaultDriver() string {
 		return ""
 	}
 	return m.defaultGuard
+}
+
+// SetMustVerifyEmail toggles whether unverified users are blocked and mailed.
+// AUTH_MUST_VERIFY_EMAIL / auth.must_verify_email; default false.
+func (m *Manager) SetMustVerifyEmail(v bool) {
+	if m == nil {
+		return
+	}
+	m.mustVerifyEmail = v
+}
+
+// MustVerifyEmail reports whether email confirmation is required.
+func (m *Manager) MustVerifyEmail() bool {
+	return m != nil && m.mustVerifyEmail
 }
 
 // SetDispatcher configures lifecycle event dispatching.
