@@ -12,12 +12,14 @@ import (
 	_ "github.com/zatrano/packages/backup"
 	_ "github.com/zatrano/packages/broadcasting"
 	_ "github.com/zatrano/packages/cache"
+	_ "github.com/zatrano/packages/docs"
 	_ "github.com/zatrano/packages/flash"
 	_ "github.com/zatrano/packages/notification"
 	_ "github.com/zatrano/packages/orm"
 	_ "github.com/zatrano/packages/queue"
 	_ "github.com/zatrano/packages/rag"
 	_ "github.com/zatrano/packages/redisx"
+	_ "github.com/zatrano/packages/seo"
 	_ "github.com/zatrano/packages/workflow"
 )
 
@@ -77,6 +79,7 @@ func TestOptionalNotInRequires(t *testing.T) {
 		"notification": {"view", "broadcasting", "localization", "database"},
 		"backup":       {"database"},
 		"database":     {"events"},
+		"seo":          {"docs"},
 	}
 	for name, optional := range cases {
 		meta, ok := addons.Lookup(name)

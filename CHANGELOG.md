@@ -7,6 +7,17 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.9.1 - 2026-09-15
+
+Why now: Restore the markdown `docs` addon and ship a single `seo` addon so applications that served sitemaps, robots.txt, and LLM discovery files can pin without tracking `main`.
+
+### Added
+
+- Restored `docs` (`From`, `Repository`, `Register`). Markdown rendering uses `toolkit/markdown`.
+- `seo` is one addon for classic crawlers and LLM discovery: sitemap.xml, robots.txt (no `LLMs-Txt` directive), OG/JSON-LD `ViewData`, security.txt, `/llms.txt`, `/llms-full.txt`, `/.well-known/ai-plugin.json`. Optional `docs` fills sitemap and llms-full. It does not import `ai`. There is no `sitemap` or `wellknown` package.
+
+Install with `go get github.com/zatrano/packages@v1.9.1`.
+
 ## 1.9.0 - 2026-09-15
 
 Why now: Pin the catalog freeze so applications can import toolkit libraries, nested pagination/TOTP/OTP, and experimental `workflow` without tracking `main`.
