@@ -7,8 +7,8 @@ import (
 	"github.com/zatrano/framework/v2/bootstrap/addons"
 
 	_ "github.com/zatrano/packages/agent"
-	_ "github.com/zatrano/packages/auth/token"
 	_ "github.com/zatrano/packages/auth"
+	_ "github.com/zatrano/packages/auth/token"
 	_ "github.com/zatrano/packages/backup"
 	_ "github.com/zatrano/packages/broadcasting"
 	_ "github.com/zatrano/packages/cache"
