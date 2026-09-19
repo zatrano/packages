@@ -7,6 +7,16 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.11.1 - 2026-09-19
+
+Why now: Publish the gofmt import-order fix so the tagged CI is green.
+
+### Fixed
+
+- Import order in `auth/token` and enablement graph tests (`gofmt`).
+
+Install with `go get github.com/zatrano/packages@v1.11.1`.
+
 ## 1.11.0 - 2026-09-19
 
 Why now: Put authorization, API tokens, OAuth, and social under `packages/auth` so the auth domain has one import namespace. Enable names stay flat.
