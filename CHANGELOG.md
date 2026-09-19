@@ -7,6 +7,16 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.12.0 - 2026-09-19
+
+Why now: Replace the string Event/Listener addon with typed Fact/Reaction so application side effects have one mechanism.
+
+### Breaking
+
+- Replaced the `events` addon with `facts` (typed Fact/Reaction, Sync/Async). Removed `Listen`/`Dispatch`/string event names, `make:event`/`make:listener`/`make:subscriber`, and `EventServiceProvider`. Auth publishes typed Facts (`UserRegistered`, `EmailVerified`, …). ORM persistence observers live on `orm.ObserveModel` and no longer use an application dispatcher.
+
+Install with `go get github.com/zatrano/packages@v1.12.0`.
+
 ## 1.11.1 - 2026-09-19
 
 Why now: Publish the gofmt import-order fix so the tagged CI is green.

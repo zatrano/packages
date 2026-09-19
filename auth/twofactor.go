@@ -208,7 +208,7 @@ func (m *Manager) ChallengeTwoFactor(req *http.Request, code string, rememberDev
 		return false, fmt.Errorf("two-factor challenge is not pending")
 	}
 	if m.lockouts != nil && m.lockouts.locked(twoFactorLockoutKey(req, id)) {
-		m.dispatch(EventLockout, LockoutEvent{Request: req, Guard: m.Guard().name, At: time.Now().UTC()})
+		m.publish(factContext(req), UserLockedOut{occur(req, nil, nil, m.Guard().name)})
 		return false, ErrLockout
 	}
 	user, err := m.Guard().Provider().RetrieveByID(id)
@@ -218,7 +218,7 @@ func (m *Manager) ChallengeTwoFactor(req *http.Request, code string, rememberDev
 	if !m.VerifyTwoFactorCode(user, code) {
 		if m.lockouts != nil {
 			if m.lockouts.hit(twoFactorLockoutKey(req, id)) {
-				m.dispatch(EventLockout, LockoutEvent{Request: req, User: user, Guard: m.Guard().name, At: time.Now().UTC()})
+				m.publish(factContext(req), UserLockedOut{occur(req, user, nil, m.Guard().name)})
 				return false, ErrLockout
 			}
 		}
@@ -236,7 +236,7 @@ func (m *Manager) ChallengeTwoFactor(req *http.Request, code string, rememberDev
 	if len(rememberDevice) > 0 && rememberDevice[0] {
 		m.queueTrustedDevice(req, user)
 	}
-	m.dispatch(EventTwoFactorAuthenticated, TwoFactorAuthenticatedEvent{Request: req, User: user, Guard: m.Guard().name, At: time.Now().UTC()})
+	m.publish(factContext(req), TwoFactorAuthenticated{occur(req, user, nil, m.Guard().name)})
 	return true, nil
 }
 

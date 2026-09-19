@@ -11,7 +11,6 @@ func init() {
 		Key:         "database",
 		Description: "Database manager",
 		Order:       10,
-		Optional:    []string{"events"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

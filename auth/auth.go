@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -85,9 +86,9 @@ func (g *Guard) Provider() UserProvider {
 // Attempt authenticates with credentials and logs the user in.
 func (g *Guard) Attempt(req *http.Request, credentials map[string]string, remember ...bool) (bool, error) {
 	if g.manager != nil {
-		g.manager.dispatch(EventAttempting, AttemptingEvent{Request: req, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+		g.manager.publish(factContext(req), UserAttempting{occur(req, nil, credentials, g.name)})
 		if g.manager.lockouts.locked(lockoutKey(req, credentials)) {
-			g.manager.dispatch(EventLockout, LockoutEvent{Request: req, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+			g.manager.publish(factContext(req), UserLockedOut{occur(req, nil, credentials, g.name)})
 			return false, ErrLockout
 		}
 	}
@@ -95,9 +96,9 @@ func (g *Guard) Attempt(req *http.Request, credentials map[string]string, rememb
 	if err != nil || user == nil {
 		if g.manager != nil {
 			locked := g.manager.lockouts.hit(lockoutKey(req, credentials))
-			g.manager.dispatch(EventFailed, FailedEvent{Request: req, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+			g.manager.publish(factContext(req), UserFailed{occur(req, nil, credentials, g.name)})
 			if locked {
-				g.manager.dispatch(EventLockout, LockoutEvent{Request: req, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+				g.manager.publish(factContext(req), UserLockedOut{occur(req, nil, credentials, g.name)})
 				return false, ErrLockout
 			}
 		}
@@ -106,9 +107,9 @@ func (g *Guard) Attempt(req *http.Request, credentials map[string]string, rememb
 	if !g.provider.ValidateCredentials(user, credentials) {
 		if g.manager != nil {
 			locked := g.manager.lockouts.hit(lockoutKey(req, credentials))
-			g.manager.dispatch(EventFailed, FailedEvent{Request: req, User: user, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+			g.manager.publish(factContext(req), UserFailed{occur(req, user, credentials, g.name)})
 			if locked {
-				g.manager.dispatch(EventLockout, LockoutEvent{Request: req, User: user, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+				g.manager.publish(factContext(req), UserLockedOut{occur(req, user, credentials, g.name)})
 				return false, ErrLockout
 			}
 		}
@@ -128,7 +129,7 @@ func (g *Guard) Attempt(req *http.Request, credentials map[string]string, rememb
 				sess.Put(twoFactorSessionKey, fmt.Sprint(user.AuthID()))
 				sess.Put(twoFactorRememberSessionKey, wantsRemember(remember))
 			}
-			g.manager.dispatch(EventTwoFactorChallenged, TwoFactorChallengedEvent{Request: req, User: user, Credentials: credentials, Guard: g.name, At: time.Now().UTC()})
+			g.manager.publish(factContext(req), TwoFactorChallenged{occur(req, user, credentials, g.name)})
 			return false, ErrTwoFactorRequired
 		}
 	}
@@ -179,7 +180,7 @@ func (g *Guard) Login(req *http.Request, user Authenticatable, remember ...bool)
 		}
 	}
 	if g.manager != nil {
-		g.manager.dispatch(EventLogin, LoginEvent{Request: req, User: user, Guard: g.name, At: time.Now().UTC()})
+		g.manager.publish(factContext(req), UserLoggedIn{occur(req, user, nil, g.name)})
 	}
 	return nil
 }
@@ -205,8 +206,8 @@ func (g *Guard) Logout(req *http.Request) error {
 	ClearPasswordConfirmation(req)
 	if g.manager != nil {
 		g.manager.ForgetTrustedDevice(req)
-		g.manager.dispatch(EventLogout, LogoutEvent{Request: req, User: user, Guard: g.name, At: time.Now().UTC()})
-		g.manager.dispatch(EventCurrentDeviceLogout, CurrentDeviceLogoutEvent{Request: req, User: user, Guard: g.name, At: time.Now().UTC()})
+		g.manager.publish(factContext(req), UserLoggedOut{occur(req, user, nil, g.name)})
+		g.manager.publish(factContext(req), CurrentDeviceLogout{occur(req, user, nil, g.name)})
 	}
 	return nil
 }
@@ -347,7 +348,7 @@ func (g *Guard) userFromSessionOrCache(req *http.Request) Authenticatable {
 type Manager struct {
 	defaultGuard            string
 	guards                  map[string]*Guard
-	dispatcher              Dispatcher
+	publisher               Publisher
 	sessions                *session.Manager
 	lockouts                *lockoutStore
 	crypt                   Crypt
@@ -420,8 +421,8 @@ func (m *Manager) MustVerifyEmail() bool {
 	return m != nil && m.mustVerifyEmail
 }
 
-// SetDispatcher configures lifecycle event dispatching.
-func (m *Manager) SetDispatcher(d Dispatcher) { m.dispatcher = d }
+// SetPublisher configures optional Fact publishing for authentication Reactions.
+func (m *Manager) SetPublisher(p Publisher) { m.publisher = p }
 
 // SetVerificationURLGenerator builds signed verification URLs for email verification.
 func (m *Manager) SetVerificationURLGenerator(fn func(user Authenticatable) (string, error)) {
@@ -507,15 +508,10 @@ func (m *Manager) InvalidateSessionsForUser(userID any) error {
 	return err
 }
 
-func (m *Manager) dispatch(name string, event any) {
-	if m != nil && m.dispatcher != nil {
-		_ = m.dispatcher.Dispatch(name, event)
+func (m *Manager) publish(ctx context.Context, fact any) {
+	if m != nil && m.publisher != nil {
+		_ = m.publisher.Publish(ctx, fact)
 	}
-}
-
-// DispatchEvent emits an authentication lifecycle event for integrations.
-func (m *Manager) DispatchEvent(name string, event any) {
-	m.dispatch(name, event)
 }
 
 // Guard returns a named guard.
@@ -573,7 +569,7 @@ func (m *Manager) LogoutOtherDevices(req *http.Request, password string) error {
 			return err
 		}
 	}
-	m.dispatch(EventOtherDeviceLogout, OtherDeviceLogoutEvent{Request: req, User: user, Guard: m.Guard().name, At: time.Now().UTC()})
+	m.publish(factContext(req), OtherDeviceLogout{occur(req, user, nil, m.Guard().name)})
 	return nil
 }
 

@@ -13,6 +13,7 @@ import (
 	_ "github.com/zatrano/packages/broadcasting"
 	_ "github.com/zatrano/packages/cache"
 	_ "github.com/zatrano/packages/docs"
+	_ "github.com/zatrano/packages/facts"
 	_ "github.com/zatrano/packages/flash"
 	_ "github.com/zatrano/packages/notification"
 	_ "github.com/zatrano/packages/orm"
@@ -31,10 +32,10 @@ func TestAuthRequiresClosure(t *testing.T) {
 	if !containsAll(meta.Requires, "hashing", "database", "session") {
 		t.Fatalf("auth Requires=%v", meta.Requires)
 	}
-	if containsAny(meta.Requires, "cache", "notification", "authorization", "events") {
+	if containsAny(meta.Requires, "cache", "notification", "authorization", "facts") {
 		t.Fatalf("optional names must not be Requires: %v", meta.Requires)
 	}
-	if !containsAll(meta.Optional, "cache", "notification", "authorization", "events") {
+	if !containsAll(meta.Optional, "cache", "notification", "authorization", "facts") {
 		t.Fatalf("auth Optional=%v", meta.Optional)
 	}
 
@@ -78,7 +79,6 @@ func TestOptionalNotInRequires(t *testing.T) {
 		"queue":        {"database", "cache"},
 		"notification": {"view", "broadcasting", "localization", "database"},
 		"backup":       {"database"},
-		"database":     {"events"},
 		"seo":          {"docs"},
 	}
 	for name, optional := range cases {
@@ -172,7 +172,7 @@ func TestNegativePathMissingRequires(t *testing.T) {
 
 func TestNegativePathOptionalAbsent(t *testing.T) {
 	cases := []addons.Meta{
-		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "events", "url"}},
+		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "facts", "url"}},
 		{Name: "queue", Optional: []string{"database", "cache"}},
 		{Name: "notification", Optional: []string{"view", "broadcasting", "localization", "database"}},
 		{Name: "backup", Optional: []string{"database"}},

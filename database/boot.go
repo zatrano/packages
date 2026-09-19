@@ -9,7 +9,6 @@ import (
 	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/database/query"
-	"github.com/zatrano/packages/events"
 	"github.com/zatrano/packages/orm"
 	"github.com/zatrano/packages/validation"
 )
@@ -88,9 +87,6 @@ func boot(app contracts.App) error {
 	})
 	if enc := app.Encrypter(); enc != nil {
 		orm.SetCastEncrypter(enc)
-	}
-	if ev := events.From(app); ev != nil {
-		orm.SetDispatcher(ev)
 	}
 	validation.SetDefaultPresenceChecker(func(table, column, value string) (bool, error) {
 		table = strings.TrimSpace(table)

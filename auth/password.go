@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
@@ -180,11 +181,11 @@ type PasswordBroker struct {
 	tokens TokenRepository
 	users  PasswordUserProvider
 	// notifier delivers the reset link (should return quickly; prefer async notification.Send).
-	notifier   func(email, token, resetURL string) error
-	ttl        time.Duration
-	throttle   time.Duration
-	dispatcher Dispatcher
-	sessions   *session.Manager
+	notifier  func(email, token, resetURL string) error
+	ttl       time.Duration
+	throttle  time.Duration
+	publisher Publisher
+	sessions  *session.Manager
 }
 
 // NewPasswordBroker creates a password broker.
@@ -214,9 +215,9 @@ func (b *PasswordBroker) SetMailer(fn func(email, token, resetURL string) error)
 	b.SetNotifier(fn)
 }
 
-// SetDispatcher configures password-reset lifecycle event dispatching.
-func (b *PasswordBroker) SetDispatcher(d Dispatcher) {
-	b.dispatcher = d
+// SetPublisher configures password-reset Fact publishing.
+func (b *PasswordBroker) SetPublisher(p Publisher) {
+	b.publisher = p
 }
 
 // SetSessionManager configures session invalidation after password reset.
@@ -293,8 +294,8 @@ func (b *PasswordBroker) Reset(email, token, password string) error {
 			_, _ = b.sessions.DestroyOthersForUser(user.AuthID(), "")
 		}
 	}
-	if b.dispatcher != nil {
-		_ = b.dispatcher.Dispatch(EventPasswordReset, PasswordResetEvent{User: user, At: time.Now().UTC()})
+	if b.publisher != nil {
+		_ = b.publisher.Publish(context.Background(), PasswordReset{occur(nil, user, nil, "")})
 	}
 	return nil
 }

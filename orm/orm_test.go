@@ -9,7 +9,6 @@ import (
 	_ "modernc.org/sqlite"
 
 	"github.com/zatrano/packages/database/query"
-	"github.com/zatrano/packages/events"
 	"github.com/zatrano/packages/orm"
 )
 
@@ -261,13 +260,13 @@ func TestModelEventsAndDirty(t *testing.T) {
 	db := setupORMDB(t)
 	defer db.Close()
 
-	d := events.New()
+	orm.ResetObservers()
+	t.Cleanup(orm.ResetObservers)
 	var created bool
-	d.Listen("softmodel.created", func(event any) error {
+	orm.Observe("softmodel", "created", func(event any) error {
 		created = true
 		return nil
 	})
-	orm.SetDispatcher(d)
 
 	m, err := orm.Create[softModel](map[string]any{"title": "evt", "hits": int64(1)})
 	if err != nil || !created {

@@ -1,6 +1,7 @@
 package auth_test
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	stdhttp "net/http"
@@ -275,22 +276,22 @@ func TestMultiGuardSessionIsolation(t *testing.T) {
 	}
 }
 
-type recordingDispatcher struct {
-	events []string
+type recordingPublisher struct {
+	facts []any
 }
 
-func (d *recordingDispatcher) Dispatch(name string, event any) error {
-	d.events = append(d.events, name)
+func (p *recordingPublisher) Publish(ctx context.Context, fact any) error {
+	p.facts = append(p.facts, fact)
 	return nil
 }
 
-func TestMarkEmailAsVerifiedDispatchesEvent(t *testing.T) {
+func TestMarkEmailAsVerifiedPublishesFact(t *testing.T) {
 	provider := newMemoryUserProvider()
 	user, _ := provider.Create(map[string]any{"email": "verify@zatrano.test", "password": "x"})
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
-	disp := &recordingDispatcher{}
-	manager.SetDispatcher(disp)
+	pub := &recordingPublisher{}
+	manager.SetPublisher(pub)
 
 	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	if err := manager.MarkEmailAsVerified(req, user); err != nil {
@@ -300,13 +301,13 @@ func TestMarkEmailAsVerifiedDispatchesEvent(t *testing.T) {
 		t.Fatal("expected verified")
 	}
 	found := false
-	for _, name := range disp.events {
-		if name == auth.EventVerified {
+	for _, fact := range pub.facts {
+		if _, ok := fact.(auth.EmailVerified); ok {
 			found = true
 		}
 	}
 	if !found {
-		t.Fatalf("expected %s, got %#v", auth.EventVerified, disp.events)
+		t.Fatalf("expected EmailVerified, got %#v", pub.facts)
 	}
 }
 

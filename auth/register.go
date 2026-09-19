@@ -78,7 +78,7 @@ func (m *Manager) Register(req *http.Request, attrs map[string]any, login ...boo
 			return user, err
 		}
 	}
-	m.dispatch(EventRegistered, RegisteredEvent{Request: req, User: user, Guard: m.Guard().name, At: time.Now().UTC()})
+	m.publish(factContext(req), UserRegistered{occur(req, user, nil, m.Guard().name)})
 	if m.MustVerifyEmail() {
 		_ = m.SendEmailVerification(user)
 	}
@@ -138,7 +138,7 @@ func (m *Manager) ChangePassword(req *http.Request, current, next string) error 
 	if generic, ok := user.(*GenericUser); ok && generic.Attributes != nil {
 		generic.Attributes["password"] = hashed
 	}
-	m.dispatch(EventPasswordReset, PasswordResetEvent{Request: req, User: user, Guard: m.Guard().name, At: time.Now().UTC()})
+	m.publish(factContext(req), PasswordReset{occur(req, user, nil, m.Guard().name)})
 	if m.passwordChangedSender != nil {
 		_ = m.passwordChangedSender(user)
 	}

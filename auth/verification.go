@@ -83,7 +83,7 @@ func MarkEmailVerified(attrs map[string]any) {
 	attrs["email_verified_at"] = time.Now().UTC()
 }
 
-// MarkEmailAsVerified persists verification and dispatches EventVerified.
+// MarkEmailAsVerified persists verification and publishes EmailVerified.
 func (m *Manager) MarkEmailAsVerified(req *http.Request, user Authenticatable) error {
 	if m == nil || user == nil {
 		return fmt.Errorf("user is required")
@@ -108,12 +108,7 @@ func (m *Manager) MarkEmailAsVerified(req *http.Request, user Authenticatable) e
 	} else if generic, ok := user.(*GenericUser); ok && generic.Attributes != nil {
 		MarkEmailVerified(generic.Attributes)
 	}
-	m.dispatch(EventVerified, VerifiedEvent{
-		Request: req,
-		User:    user,
-		Guard:   guard.guardName(),
-		At:      time.Now().UTC(),
-	})
+	m.publish(factContext(req), EmailVerified{occur(req, user, nil, guard.guardName())})
 	return nil
 }
 

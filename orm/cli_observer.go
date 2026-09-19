@@ -23,8 +23,10 @@ type MakeObserverCommand struct {
 	app contracts.App
 }
 
-func (c *MakeObserverCommand) Name() string        { return "make:observer" }
-func (c *MakeObserverCommand) Description() string { return "Create a model event observer scaffold" }
+func (c *MakeObserverCommand) Name() string { return "make:observer" }
+func (c *MakeObserverCommand) Description() string {
+	return "Create a model persistence observer scaffold"
+}
 func (c *MakeObserverCommand) Handle(args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("observer name required")
@@ -45,38 +47,38 @@ func (c *MakeObserverCommand) Handle(args []string) error {
 import (
 	"fmt"
 
-	"github.com/zatrano/packages/events"
+	"github.com/zatrano/packages/orm"
 )
 
-// %s observes "%s.*" lifecycle events.
+// %s observes "%s.*" persistence lifecycle hooks. These are not application Facts.
 type %s struct{}
 
-var _ events.ModelObserver = (*%s)(nil)
+var _ orm.ModelObserver = (*%s)(nil)
 
-func (o *%s) Created(event any) error {
-	fmt.Printf("%s created: %%v\n", event)
+func (o *%s) Created(model any) error {
+	fmt.Printf("%s created: %%v\n", model)
 	return nil
 }
 
-func (o *%s) Updated(event any) error {
-	fmt.Printf("%s updated: %%v\n", event)
+func (o *%s) Updated(model any) error {
+	fmt.Printf("%s updated: %%v\n", model)
 	return nil
 }
 
-func (o *%s) Deleted(event any) error {
-	fmt.Printf("%s deleted: %%v\n", event)
+func (o *%s) Deleted(model any) error {
+	fmt.Printf("%s deleted: %%v\n", model)
 	return nil
 }
 
-// Register%s attaches the observer to the dispatcher.
-func Register%s(d *events.Dispatcher) {
-	d.ObserveModel(%q, &%s{})
+// Register%s attaches the observer to ORM persistence hooks.
+func Register%s() {
+	orm.ObserveModel(%q, &%s{})
 }
 `, structName, subject, structName, structName, structName, subject, structName, subject, structName, subject, structName, structName, subject, structName)
 	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 		return err
 	}
 	fmt.Printf("Observer created: %s\n", path)
-	fmt.Printf("Call observers.Register%s(events.From(app)) during boot.\n", structName)
+	fmt.Printf("Call observers.Register%s() during boot.\n", structName)
 	return nil
 }

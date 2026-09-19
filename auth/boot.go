@@ -11,7 +11,7 @@ import (
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/cache"
 	"github.com/zatrano/packages/database"
-	"github.com/zatrano/packages/events"
+	"github.com/zatrano/packages/facts"
 	"github.com/zatrano/packages/notification"
 	"github.com/zatrano/packages/session"
 )
@@ -21,7 +21,7 @@ func boot(app contracts.App) error {
 	app.Container().Instance("gate", authorization.New())
 	authManager := NewManager(app.Config().GetString("auth.defaults.guard", "web"))
 	authManager.SetSessionManager(session.From(app))
-	authManager.SetDispatcher(events.From(app))
+	authManager.SetPublisher(facts.From(app))
 	if max := app.Config().GetInt("auth.lockout.max_attempts", 5); max > 0 {
 		decayMin := app.Config().GetInt("auth.lockout.decay_minutes", 1)
 		if decayMin <= 0 {
@@ -168,7 +168,7 @@ func boot(app contracts.App) error {
 			tokens := NewDatabaseTokenRepositoryTable(db, driver, table, time.Duration(expireMin)*time.Minute)
 			passwords := NewPasswordBroker(tokens, provider, time.Duration(expireMin)*time.Minute)
 			passwords.SetThrottle(time.Duration(throttleSec) * time.Second)
-			passwords.SetDispatcher(events.From(app))
+			passwords.SetPublisher(facts.From(app))
 			passwords.SetSessionManager(session.From(app))
 			passwords.SetNotifier(func(email, token, resetURL string) error {
 				n := notification.From(app)

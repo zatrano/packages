@@ -411,7 +411,7 @@ Relative to AI:
 | `cache` | service | No | RAG/result stores are their own |
 | `httpclient` | service | No | Drivers and `web_fetch` use `net/http` |
 | `bus` | service | No | Sync command bus; not workflow |
-| `lock` / `events` | service | No | |
+| `lock` / `facts` | service | No | |
 
 Domain-specific AI health/usage observers are reasonable. Unwired **HTTP client, circuit, app health, and rate limit** are the real gaps — not missing a second queue.
 
