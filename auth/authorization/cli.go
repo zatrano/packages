@@ -36,7 +36,7 @@ func (c *MakePolicyCommand) Handle(args []string) error {
 	path := filepath.Join(dir, bootutil.ToSnake(name)+".go")
 	content := fmt.Sprintf(`package policies
 
-import "github.com/zatrano/packages/authorization"
+import "github.com/zatrano/packages/auth/authorization"
 
 func New%s() *authorization.Policy {
 	return authorization.NewPolicy().

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.5.0
+
+- Auth-domain neighbors moved under this tree (`authorization`, `token`, `oauth`, `social`). `webauthn` remains a nested module at `github.com/zatrano/packages/webauthn`. Root `auth.From` is unchanged.
+
 ## 1.4.0
 
 - `AUTH_MUST_VERIFY_EMAIL` (default `false`): when true, register/profile send verification mail and `VerifyEmailMiddleware` blocks unverified users. When false, register stamps `email_verified_at` and the middleware does not require confirmation. `make:auth` / `make:panel` wrap account and panel routes with the middleware.

@@ -7,6 +7,20 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.11.0 - 2026-09-19
+
+Why now: Put authorization, API tokens, OAuth, and social under `packages/auth` so the auth domain has one import namespace. Enable names stay flat.
+
+### Breaking
+
+- Removed top-level import paths `github.com/zatrano/packages/{authorization,apitoken,oauth,social}`. Import `auth/authorization`, `auth/token` (package `apitoken`), `auth/oauth`, and `auth/social`. Enable names are unchanged.
+
+### Changed
+
+- Auth domain namespace: implementations live under `auth/authorization`, `auth/token`, `auth/oauth`, and `auth/social`. `webauthn` stays `github.com/zatrano/packages/webauthn` (nested Go module path cannot move). `auth.From(app)` is unchanged. `session`, `hashing`, and `notification/otp` stay outside `auth`.
+
+Install with `go get github.com/zatrano/packages@v1.11.0`.
+
 ## 1.10.0 - 2026-09-15
 
 Why now: Drop the `api` library (path versioning is kernel routing) and ship auth email-verify env plus JSON surface parity with web.

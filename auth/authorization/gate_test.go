@@ -7,7 +7,7 @@ import (
 
 	"github.com/zatrano/framework/v2/kernel/http"
 	"github.com/zatrano/packages/auth"
-	"github.com/zatrano/packages/authorization"
+	"github.com/zatrano/packages/auth/authorization"
 )
 
 type fakeUser struct{ id any }

@@ -15,7 +15,7 @@ func DefaultConfig() map[string]any {
 				"driver":   "session",
 				"provider": "users",
 			},
-			// Session SPA/API cookie auth. Personal access tokens use packages/apitoken middleware.
+			// Session SPA/API cookie auth. Personal access tokens use packages/auth/token middleware.
 			"api": map[string]any{
 				"driver":   "session",
 				"provider": "users",

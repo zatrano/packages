@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/packages/apitoken"
+	"github.com/zatrano/packages/auth/token"
 	"github.com/zatrano/packages/auth"
 )
 

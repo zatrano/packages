@@ -19,7 +19,11 @@ auth.Middleware(auth.From(app), "web", "api")
 auth.VerifyEmailMiddleware(auth.From(app))
 ```
 
-Personal access tokens live in `packages/apitoken` (middleware), not as an auth guard driver.
+Personal access tokens live in `packages/auth/token` (package `apitoken`, middleware), not as an auth guard driver. Import `github.com/zatrano/packages/auth/token`.
+
+Authorization is `github.com/zatrano/packages/auth/authorization` (`authorization.From`). OAuth server: `auth/oauth`. Social login: `auth/social`. Passkeys: `github.com/zatrano/packages/webauthn` (nested module). TOTP helpers: `auth/totp`.
+
+Resolve authentication with `auth.From(app)` — never `app.Auth()`.
 
 ## Email verification
 

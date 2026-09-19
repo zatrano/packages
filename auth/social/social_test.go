@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/packages/social"
+	"github.com/zatrano/packages/auth/social"
 )
 
 func TestSocialRedirectAndUser(t *testing.T) {

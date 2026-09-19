@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/packages/oauth"
+	"github.com/zatrano/packages/auth/oauth"
 )
 
 func TestOAuthClientCredentials(t *testing.T) {

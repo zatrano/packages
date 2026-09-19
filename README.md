@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.10.0"><code>v1.10.0</code></a>
+  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.11.0"><code>v1.11.0</code></a>
   ·
   Framework pin: <code>github.com/zatrano/framework/v2@v2.0.28</code>
 </p>
@@ -32,7 +32,7 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.10.0`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
+It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.11.0`**. It requires `github.com/zatrano/framework/v2 v2.0.28`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z` (nested: `scripts/release.sh --dry-run database/driver/sqlite/vX.Y.Z`).
 
@@ -44,7 +44,7 @@ The two modules cannot be merged: this one already requires the framework.
   github.com/zatrano/framework/v2          github.com/zatrano/packages
   ────────────────────────────          ──────────────────────────
   kernel/http  kernel/routing           session  auth  database  view
-  contracts    bootstrap.App()          queue    ai    oauth     social
+  contracts    bootstrap.App()          queue    ai    auth/oauth  auth/social
   zatrano new                           toolkit   resources
           │                                        ▲
           │         blank-import                   │
@@ -84,13 +84,13 @@ From the app CLI:
 
 ```bash
 go get github.com/zatrano/framework/v2@v2.6.0
-go get github.com/zatrano/packages@v1.10.0
+go get github.com/zatrano/packages@v1.11.0
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.10.0` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.11.0` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0` → `v1.11.0`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -133,18 +133,38 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 
 ### Identity
 
+Authentication capabilities live under the `auth` domain. Enable names stay flat (`package:enable authorization`). Imports are nested.
+
+```text
+auth/                 session login, MFA, password reset  (auth.From)
+auth/authorization/   gates and policies
+auth/token/           personal access tokens (package apitoken)
+auth/oauth/           OAuth2 authorization server
+auth/social/          GitHub/Google OAuth client
+auth/totp/            TOTP helpers used by MFA
+webauthn/             passkeys (own Go module path; auth-domain conceptually)
+```
+
+| Enable name | Canonical import | Kind | What it does |
+| --- | --- | --- | --- |
+| [`auth`](auth) | `github.com/zatrano/packages/auth` | service | Session login, register, password reset, email verify, lockout, MFA, remember-me |
+| `authorization` | [`auth/authorization`](auth/authorization) | service | Gates and policies after authentication |
+| `apitoken` | [`auth/token`](auth/token) (package `apitoken`) | service | Personal access tokens (Bearer) |
+| `social` | [`auth/social`](auth/social) | service | GitHub/Google OAuth **client** login |
+| `oauth` | [`auth/oauth`](auth/oauth) | service | OAuth2 **authorization server** (not social login) |
+| [`webauthn`](webauthn) | `github.com/zatrano/packages/webauthn` | heavy | Passkey registration and login (own `go.mod`) |
+
+Generic primitives stay outside `auth` (reusable, not authentication-specific):
+
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`auth`](auth) | service | Session login, register, password reset, email verify, lockout, MFA, remember-me |
-| [`authorization`](authorization) | service | Gates and policies after authentication |
-| [`hashing`](hashing) | service | bcrypt password hashes |
-| [`apitoken`](apitoken) | service | Personal access tokens (Bearer) |
-| [`social`](social) | service | GitHub/Google OAuth **client** login |
-| [`oauth`](oauth) | service | OAuth2 **authorization server** (not social login) |
-| [`webauthn`](webauthn) | heavy | Passkey registration and login (own `go.mod`) |
+| [`hashing`](hashing) | service | bcrypt secret hashes (auth depends on it; other code may too) |
+| [`session`](session) | service | Per-visitor HTTP sessions (listed under Web) |
 | [`consent`](consent) | library | Cookie-consent helpers |
 | [`fingerprint`](fingerprint) | library | Device fingerprint helpers |
 | [`honeypot`](honeypot) | library | Hidden spam-trap fields on forms |
+
+Numeric OTP helpers for notifications live in [`notification/otp`](notification/otp), not MFA. MFA is `auth` + `auth/totp`.
 
 ### Data
 
@@ -260,9 +280,9 @@ Public consumption of a nested driver (after that module is tagged correctly) is
 go get github.com/zatrano/packages/database/driver/sqlite@v1.0.0
 ```
 
-The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.10.0`.
+The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.11.0`.
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.10.0` does not require those nested module paths.
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.11.0` does not require those nested module paths.
 
 ## Local development
 

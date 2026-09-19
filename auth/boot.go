@@ -7,7 +7,7 @@ import (
 
 	"github.com/zatrano/framework/v2/contracts"
 	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
-	"github.com/zatrano/packages/authorization"
+	"github.com/zatrano/packages/auth/authorization"
 	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/packages/cache"
 	"github.com/zatrano/packages/database"
@@ -71,7 +71,7 @@ func boot(app contracts.App) error {
 							providerName = p
 						}
 					}
-					// Session guards only; token/PAT auth uses packages/apitoken middleware.
+					// Session guards only; token/PAT auth uses packages/auth/token middleware.
 					if guardDriver != "session" {
 						continue
 					}
