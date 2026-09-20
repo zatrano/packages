@@ -7,6 +7,16 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.13.1 - 2026-09-20
+
+Why now: Pin the kernel that actually contains `middleware.Throttle` so CI and public consumers can compile `ratelimit`.
+
+### Fixed
+
+- Require `github.com/zatrano/framework/v2 v2.8.0`. `v1.13.0` still declared `v2.0.28`, so `go vet` without the sibling replace failed on `AttemptLimiter` / `Throttle`.
+
+Install with `go get github.com/zatrano/packages@v1.13.1`.
+
 ## 1.13.0 - 2026-09-20
 
 Why now: Move Accept negotiation into the kernel so packages no longer duplicate HTTP protocol primitives.
