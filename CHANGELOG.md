@@ -7,6 +7,21 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.13.0 - 2026-09-20
+
+Why now: Move Accept negotiation into the kernel so packages no longer duplicate HTTP protocol primitives.
+
+### Breaking
+
+- Removed `github.com/zatrano/packages/negotiate`. Use `kernel/http.Negotiate` and `kernel/middleware.Negotiate`.
+
+### Changed
+
+- `ratelimit` HTTP 429 middleware delegates to `kernel/middleware.Throttle`. Limiter state stays in this package. `Limiter.Take` is the atomic HTTP contract; `TooManyAttempts` / `Hit` / `AvailableIn` remain for programmatic use.
+- `url.HasRoute` looks up the named route (`Router.Route`) instead of generating a URL, so parameterized routes are not false negatives.
+
+Install with `go get github.com/zatrano/packages@v1.13.0`.
+
 ## 1.12.0 - 2026-09-19
 
 Why now: Replace the string Event/Listener addon with typed Fact/Reaction so application side effects have one mechanism.

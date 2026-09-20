@@ -42,8 +42,12 @@ func (g *Generator) To(path string) string {
 	return g.root + path
 }
 
-// Route builds a named route URL.
+// Route builds an absolute URL for a named route via kernel routing (Router.URL).
+// The generator does not keep a second route registry.
 func (g *Generator) Route(name string, params ...map[string]string) (string, error) {
+	if g == nil || g.router == nil {
+		return "", fmt.Errorf("url generator has no router")
+	}
 	path, err := g.router.URL(name, params...)
 	if err != nil {
 		return "", err
@@ -95,10 +99,13 @@ func (g *Generator) Current(path string, query ...map[string]string) string {
 	return g.Query(path, query[0])
 }
 
-// HasRoute reports whether a named route exists.
+// HasRoute reports whether a named route exists (lookup only; not URL generation).
 func (g *Generator) HasRoute(name string) bool {
-	_, err := g.router.URL(name)
-	return err == nil
+	if g == nil || g.router == nil || name == "" {
+		return false
+	}
+	_, ok := g.router.Route(name)
+	return ok
 }
 
 // Format formats a path with sprintf-style args then absolutizes it.

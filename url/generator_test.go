@@ -23,4 +23,18 @@ func TestGenerator(t *testing.T) {
 	if gen.Asset("app.css") != "http://localhost:8080/app.css" {
 		t.Fatalf("asset=%q", gen.Asset("app.css"))
 	}
+	if !gen.HasRoute("users.show") {
+		t.Fatal("named route with required params must exist")
+	}
+	if gen.HasRoute("missing") {
+		t.Fatal("unknown name")
+	}
+
+	bare := url.New(nil, "http://localhost:8080")
+	if _, err := bare.Route("users.show"); err == nil {
+		t.Fatal("nil router must error")
+	}
+	if bare.HasRoute("users.show") {
+		t.Fatal("nil router has no routes")
+	}
 }

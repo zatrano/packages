@@ -42,6 +42,9 @@ func (g *Generator) Signed(path string, expiresIn time.Duration, query ...map[st
 
 // TemporarySignedRoute signs a named route URL.
 func (g *Generator) TemporarySignedRoute(name string, expiresIn time.Duration, params map[string]string, query ...map[string]string) (string, error) {
+	if g == nil || g.router == nil {
+		return "", fmt.Errorf("url generator has no router")
+	}
 	path, err := g.router.URL(name, params)
 	if err != nil {
 		return "", err

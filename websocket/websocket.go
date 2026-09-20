@@ -25,6 +25,9 @@ type Handler func(conn *Conn) error
 type CheckOrigin func(req *http.Request) bool
 
 // Upgrade upgrades matching requests to WebSocket using SameOrigin checks.
+// HTTP 101 takeover uses kernel/http.Hijack; this package implements RFC 6455 frames.
+// Hijack requires net/http.Hijacker (typical for HTTP/1.1). HTTP/2 writers usually
+// do not implement it; Upgrade then returns 500 "hijacking not supported".
 func Upgrade(handler Handler) routing.HandlerFunc {
 	return UpgradeWithCheckOrigin(handler, nil)
 }
@@ -116,13 +119,14 @@ func (c *Conn) ReadMessage() (opcode byte, payload []byte, err error) {
 	opcode = header[0] & 0x0f
 	masked := header[1]&0x80 != 0
 	length := int(header[1] & 0x7f)
-	if length == 126 {
+	switch length {
+	case 126:
 		ext := make([]byte, 2)
 		if _, err = io.ReadFull(c.bufrw, ext); err != nil {
 			return 0, nil, err
 		}
 		length = int(binary.BigEndian.Uint16(ext))
-	} else if length == 127 {
+	case 127:
 		ext := make([]byte, 8)
 		if _, err = io.ReadFull(c.bufrw, ext); err != nil {
 			return 0, nil, err

@@ -95,6 +95,44 @@ func (l *Limiter) TooManyAttempts(key string, maxAttempts int) bool {
 	return b.hits >= maxAttempts
 }
 
+// Take records one attempt atomically. allowed is false when the key is already at the limit.
+func (l *Limiter) Take(key string, maxAttempts int, decay time.Duration) (allowed bool, remaining int, retryAfter int) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	now := time.Now()
+	b, ok := l.attempts[key]
+	if ok && now.After(b.expiresAt) {
+		delete(l.attempts, key)
+		ok = false
+	}
+	if ok && b.hits >= maxAttempts {
+		sec := int(time.Until(b.expiresAt).Seconds())
+		if sec < 0 {
+			sec = 0
+		}
+		return false, 0, sec
+	}
+	if !ok {
+		l.attempts[key] = &bucket{
+			hits:       1,
+			expiresAt:  now.Add(decay),
+			retryAfter: decay,
+		}
+		rem := maxAttempts - 1
+		if rem < 0 {
+			rem = 0
+		}
+		return true, rem, 0
+	}
+	b.hits++
+	rem := maxAttempts - b.hits
+	if rem < 0 {
+		rem = 0
+	}
+	return true, rem, 0
+}
+
 // Hit increments the attempt counter.
 func (l *Limiter) Hit(key string, decay time.Duration) int {
 	l.mu.Lock()
@@ -145,42 +183,4 @@ func (l *Limiter) Clear(key string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	delete(l.attempts, key)
-}
-
-// Middleware limits requests by key resolver.
-func Middleware(limiter *Limiter, maxAttempts int, decay time.Duration, key func(*http.Request) string) routing.MiddlewareFunc {
-	return func(next routing.HandlerFunc) routing.HandlerFunc {
-		return func(req *http.Request) *http.Response {
-			k := key(req)
-			if limiter.TooManyAttempts(k, maxAttempts) {
-				resp := http.JSON(map[string]any{
-					"message": "Too Many Attempts.",
-				}).Status(429)
-				resp.Header("Retry-After", fmt.Sprint(limiter.AvailableIn(k)))
-				resp.Header("X-RateLimit-Limit", fmt.Sprint(maxAttempts))
-				resp.Header("X-RateLimit-Remaining", "0")
-				return resp
-			}
-
-			hits := limiter.Hit(k, decay)
-			remaining := maxAttempts - hits
-			if remaining < 0 {
-				remaining = 0
-			}
-
-			resp := next(req)
-			if resp != nil {
-				resp.Header("X-RateLimit-Limit", fmt.Sprint(maxAttempts))
-				resp.Header("X-RateLimit-Remaining", fmt.Sprint(remaining))
-			}
-			return resp
-		}
-	}
-}
-
-// PerIP limits by client IP.
-func PerIP(limiter *Limiter, maxAttempts int, decay time.Duration) routing.MiddlewareFunc {
-	return Middleware(limiter, maxAttempts, decay, func(req *http.Request) string {
-		return "ip:" + req.IP()
-	})
 }

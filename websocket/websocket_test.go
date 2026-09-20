@@ -5,7 +5,12 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
+	stdhttp "net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"github.com/zatrano/framework/v2/kernel/http"
 )
 
 func TestWriteBinaryPingPongClose(t *testing.T) {
@@ -104,4 +109,23 @@ func mustReadUnmaskedFrame(t *testing.T, data []byte) (opcode byte, payload []by
 	payload = data[off : off+n]
 	rest = data[off+n:]
 	return opcode, payload, rest
+}
+
+func TestUpgradeHijackUnsupported(t *testing.T) {
+	raw := httptest.NewRequest(stdhttp.MethodGet, "/ws", nil)
+	raw.Header.Set("Upgrade", "websocket")
+	raw.Header.Set("Connection", "Upgrade")
+	raw.Header.Set("Sec-WebSocket-Key", "dGhlIHNhbXBsZSBub25jZQ==")
+	resp := Upgrade(func(conn *Conn) error { return nil })(http.NewRequest(raw))
+	if resp.StatusCode() != 101 {
+		t.Fatalf("status=%d", resp.StatusCode())
+	}
+	rec := httptest.NewRecorder()
+	err := resp.WriteTo(rec)
+	if err == nil || !strings.Contains(err.Error(), "hijacking not supported") {
+		t.Fatalf("err=%v", err)
+	}
+	if rec.Code != stdhttp.StatusInternalServerError {
+		t.Fatalf("code=%d", rec.Code)
+	}
 }
