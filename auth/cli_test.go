@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/kernel"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/kernel"
 )
 
 func TestAuthCLIRegistered(t *testing.T) {
@@ -57,8 +57,8 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{
-		filepath.Join(dir, "app", "http", "controllers", "auth", "web", "auth_controller.go"),
-		filepath.Join(dir, "app", "http", "controllers", "auth", "api", "auth_controller.go"),
+		filepath.Join(dir, "app", "http", "handlers", "auth", "web", "auth_handler.go"),
+		filepath.Join(dir, "app", "http", "handlers", "auth", "api", "auth_handler.go"),
 		filepath.Join(dir, "app", "routes", "auth", "web", "auth.go"),
 		filepath.Join(dir, "app", "routes", "auth", "api", "auth.go"),
 	}
@@ -84,8 +84,8 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 	if strings.Contains(string(apiBody), "github.com/zatrano/packages/api") {
 		t.Fatal("API versioning is kernel routing.Version, not packages/api")
 	}
-	if strings.Contains(string(apiBody), "github.com/zatrano/framework/v2/api") {
-		t.Fatal("there is no framework/v2/api package")
+	if strings.Contains(string(apiBody), "github.com/zatrano/framework/v3/api") {
+		t.Fatal("there is no framework/v3/core/api package")
 	}
 	if !strings.Contains(string(apiBody), "routing.Version") {
 		t.Fatal("API routes must call routing.Version")
@@ -104,7 +104,7 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 			t.Fatalf("API routes missing %s", needle)
 		}
 	}
-	apiCtrl, err := os.ReadFile(filepath.Join(dir, "app", "http", "controllers", "auth", "api", "auth_controller.go"))
+	apiCtrl, err := os.ReadFile(filepath.Join(dir, "app", "http", "handlers", "auth", "api", "auth_handler.go"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -123,8 +123,8 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 		}
 	}
 	absent := []string{
-		filepath.Join(dir, "app", "http", "controllers", "auth", "web", "social_auth_controller.go"),
-		filepath.Join(dir, "app", "http", "controllers", "auth", "api", "social_auth_controller.go"),
+		filepath.Join(dir, "app", "http", "handlers", "auth", "web", "social_auth_handler.go"),
+		filepath.Join(dir, "app", "http", "handlers", "auth", "api", "social_auth_handler.go"),
 		filepath.Join(dir, "app", "services", "social.go"),
 		filepath.Join(dir, "app", "models", "social_account.go"),
 	}
@@ -165,8 +165,8 @@ func TestMakeAuthSocialBareFlagEnablesGoogle(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{
-		filepath.Join(dir, "app", "http", "controllers", "auth", "web", "social_auth_controller.go"),
-		filepath.Join(dir, "app", "http", "controllers", "auth", "api", "social_auth_controller.go"),
+		filepath.Join(dir, "app", "http", "handlers", "auth", "web", "social_auth_handler.go"),
+		filepath.Join(dir, "app", "http", "handlers", "auth", "api", "social_auth_handler.go"),
 		filepath.Join(dir, "app", "services", "social.go"),
 	}
 	for _, path := range want {
@@ -208,7 +208,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(enabled), `"view"`) {
+	if !strings.Contains(string(enabled), `"template"`) {
 		t.Fatal("make:auth must enable view")
 	}
 	if !strings.Contains(string(enabled), `"url"`) {
@@ -218,17 +218,17 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/view") {
+	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/template") {
 		t.Fatal("make:auth must blank-import view")
 	}
 	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/url") {
 		t.Fatal("make:auth must blank-import url")
 	}
-	home, err := os.ReadFile(filepath.Join(dir, "app", "http", "controllers", "web", "home_controller.go"))
+	home, err := os.ReadFile(filepath.Join(dir, "app", "http", "handlers", "web", "home_handler.go"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(home), `http.View("web.welcome")`) {
+	if !strings.Contains(string(home), `http.Template("web.welcome")`) {
 		t.Fatalf("starter home must switch to View:\n%s", home)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "app", "views", "web", "welcome.html")); err != nil {
@@ -261,17 +261,17 @@ import (
 	if err := os.WriteFile(filepath.Join(dir, "bootstrap", "addons.go"), []byte(addons), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	home := filepath.Join(dir, "app", "http", "controllers", "web", "home_controller.go")
+	home := filepath.Join(dir, "app", "http", "handlers", "web", "home_handler.go")
 	if err := os.MkdirAll(filepath.Dir(home), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	src := `package web
 
-import "github.com/zatrano/framework/v2/kernel/http"
+import "github.com/zatrano/framework/v3/core/kernel/http"
 
-type HomeController struct{}
+type HomeHandler struct{}
 
-func (c *HomeController) Index(req *http.Request) *http.Response {
+func (c *HomeHandler) Index(req *http.Request) *http.Response {
 	return http.HTML("<!DOCTYPE html><html><head><title>App</title></head><body><h1>App</h1></body></html>")
 }
 `
@@ -287,7 +287,7 @@ func TestMakePanelWritesSurface(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{
-		filepath.Join(dir, "app", "http", "controllers", "dashboard", "home_controller.go"),
+		filepath.Join(dir, "app", "http", "handlers", "dashboard", "home_handler.go"),
 		filepath.Join(dir, "app", "routes", "dashboard", "dashboard.go"),
 		filepath.Join(dir, "app", "views", "dashboard", "layouts", "dashboard.html"),
 		filepath.Join(dir, "app", "views", "dashboard", "index.html"),

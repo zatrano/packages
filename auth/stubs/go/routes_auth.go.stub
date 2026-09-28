@@ -2,7 +2,7 @@ package web
 
 import (
 	approutes "__MODULE__/app/routes"
-	authctrl "__MODULE__/app/http/controllers/auth/web"
+	authctrl "__MODULE__/app/http/handlers/auth/web"
 
 	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/ratelimit"

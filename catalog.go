@@ -1,6 +1,6 @@
 package packages
 
-import "github.com/zatrano/framework/v2/kernel"
+import "github.com/zatrano/framework/v3/core/kernel"
 
 // Catalog lists experimental intelligence libraries and opt-in toolkit libraries.
 // The consumer-facing name list is console/describe/catalog.go in the framework;

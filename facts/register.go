@@ -3,8 +3,8 @@ package facts
 import (
 	"context"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 )
 
 var _ contracts.LifecycleProvider = (*ServiceProvider)(nil)

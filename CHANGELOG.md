@@ -13,7 +13,7 @@ Why now: Pin the kernel that actually contains `middleware.Throttle` so CI and p
 
 ### Fixed
 
-- Require `github.com/zatrano/framework/v2 v2.8.0`. `v1.13.0` still declared `v2.0.28`, so `go vet` without the sibling replace failed on `AttemptLimiter` / `Throttle`.
+- Require `github.com/zatrano/framework/v3 v2.8.0`. `v1.13.0` still declared `v2.0.28`, so `go vet` without the sibling replace failed on `AttemptLimiter` / `Throttle`.
 
 Install with `go get github.com/zatrano/packages@v1.13.1`.
 
@@ -120,11 +120,11 @@ Why now: Pin the catalog freeze so applications can import toolkit libraries, ne
 ### Changed
 
 - Broadcasting no longer declares Optional `auth` (private channels resolve `auth` at request time). Official addon Requires/Optional graph is cycle-tested.
-- `make:auth` writes `controllers/auth/{web,api}`, `routes/auth/{web,api}`, `views/auth` pages, `views/layout/{auth,mail}`, and `views/mail/auth`. Default output has no social files, routes, views, or lang keys. `--social` / `--social=google` adds them. GitHub is not generated.
-- `package:enable view` (and `make:auth`) write `views/layout/app.html` and `views/web/welcome.html` when missing, and switch the starter `HomeController` from `http.HTML` to `http.View("web.welcome")`.
+- `make:auth` writes `handlers/auth/{web,api}`, `routes/auth/{web,api}`, `views/auth` pages, `views/layout/{auth,mail}`, and `views/mail/auth`. Default output has no social files, routes, views, or lang keys. `--social` / `--social=google` adds them. GitHub is not generated.
+- `package:enable template` (and `make:auth`) write `views/layout/app.html` and `views/web/welcome.html` when missing, and switch the starter `HomeHandler` from `http.HTML` to `http.Template("web.welcome")`.
 - `make:panel {name}` scaffolds a named HTML surface.
 
-This module still requires `github.com/zatrano/framework/v2 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
+This module still requires `github.com/zatrano/framework/v3 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
 
 ## 1.8.0 - 2026-09-15
 
@@ -140,7 +140,7 @@ Why now: Publish toolkit libraries and experimental AI/RAG/agent labels so frame
 
 - OAuth, ORM, and WebAuthn check `crypto/rand` errors instead of discarding them.
 
-This module still requires `github.com/zatrano/framework/v2 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
+This module still requires `github.com/zatrano/framework/v3 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
 
 ## 1.7.2 - 2026-09-10
 
@@ -148,7 +148,7 @@ This module still requires `github.com/zatrano/framework/v2 v2.0.28` (minimum). 
 
 - `unique` / `exists` fail closed when no PresenceChecker is bound, the rule is missing a table or column, or the checker returns an error. An infrastructure failure is no longer treated as a successful lookup. The database package's default checker also returns an error for empty table or column instead of `(false, nil)`. `unique` / `exists` no longer silently succeed when the database checker or required infrastructure cannot determine the result.
 
-This module still requires `github.com/zatrano/framework/v2 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
+This module still requires `github.com/zatrano/framework/v3 v2.0.28` (minimum). Nested-module publication remains a separate tagging operation.
 
 ## 1.7.1 - 2026-09-09
 
@@ -163,7 +163,7 @@ In-tree ORM/query tests may still use public `modernc.org/sqlite`.
 
 ## 1.7.0 - 2026-09-09
 
-Require `github.com/zatrano/framework/v2 v2.0.28`. Public module path stays `github.com/zatrano/packages` (no `/v2` suffix).
+Require `github.com/zatrano/framework/v3 v2.0.28`. Public module path stays `github.com/zatrano/packages` (no `/v2` suffix).
 
 ### Changed
 
@@ -176,105 +176,105 @@ Require `github.com/zatrano/framework/v2 v2.0.28`. Public module path stays `git
 
 ## 2.0.27 - 2026-09-08
 
-Require `github.com/zatrano/framework/v2 v2.0.27`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.27`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.26 - 2026-09-08
 
-Require `github.com/zatrano/framework/v2 v2.0.26`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.26`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.25 - 2026-09-08
 
-Require `github.com/zatrano/framework/v2 v2.0.25`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.25`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.24 - 2026-09-08
 
-Require `github.com/zatrano/framework/v2 v2.0.24`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.24`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.22 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.22`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.22`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.21 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.21`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.21`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.20 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.20`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.20`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.19 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.19`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.19`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.18 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.18`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.18`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.17 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.17`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.17`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.16 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.16`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.16`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.14 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.14`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.14`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.13 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.13`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.13`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.12 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.12`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.12`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.11 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.11`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.11`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.10 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.10`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.10`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.9 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.9`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.9`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.8 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.8`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.8`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.7 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.7`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.7`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.6 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.6`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.6`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.5 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.5`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.5`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.4 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.4`. This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.4`. This packages module is still not tagged `v2.x`.
 
 ## 2.0.3 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.3` (registry data model on the kernel). This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.3` (registry data model on the kernel). This packages module is still not tagged `v2.x`.
 
 ## 2.0.2 - 2026-09-07
 
-Require `github.com/zatrano/framework/v2 v2.0.2`. Bind `apitoken` on Register so `From(app)` works. Document Enabled âˆ© Imported. Tests for hashing, health, redisx, and testing.
+Require `github.com/zatrano/framework/v3 v2.0.2`. Bind `apitoken` on Register so `From(app)` works. Document Enabled âˆ© Imported. Tests for hashing, health, redisx, and testing.
 
 This packages module is still not tagged `v2.x`.
 
 ## 2.0.1 - 2026-09-06
 
-Require `github.com/zatrano/framework/v2 v2.0.1` (GOPROXY-valid kernel module). This packages module is still not tagged `v2.x`.
+Require `github.com/zatrano/framework/v3 v2.0.1` (GOPROXY-valid kernel module). This packages module is still not tagged `v2.x`.
 
 ## 2.0.0 - 2026-09-06
 
@@ -288,7 +288,7 @@ v2 packages are the default line on `main`. This module stays `github.com/zatran
 
 ### Changed
 
-- Imports that resolve `app/views`, `app/localization`, and `app/database` now use `github.com/zatrano/framework/v2/kernel/dirs` (was `kernel/layout`).
+- Imports that resolve `templates`, `app/localization`, and `app/database` now use `github.com/zatrano/framework/v3/core/kernel/dirs` (was `kernel/layout`).
 - CI: tests, coding style, static analysis, and security (same set as the framework). Linux jobs check out `zatrano/framework@main` as a sibling.
 - `validation` no longer imports `flash` (old input is flashed on the session directly). Importing validation/database/billing must not register the flash addon.
 - Browser feature tests register probe routes before `Bootstrap` (router is frozen after boot).
@@ -296,4 +296,4 @@ v2 packages are the default line on `main`. This module stays `github.com/zatran
 ### Notes
 
 - Go module path is `github.com/zatrano/packages` (no `/v2` suffix). Do **not** tag `v2.0.0-alpha`: the Go toolchain would require `github.com/zatrano/packages/v2`. Use `v0.x` / `v1.x` tags (for example `v1.0.0-alpha`) until a real v1/v2 module decision.
-- Local development: `replace github.com/zatrano/framework/v2 => ../framework`.
+- Local development: `replace github.com/zatrano/framework/v3 => ../framework`.

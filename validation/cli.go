@@ -7,8 +7,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/bootutil"
 )
 
@@ -96,7 +96,7 @@ func requestStub(name, intent string) string {
 	return fmt.Sprintf(`package requests
 
 import (
-	. "github.com/zatrano/framework/v2/kernel/http"
+	. "github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/validation"
 )
 

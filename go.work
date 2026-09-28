@@ -9,6 +9,12 @@ use (
 	./database/driver/oracle
 	./database/driver/pgsql
 	./database/driver/sqlite
+	./db/mariadb
+	./db/mysql
+	./db/oracle
+	./db/postgres
+	./db/sqlite
+	./db/sqlserver
 	./mongo
 	./qr
 	./webauthn

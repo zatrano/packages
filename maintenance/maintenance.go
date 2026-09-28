@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 // Payload describes an active maintenance window.

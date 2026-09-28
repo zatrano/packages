@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 func TestWriteBinaryPingPongClose(t *testing.T) {

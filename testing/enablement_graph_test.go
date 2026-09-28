@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 
 	_ "github.com/zatrano/packages/agent"
 	_ "github.com/zatrano/packages/auth"
@@ -174,7 +174,7 @@ func TestNegativePathOptionalAbsent(t *testing.T) {
 	cases := []addons.Meta{
 		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "facts", "url"}},
 		{Name: "queue", Optional: []string{"database", "cache"}},
-		{Name: "notification", Optional: []string{"view", "broadcasting", "localization", "database"}},
+		{Name: "notification", Optional: []string{"template", "broadcasting", "localization", "database"}},
 		{Name: "backup", Optional: []string{"database"}},
 	}
 	for _, meta := range cases {

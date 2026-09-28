@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/cache"
 	"github.com/zatrano/packages/idempotency"
 )

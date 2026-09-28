@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/safepath"
+	"github.com/zatrano/framework/v3/core/kernel/safepath"
 	"github.com/zatrano/packages/database"
 )
 

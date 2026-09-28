@@ -6,15 +6,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/framework/v2/kernel/dirs"
-	"github.com/zatrano/framework/v2/kernel/env"
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/framework/v3/core/kernel/dirs"
+	"github.com/zatrano/framework/v3/core/kernel/env"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 	"github.com/zatrano/packages/flash"
 	"github.com/zatrano/packages/localization"
 	"github.com/zatrano/packages/validation"
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/packages/template"
 )
 
 type httpBridge struct {
@@ -32,21 +32,21 @@ func (b *httpBridge) Middleware() []any {
 	}
 }
 
-func (b *httpBridge) Finalize(w stdhttp.ResponseWriter, reqAny any, respAny any) any {
+func (b *httpBridge) Finalize(reqAny any, respAny any) any {
 	req, _ := reqAny.(*http.Request)
 	resp, _ := respAny.(*http.Response)
-	return b.finalize(w, req, resp)
+	return b.finalize(req, resp)
 }
 
-func (b *httpBridge) finalize(w stdhttp.ResponseWriter, req *http.Request, resp *http.Response) *http.Response {
+func (b *httpBridge) finalize(req *http.Request, resp *http.Response) *http.Response {
 	app := b.app
 	if resp == nil {
 		resp = http.Abort(204)
 	}
 
 	engine := view.From(app)
-	if resp.ViewName() != "" && engine != nil {
-		data := resp.ViewData()
+	if resp.TemplateName() != "" && engine != nil {
+		data := resp.TemplateData()
 		if data == nil {
 			data = map[string]any{}
 		}
@@ -103,12 +103,12 @@ func (b *httpBridge) finalize(w stdhttp.ResponseWriter, req *http.Request, resp 
 				}
 			}
 		}
-		html, err := engine.Render(resp.ViewName(), data)
+		html, err := engine.Render(resp.TemplateName(), data)
 		if err != nil {
 			if app.IsDebug() {
-				resp = http.HTML(fmt.Sprintf("<h1>View Error</h1><pre>%v</pre>", err)).Status(500)
+				resp = http.HTML(fmt.Sprintf("<h1>Template Error</h1><pre>%v</pre>", err)).Status(500)
 			} else {
-				resp = http.Abort(500, "View rendering failed")
+				resp = http.Abort(500, "Template rendering failed")
 			}
 		} else {
 			resp.SetContent([]byte(html), "text/html; charset=utf-8")
@@ -120,7 +120,7 @@ func (b *httpBridge) finalize(w stdhttp.ResponseWriter, req *http.Request, resp 
 			hadCookie := strings.TrimSpace(req.Cookie(sess.CookieName())) != ""
 			if bag.Changed() || hadCookie {
 				_ = sess.Save(bag)
-				stdhttp.SetCookie(w, &stdhttp.Cookie{
+				resp.WithCookie(&stdhttp.Cookie{
 					Name:     sess.CookieName(),
 					Value:    bag.ID(),
 					Path:     "/",

@@ -32,7 +32,7 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.13.1`**. It requires `github.com/zatrano/framework/v2 v2.8.0`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
+It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.13.1`**. It requires `github.com/zatrano/framework/v3 v2.8.0`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z` (nested: `scripts/release.sh --dry-run database/driver/sqlite/vX.Y.Z`).
 
@@ -41,7 +41,7 @@ The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano
 The two modules cannot be merged: this one already requires the framework.
 
 ```text
-  github.com/zatrano/framework/v2          github.com/zatrano/packages
+  github.com/zatrano/framework/v3          github.com/zatrano/packages
   ────────────────────────────          ──────────────────────────
   kernel/http  kernel/routing           session  auth  database  view
   contracts    bootstrap.App()          queue    ai    auth/oauth  auth/social
@@ -73,7 +73,7 @@ import (
     _ "github.com/zatrano/packages/session"
     _ "github.com/zatrano/packages/auth"
     _ "github.com/zatrano/packages/database"
-    _ "github.com/zatrano/packages/view"
+    _ "github.com/zatrano/packages/template"
 )
 
 app := bootstrap.App(bootstrap.WithProviders(providers.All()...))
@@ -288,7 +288,7 @@ The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named
 This repository may use a sibling framework checkout and `go.work`:
 
 ```text
-replace github.com/zatrano/framework/v2 => ../framework
+replace github.com/zatrano/framework/v3 => ../framework
 ```
 
 That replace is **development-only**. Public consumers resolve `github.com/zatrano/framework/v2@v2.8.0` from the module proxy; they do not clone this tree next to the framework.
@@ -303,7 +303,7 @@ Work lands on **`main`**, same default branch as the framework.
 
 ```go
 import "github.com/zatrano/packages/auth"
-import "github.com/zatrano/framework/v2/kernel/http"   // kernel, not this module
+import "github.com/zatrano/framework/v3/core/kernel/http"   // kernel, not this module
 ```
 
 Kernel types (`http.Request`, the router, CSRF) stay in the framework. This module implements the rest and talks to the kernel through `contracts.App`.

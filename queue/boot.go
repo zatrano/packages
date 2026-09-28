@@ -3,8 +3,8 @@ package queue
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/framework/v2/kernel/env"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/framework/v3/core/kernel/env"
 	"github.com/zatrano/packages/database"
 	"github.com/zatrano/packages/redisx"
 )

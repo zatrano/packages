@@ -4,9 +4,9 @@ CSV and Excel (`.xlsx`) import/export without third-party dependencies.
 
 ```go
 import (
-    "github.com/zatrano/framework/v2/export"
-    "github.com/zatrano/framework/v2/export/csv"
-    "github.com/zatrano/framework/v2/export/xlsx"
+    "github.com/zatrano/framework/v3/core/export"
+    "github.com/zatrano/framework/v3/core/export/csv"
+    "github.com/zatrano/framework/v3/core/export/xlsx"
 )
 
 // Import (auto-detect by extension)

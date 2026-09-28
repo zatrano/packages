@@ -3,8 +3,8 @@ package schedule
 import (
 	"testing"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/kernel"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/kernel"
 )
 
 func TestScheduleCLIRegistered(t *testing.T) {

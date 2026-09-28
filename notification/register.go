@@ -1,9 +1,9 @@
 package notification
 
 import (
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/packages/template"
 )
 
 func init() {
@@ -12,7 +12,7 @@ func init() {
 		Key:         "notification",
 		Description: "Notifications",
 		Order:       100,
-		Optional:    []string{"view", "broadcasting", "localization", "database"},
+		Optional:    []string{"template", "broadcasting", "localization", "database"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

@@ -2,7 +2,7 @@ package social
 
 const publishedSocialConfig = `package config
 
-import "github.com/zatrano/framework/v2/kernel/env"
+import "github.com/zatrano/framework/v3/core/kernel/env"
 
 // Social returns social login configuration defaults.
 func Social() map[string]any {

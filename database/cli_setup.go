@@ -3,7 +3,7 @@ package database
 import (
 	"bufio"
 	"fmt"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"os"
 	"os/exec"
 	"path/filepath"

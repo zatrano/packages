@@ -2,7 +2,7 @@ package api
 
 import (
 	approutes "__MODULE__/app/routes"
-	apictrl "__MODULE__/app/http/controllers/auth/api"
+	apictrl "__MODULE__/app/http/handlers/auth/api"
 
 	"github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/ratelimit"

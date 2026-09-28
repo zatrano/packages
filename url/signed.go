@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 // SetSigningKey configures the HMAC key used for signed URLs.

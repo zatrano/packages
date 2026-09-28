@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 	"github.com/zatrano/packages/pages"
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/packages/template"
 )
 
 func TestPagesRegister(t *testing.T) {

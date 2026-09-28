@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 const attrKey = "server_timing_marks"

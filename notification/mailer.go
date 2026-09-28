@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/packages/template"
 )
 
 // MailMessage represents an email message.

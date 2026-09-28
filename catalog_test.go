@@ -3,7 +3,7 @@ package packages
 import (
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel"
+	"github.com/zatrano/framework/v3/core/kernel"
 )
 
 func TestCatalogToolkitAddons(t *testing.T) {

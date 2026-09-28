@@ -8,10 +8,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/bootutil"
-	"github.com/zatrano/packages/view/starter"
+	"github.com/zatrano/packages/template/starter"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
@@ -28,7 +28,7 @@ type MakeAuthCommand struct {
 
 func (c *MakeAuthCommand) Name() string { return "make:auth" }
 func (c *MakeAuthCommand) Description() string {
-	return "Scaffold the auth HTTP surface (controllers/auth/{web,api}, routes/auth/{web,api}, views)"
+	return "Scaffold the auth HTTP surface (handlers/auth/{web,api}, routes/auth/{web,api}, views)"
 }
 
 func (c *MakeAuthCommand) Handle(args []string) error {
@@ -103,8 +103,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			filePair{"go/user_model.go.stub", []string{"app", "models", "user.go"}},
 			filePair{"go/user_factory.go.stub", []string{"database", "factories", "user_factory.go"}},
 			filePair{"go/user_resource.go.stub", []string{"app", "http", "resources", "user_resource.go"}},
-			filePair{"go/auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "web", "auth_controller.go"}},
-			filePair{"go/api_auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "api", "auth_controller.go"}},
+			filePair{"go/auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "web", "auth_handler.go"}},
+			filePair{"go/api_auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "api", "auth_handler.go"}},
 			filePair{"go/auth_service.go.stub", []string{"app", "services", "auth.go"}},
 			filePair{"go/login_request.go.stub", []string{"app", "http", "requests", "auth", "login_request.go"}},
 			filePair{"go/register_request.go.stub", []string{"app", "http", "requests", "auth", "register_request.go"}},
@@ -125,8 +125,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			pairs = append(pairs,
 				filePair{"go/social_account_model.go.stub", []string{"app", "models", "social_account.go"}},
 				filePair{"go/social_auth_service.go.stub", []string{"app", "services", "social.go"}},
-				filePair{"go/social_auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "web", "social_auth_controller.go"}},
-				filePair{"go/api_social_auth_controller.go.stub", []string{"app", "http", "controllers", "auth", "api", "social_auth_controller.go"}},
+				filePair{"go/social_auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "web", "social_auth_handler.go"}},
+				filePair{"go/api_social_auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "api", "social_auth_handler.go"}},
 				filePair{"go/migration_social_accounts.go.stub", []string{"database", "migrations", "create_social_accounts_table.go"}},
 			)
 		}
@@ -262,10 +262,10 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 }
 
 func enableViewForAuth(app contracts.App) error {
-	if err := bootutil.EnsureEnabledAddon(app, "view"); err != nil {
+	if err := bootutil.EnsureEnabledAddon(app, "template"); err != nil {
 		return err
 	}
-	if err := bootutil.EnsureBlankImport(app.BasePath("bootstrap", "addons.go"), "github.com/zatrano/packages/view"); err != nil {
+	if err := bootutil.EnsureBlankImport(app.BasePath("bootstrap", "addons.go"), "github.com/zatrano/packages/template"); err != nil {
 		return err
 	}
 	return starter.Write(app)

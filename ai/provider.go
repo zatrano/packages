@@ -3,11 +3,11 @@ package ai
 import (
 	"fmt"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
-	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
-	"github.com/zatrano/framework/v2/kernel/env"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
+	pkgconfig "github.com/zatrano/framework/v3/core/kernel/config"
+	"github.com/zatrano/framework/v3/core/kernel/env"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 func init() {

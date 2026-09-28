@@ -3,8 +3,8 @@ package facts
 import (
 	"time"
 
-	"github.com/zatrano/framework/v2/contracts"
-	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
+	"github.com/zatrano/framework/v3/core/contracts"
+	pkgconfig "github.com/zatrano/framework/v3/core/kernel/config"
 )
 
 func boot(app contracts.App) (*Bus, error) {

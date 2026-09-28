@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/framework/v2/kernel/dirs"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/framework/v3/core/kernel/dirs"
 )
 
 // NamedCmd is a console command that can be registered through addon Meta.CLI.
@@ -38,7 +38,7 @@ func ConsumerModule(app contracts.App) string {
 		return "your/module"
 	}
 	mod, err := modulePath(app.BasePath())
-	if err != nil || strings.TrimSpace(mod) == "" || mod == "github.com/zatrano/framework/v2" {
+	if err != nil || strings.TrimSpace(mod) == "" || mod == "github.com/zatrano/framework/v3" {
 		return "your/module"
 	}
 	return mod
@@ -48,18 +48,18 @@ func ConsumerModule(app contracts.App) string {
 func ApplyConsumerPlaceholders(app contracts.App, body string) string {
 	mod := ConsumerModule(app)
 	body = strings.ReplaceAll(body, "__MODULE__", mod)
-	body = strings.ReplaceAll(body, "github.com/zatrano/framework/v2/app/", mod+"/app/")
+	body = strings.ReplaceAll(body, "github.com/zatrano/framework/v3/app/", mod+"/app/")
 	return body
 }
 
-// ScaffoldDest maps starter path prefixes onto app/views, app/localization, app/database.
+// ScaffoldDest maps starter path prefixes onto templates, app/localization, app/database.
 func ScaffoldDest(app contracts.App, parts []string) string {
 	if app == nil || len(parts) == 0 {
 		return ""
 	}
 	switch parts[0] {
 	case "views":
-		return filepath.Join(append([]string{dirs.ViewsDirForCreate(app)}, parts[1:]...)...)
+		return filepath.Join(append([]string{dirs.TemplatesDirForCreate(app)}, parts[1:]...)...)
 	case "lang":
 		return filepath.Join(append([]string{dirs.LocalizationDirForCreate(app)}, parts[1:]...)...)
 	case "database":

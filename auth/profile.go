@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 // UpdateProfile updates the authenticated user's name/email.

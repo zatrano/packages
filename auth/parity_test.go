@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/encryption"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/encryption"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/auth/totp"
 	"github.com/zatrano/packages/hashing"

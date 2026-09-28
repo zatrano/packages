@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
+	"github.com/zatrano/packages/template"
 )
 
 // Registrar mounts file-based pages onto a router.
@@ -84,7 +84,7 @@ func (r *Registrar) Register(router *routing.Router) error {
 				data["title"] = "Home"
 			}
 			rawRouteParams(req, data)
-			return http.View(viewName, data)
+			return http.Template(viewName, data)
 		}).As(name)
 	}
 	return nil

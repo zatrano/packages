@@ -1,6 +1,6 @@
 package audit
 
-import "github.com/zatrano/framework/v2/contracts"
+import "github.com/zatrano/framework/v3/core/contracts"
 
 // From resolves the audit manager from the application container.
 func From(app contracts.App) *Manager {
