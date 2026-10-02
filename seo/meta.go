@@ -15,8 +15,8 @@ type Meta struct {
 	ImagePath   string
 }
 
-// ViewData builds template variables for SEO partials (canonical, OG, JSON-LD, GTM).
-func (s *Site) ViewData(meta Meta) map[string]any {
+// TemplateData builds template variables for SEO partials (canonical, OG, JSON-LD, GTM).
+func (s *Site) TemplateData(meta Meta) map[string]any {
 	s.mu.Lock()
 	opts := s.opts
 	s.mu.Unlock()
@@ -63,6 +63,11 @@ func (s *Site) ViewData(meta Meta) map[string]any {
 		"robotsMeta":    meta.Robots,
 		"jsonLd":        mustJSON(s.graph(opts, meta, canonical)),
 	}
+}
+
+// ViewData is a deprecated alias for TemplateData.
+func (s *Site) ViewData(meta Meta) map[string]any {
+	return s.TemplateData(meta)
 }
 
 func (s *Site) graph(opts Options, meta Meta, canonical string) map[string]any {

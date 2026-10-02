@@ -7,7 +7,7 @@ func (m *MailManager) SetTemplate(engine *canvas.Engine) {
 	if m == nil {
 		return
 	}
-	m.view = engine
+	m.template = engine
 }
 
 // SetView is deprecated; use SetTemplate.

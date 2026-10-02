@@ -53,14 +53,14 @@ func TestSecurityTxt(t *testing.T) {
 	}
 }
 
-func TestViewDataIsGeneric(t *testing.T) {
+func TestTemplateDataIsGeneric(t *testing.T) {
 	s := seo.NewWithOptions(seo.Options{
 		BaseURL:     "https://example.test",
 		Name:        "Acme",
 		Description: "Acme docs",
 		SameAs:      []string{"https://github.com/acme"},
 	})
-	data := s.ViewData(seo.Meta{Title: "Home", Path: "/"})
+	data := s.TemplateData(seo.Meta{Title: "Home", Path: "/"})
 	if data["ogTitle"] != "Home" {
 		t.Fatalf("%#v", data)
 	}

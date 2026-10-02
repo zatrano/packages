@@ -47,7 +47,7 @@ The two modules cannot be merged: this one already requires the framework.
 ```text
   github.com/zatrano/framework/v3          github.com/zatrano/packages
   ────────────────────────────          ──────────────────────────
-  kernel/http  kernel/routing           session  auth  database  view
+  kernel/http  kernel/routing           session  auth  db  (Canvas via framework/core/ssr)
   contracts    bootstrap.App()          queue    ai    auth/oauth  auth/social
   zatrano new                           toolkit   resources
           │                                        ▲
@@ -129,8 +129,8 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`session`](session) | service | Per-visitor server-side sessions (file driver by default) |
 | [`flash`](flash) | service | One-request success/error messages and old input |
 | [`validation`](validation) | service | Form and request validation (pipe rules, FormRequest) |
-| [`view`](view) | service | HTML templates (`views/`) |
-| [`assets`](assets) | service | Vite/Mix manifest URLs in views |
+| — | — | HTML SSR: enable **`template`** (Canvas via `framework/v3/core/ssr`, dir `templates/`) — no `packages/view` |
+| [`assets`](assets) | service | Vite/Mix manifest URLs in templates |
 | [`localization`](localization) | service | JSON translations under `lang/` |
 | [`filesystem`](filesystem) | service | Named disks (`local`, `public`, …) |
 | [`pages`](pages) | library | File-based static pages registered on the router |
