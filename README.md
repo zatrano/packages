@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  V3 line (branch <code>v3</code>): Framework <code>github.com/zatrano/framework/v3</code>
+  V3 line (branch <code>main</code>): Framework <code>github.com/zatrano/framework/v3</code> @ <code>v3.0.0</code>
   ·
   Carrier <code>rawhttp@v0.2.2</code>
   ·
@@ -36,11 +36,11 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module path (no `/v2` suffix). The **v3** branch requires `github.com/zatrano/framework/v3 v3.0.0` (local `replace` until the framework tag is published). Nested package `VERSION` files are informational only.
+It is a **v1** Go module path (no `/v2` suffix). **`main`** requires `github.com/zatrano/framework/v3 v3.0.0`. Nested package `VERSION` files are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z`.
 
-The kernel lives in [github.com/zatrano/framework](https://github.com/zatrano/framework) (`v3` branch): HTTP (rawhttp), routing, middleware, config, the CLI, `zatrano new`, Canvas wiring (`core/ssr`). Optional capabilities — sessions, auth, `packages/db`, queues, AI — live **here**.
+The kernel lives in [github.com/zatrano/framework](https://github.com/zatrano/framework) (`main`): HTTP (rawhttp), routing, middleware, config, the CLI, `zatrano new`, Canvas wiring (`core/ssr`). Optional capabilities — sessions, auth, `packages/db`, queues, AI — live **here**.
 
 The two modules cannot be merged: this one already requires the framework.
 
