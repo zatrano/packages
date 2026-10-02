@@ -231,7 +231,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(home), `http.Template("web.welcome")`) {
-		t.Fatalf("starter home must switch to View:\n%s", home)
+		t.Fatalf("starter home must switch to Template:\n%s", home)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "templates", "web", "welcome.html")); err != nil {
 		t.Fatal(err)
