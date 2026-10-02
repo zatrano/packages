@@ -39,8 +39,15 @@ func (t *sqlTable) queryFirst(col string, val any) (map[string]any, error) {
 	if err := t.mustIdent(col); err != nil {
 		return nil, err
 	}
-	q := "SELECT * FROM " + t.table + " WHERE " + col + " = " + t.ph(1) + " LIMIT 1"
-	rows, err := t.db.Query(q, val)
+	var b strings.Builder
+	b.WriteString("SELECT * FROM ")
+	b.WriteString(t.table)
+	b.WriteString(" WHERE ")
+	b.WriteString(col)
+	b.WriteString(" = ")
+	b.WriteString(t.ph(1))
+	b.WriteString(" LIMIT 1")
+	rows, err := t.db.Query(b.String(), val)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +62,14 @@ func (t *sqlTable) getWhere(col string, val any) ([]map[string]any, error) {
 	if err := t.mustIdent(col); err != nil {
 		return nil, err
 	}
-	q := "SELECT * FROM " + t.table + " WHERE " + col + " = " + t.ph(1)
-	rows, err := t.db.Query(q, val)
+	var b strings.Builder
+	b.WriteString("SELECT * FROM ")
+	b.WriteString(t.table)
+	b.WriteString(" WHERE ")
+	b.WriteString(col)
+	b.WriteString(" = ")
+	b.WriteString(t.ph(1))
+	rows, err := t.db.Query(b.String(), val)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +89,14 @@ func (t *sqlTable) deleteWhere(col string, val any) error {
 	if err := t.mustIdent(col); err != nil {
 		return err
 	}
-	_, err := t.db.Exec("DELETE FROM "+t.table+" WHERE "+col+" = "+t.ph(1), val)
+	var b strings.Builder
+	b.WriteString("DELETE FROM ")
+	b.WriteString(t.table)
+	b.WriteString(" WHERE ")
+	b.WriteString(col)
+	b.WriteString(" = ")
+	b.WriteString(t.ph(1))
+	_, err := t.db.Exec(b.String(), val)
 	return err
 }
 
