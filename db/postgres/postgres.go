@@ -13,11 +13,11 @@ import (
 
 // Config is PostgreSQL-specific pool configuration.
 type Config struct {
-	DSN             string
-	MaxConns        int32
-	MinConns        int32
-	MaxConnLifetime time.Duration
-	MaxConnIdleTime time.Duration
+	DSN               string
+	MaxConns          int32
+	MinConns          int32
+	MaxConnLifetime   time.Duration
+	MaxConnIdleTime   time.Duration
 	HealthCheckPeriod time.Duration
 }
 

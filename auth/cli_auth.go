@@ -10,8 +10,8 @@ import (
 
 	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 	"github.com/zatrano/framework/v3/core/contracts"
-	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/framework/v3/core/ssr/starter"
+	"github.com/zatrano/packages/bootutil"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
