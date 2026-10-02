@@ -101,7 +101,6 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	if !viewsOnly {
 		pairs = append(pairs,
 			filePair{"go/user_model.go.stub", []string{"app", "models", "user.go"}},
-			filePair{"go/user_factory.go.stub", []string{"database", "factories", "user_factory.go"}},
 			filePair{"go/user_resource.go.stub", []string{"app", "http", "resources", "user_resource.go"}},
 			filePair{"go/auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "web", "auth_handler.go"}},
 			filePair{"go/api_auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "api", "auth_handler.go"}},

@@ -170,10 +170,7 @@ Numeric OTP helpers for notifications live in [`notification/otp`](notification/
 
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`database`](database) | service | SQL connections, query builder, schema, migrations, seeders |
-| [`orm`](orm) | service | Models, relations, eager loading, soft deletes |
-| [`factory`](factory) | library | Model factories for tests and seeders |
-| [`cache`](cache) | service | Temporary key/value store (file / memory / redis) |
+| [`db`](db) | library | SQL-first adapters (postgres/mysql/mariadb/sqlite/sqlserver/oracle); app owns SQL/sqlc |
 | [`redisx`](redisx) | library | Redis client helper; cache owns the connection |
 | [`mongo`](mongo) | heavy | Document store client, not SQL ORM (own `go.mod`) |
 
