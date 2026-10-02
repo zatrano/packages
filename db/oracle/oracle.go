@@ -1,9 +1,11 @@
+// Package oracle is the Oracle first-class adapter (go-ora/v2).
 package oracle
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/sijms/go-ora/v2"
 
@@ -12,7 +14,11 @@ import (
 
 // Config is Oracle configuration.
 type Config struct {
-	DSN string // go-ora URL form
+	DSN             string // go-ora URL form
+	MaxOpenConns    int
+	MaxIdleConns    int
+	ConnMaxLifetime time.Duration
+	ConnMaxIdleTime time.Duration
 }
 
 // DB wraps database/sql for Oracle.
@@ -22,11 +28,23 @@ type DB struct {
 
 func Open(ctx context.Context, cfg Config) (*DB, error) {
 	if cfg.DSN == "" {
-		return nil, fmt.Errorf("oracle: empty DSN")
+		return nil, db.WrapOp("oracle", "open", fmt.Errorf("empty DSN"))
 	}
 	sqlDB, err := sql.Open("oracle", cfg.DSN)
 	if err != nil {
-		return nil, fmt.Errorf("oracle: open: %w", err)
+		return nil, db.WrapOp("oracle", "open", err)
+	}
+	if cfg.MaxOpenConns > 0 {
+		sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+	}
+	if cfg.MaxIdleConns > 0 {
+		sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+	}
+	if cfg.ConnMaxLifetime > 0 {
+		sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
+	}
+	if cfg.ConnMaxIdleTime > 0 {
+		sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 	}
 	d := &DB{sql: sqlDB}
 	if err := d.Ping(ctx); err != nil {
@@ -40,7 +58,7 @@ func (d *DB) Ping(ctx context.Context) error {
 	if d == nil || d.sql == nil {
 		return db.NotOpenError{}
 	}
-	return d.sql.PingContext(ctx)
+	return db.WrapOp("oracle", "ping", d.sql.PingContext(ctx))
 }
 
 func (d *DB) Close() error {
@@ -58,7 +76,7 @@ func (d *DB) BeginTx(ctx context.Context) (db.Tx, error) {
 	}
 	tx, err := d.sql.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, db.WrapOp("oracle", "begin", err)
 	}
 	return &Tx{tx: tx}, nil
 }

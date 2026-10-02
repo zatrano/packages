@@ -1,7 +1,3 @@
-// Package postgres is the PostgreSQL adapter for ZATRANO V3 db.
-//
-// Importing this package pulls pgx/v5 into the dependency graph and never
-// other database drivers.
 package postgres
 
 import (
@@ -9,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/zatrano/packages/db"
@@ -21,6 +18,7 @@ type Config struct {
 	MinConns        int32
 	MaxConnLifetime time.Duration
 	MaxConnIdleTime time.Duration
+	HealthCheckPeriod time.Duration
 }
 
 // DB wraps a pgxpool.Pool and implements db.DB.
@@ -31,11 +29,11 @@ type DB struct {
 // Open creates a pool, pings, and returns a ready DB.
 func Open(ctx context.Context, cfg Config) (*DB, error) {
 	if cfg.DSN == "" {
-		return nil, fmt.Errorf("postgres: empty DSN")
+		return nil, db.WrapOp("postgres", "open", fmt.Errorf("empty DSN"))
 	}
 	pcfg, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
-		return nil, fmt.Errorf("postgres: parse dsn: %w", err)
+		return nil, db.WrapOp("postgres", "parse", err)
 	}
 	if cfg.MaxConns > 0 {
 		pcfg.MaxConns = cfg.MaxConns
@@ -49,9 +47,12 @@ func Open(ctx context.Context, cfg Config) (*DB, error) {
 	if cfg.MaxConnIdleTime > 0 {
 		pcfg.MaxConnIdleTime = cfg.MaxConnIdleTime
 	}
+	if cfg.HealthCheckPeriod > 0 {
+		pcfg.HealthCheckPeriod = cfg.HealthCheckPeriod
+	}
 	pool, err := pgxpool.NewWithConfig(ctx, pcfg)
 	if err != nil {
-		return nil, fmt.Errorf("postgres: connect: %w", err)
+		return nil, db.WrapOp("postgres", "connect", err)
 	}
 	d := &DB{pool: pool}
 	if err := d.Ping(ctx); err != nil {
@@ -65,7 +66,7 @@ func (d *DB) Ping(ctx context.Context) error {
 	if d == nil || d.pool == nil {
 		return db.NotOpenError{}
 	}
-	return d.pool.Ping(ctx)
+	return db.WrapOp("postgres", "ping", d.pool.Ping(ctx))
 }
 
 func (d *DB) Close() error {
@@ -83,12 +84,13 @@ func (d *DB) BeginTx(ctx context.Context) (db.Tx, error) {
 	}
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
-		return nil, err
+		return nil, db.WrapOp("postgres", "begin", err)
 	}
 	return &Tx{tx: tx}, nil
 }
 
 // Native returns the underlying pgx pool (PostgreSQL escape hatch; not on db.DB).
+// Use for COPY, LISTEN/NOTIFY, JSONB helpers, or sqlc pgx backends.
 func (d *DB) Native() *pgxpool.Pool {
 	if d == nil {
 		return nil
@@ -98,10 +100,7 @@ func (d *DB) Native() *pgxpool.Pool {
 
 // Tx wraps pgx.Tx.
 type Tx struct {
-	tx interface {
-		Commit(context.Context) error
-		Rollback(context.Context) error
-	}
+	tx pgx.Tx
 }
 
 func (t *Tx) Commit(ctx context.Context) error {
