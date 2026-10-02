@@ -26,8 +26,8 @@ func TestGoModPinsReleasedFramework(t *testing.T) {
 	if strings.Contains(text, "module github.com/zatrano/packages/v2") {
 		t.Fatal("do not introduce a /v2 module path")
 	}
-	if !strings.Contains(text, "github.com/zatrano/framework/v3 v2.8.0") {
-		t.Fatal("go.mod must require github.com/zatrano/framework/v3 v2.8.0")
+	if !strings.Contains(text, "github.com/zatrano/framework/v3 v3.0.0") {
+		t.Fatal("go.mod must require github.com/zatrano/framework/v3 v3.0.0")
 	}
 	if !strings.Contains(text, "replace github.com/zatrano/framework/v3 => ../framework") {
 		t.Fatal("development replace must remain in the packages module")
