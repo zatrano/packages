@@ -1,11 +1,11 @@
-package resources
+﻿package resources
 
 import "__MODULE__/app/models"
 
 // User transforms a user model for API output.
 // Created by make:auth; use with packages/resources:
 //
-//	import "github.com/zatrano/framework/v2/resources"
+//	import "github.com/zatrano/framework/v3/core/resources"
 //	resources.JSON(user, User)
 func User(user models.User) map[string]any {
 	return map[string]any{

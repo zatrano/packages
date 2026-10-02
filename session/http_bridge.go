@@ -45,73 +45,82 @@ func (b *httpBridge) finalize(req *http.Request, resp *http.Response) *http.Resp
 	}
 
 	engine := ssr.From(app)
-	if resp.TemplateName() != "" && engine != nil {
-		data := resp.TemplateData()
-		if data == nil {
-			data = map[string]any{}
-		}
-		if sess := req.Session(); sess != nil {
-			if token, ok := sess.Get("_csrf_token").(string); ok {
-				data["_token"] = token
-			}
-			data["flash"] = flash.All(req)
-			data["old"] = flash.OldInput(req)
-			data["errors"] = validation.ErrorsFromSession(req)
-			data["errorBags"] = validation.ErrorBagsFromSession(req)
-		} else {
-			data["old"] = map[string]string{}
-			data["errors"] = validation.NewMessageBag(nil)
-			data["errorBags"] = map[string]any{}
-		}
-		type authView interface {
-			Check(req *http.Request) bool
-			User(req *http.Request) any
-		}
-		var authMgr authView
-		if raw, err := app.Make("auth"); err == nil {
-			authMgr, _ = raw.(authView)
-		}
-		authenticated := authMgr != nil && authMgr.Check(req)
-		data["auth"] = authenticated
-		data["guest"] = !authenticated
-		if tr := localization.From(app); tr != nil {
-			locale := tr.GetLocale()
-			if req != nil {
-				if v, ok := req.Get("locale").(string); ok && strings.TrimSpace(v) != "" {
-					locale = strings.TrimSpace(v)
-				}
-			}
-			data["locale"] = locale
-			langPath := dirs.LocalizationDir(app)
-			data["langPublished"] = localization.Published(langPath)
-			data["locales"] = localization.Options(langPath, locale)
-		}
-		var user any
-		if authenticated {
-			if u := authMgr.User(req); u != nil {
-				user = u
-				data["user"] = user
-			}
-		}
-		if raw, err := app.Make("gate"); err == nil {
-			type gater interface {
-				Allows(user any, ability string, args ...any) bool
-			}
-			if gate, ok := raw.(gater); ok {
-				data["__can"] = func(ability string, args ...any) bool {
-					return gate.Allows(user, ability, args...)
-				}
-			}
-		}
-		html, err := engine.Render(resp.TemplateName(), data)
-		if err != nil {
+	if resp.TemplateName() != "" {
+		if engine == nil {
+			msg := "Canvas engine not bound (enable template / import framework/v3/core/ssr)"
 			if app.IsDebug() {
-				resp = http.HTML(fmt.Sprintf("<h1>Template Error</h1><pre>%v</pre>", err)).Status(500)
+				resp = http.HTML(fmt.Sprintf("<h1>Template Error</h1><pre>%s</pre>", msg)).Status(500)
 			} else {
 				resp = http.Abort(500, "Template rendering failed")
 			}
 		} else {
-			resp.SetContent([]byte(html), "text/html; charset=utf-8")
+			data := resp.TemplateData()
+			if data == nil {
+				data = map[string]any{}
+			}
+			if sess := req.Session(); sess != nil {
+				if token, ok := sess.Get("_csrf_token").(string); ok {
+					data["_token"] = token
+				}
+				data["flash"] = flash.All(req)
+				data["old"] = flash.OldInput(req)
+				data["errors"] = validation.ErrorsFromSession(req)
+				data["errorBags"] = validation.ErrorBagsFromSession(req)
+			} else {
+				data["old"] = map[string]string{}
+				data["errors"] = validation.NewMessageBag(nil)
+				data["errorBags"] = map[string]any{}
+			}
+			type authView interface {
+				Check(req *http.Request) bool
+				User(req *http.Request) any
+			}
+			var authMgr authView
+			if raw, err := app.Make("auth"); err == nil {
+				authMgr, _ = raw.(authView)
+			}
+			authenticated := authMgr != nil && authMgr.Check(req)
+			data["auth"] = authenticated
+			data["guest"] = !authenticated
+			if tr := localization.From(app); tr != nil {
+				locale := tr.GetLocale()
+				if req != nil {
+					if v, ok := req.Get("locale").(string); ok && strings.TrimSpace(v) != "" {
+						locale = strings.TrimSpace(v)
+					}
+				}
+				data["locale"] = locale
+				langPath := dirs.LocalizationDir(app)
+				data["langPublished"] = localization.Published(langPath)
+				data["locales"] = localization.Options(langPath, locale)
+			}
+			var user any
+			if authenticated {
+				if u := authMgr.User(req); u != nil {
+					user = u
+					data["user"] = user
+				}
+			}
+			if raw, err := app.Make("gate"); err == nil {
+				type gater interface {
+					Allows(user any, ability string, args ...any) bool
+				}
+				if gate, ok := raw.(gater); ok {
+					data["__can"] = func(ability string, args ...any) bool {
+						return gate.Allows(user, ability, args...)
+					}
+				}
+			}
+			html, err := engine.Render(resp.TemplateName(), data)
+			if err != nil {
+				if app.IsDebug() {
+					resp = http.HTML(fmt.Sprintf("<h1>Template Error</h1><pre>%v</pre>", err)).Status(500)
+				} else {
+					resp = http.Abort(500, "Template rendering failed")
+				}
+			} else {
+				resp.SetContent([]byte(html), "text/html; charset=utf-8")
+			}
 		}
 	}
 

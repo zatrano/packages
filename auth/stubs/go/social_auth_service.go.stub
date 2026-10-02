@@ -1,4 +1,4 @@
-package services
+﻿package services
 
 import (
 	"crypto/rand"
@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"__MODULE__/app/models"
 	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/hashing"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/orm"
 	"github.com/zatrano/packages/auth/social"
 )

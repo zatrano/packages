@@ -1,13 +1,13 @@
-package api
+﻿package api
 
 import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"__MODULE__/app/services"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/localization"
 )
 

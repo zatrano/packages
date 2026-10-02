@@ -1,14 +1,14 @@
-package web
+﻿package web
 
 import (
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"errors"
 	"fmt"
 
 	requests "__MODULE__/app/http/requests/auth"
 	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/flash"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/localization"
 	"github.com/zatrano/packages/url"
 	"github.com/zatrano/packages/validation"
@@ -42,7 +42,7 @@ func (c *AuthController) validateForm(req *http.Request, form validation.FormReq
 }
 
 func (c *AuthController) LoginForm(req *http.Request) *http.Response {
-	return http.View("auth/login", map[string]any{
+	return http.Template("auth/login", map[string]any{
 		"title": "Login",
 		"email": flash.OldValue(req, "email"),
 	})
@@ -94,7 +94,7 @@ func (c *AuthController) Logout(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) RegisterForm(req *http.Request) *http.Response {
-	return http.View("auth/register", map[string]any{
+	return http.Template("auth/register", map[string]any{
 		"title": "Register",
 		"name":  flash.OldValue(req, "name"),
 		"email": flash.OldValue(req, "email"),
@@ -129,7 +129,7 @@ func (c *AuthController) ProfileForm(req *http.Request) *http.Response {
 		name = fmt.Sprint(g.Get("name"))
 		email = fmt.Sprint(g.Get("email"))
 	}
-	return http.View("auth/profile", map[string]any{"title": "Profile", "name": name, "email": email})
+	return http.Template("auth/profile", map[string]any{"title": "Profile", "name": name, "email": email})
 }
 
 func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
@@ -150,7 +150,7 @@ func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) ChangePasswordForm(req *http.Request) *http.Response {
-	return http.View("auth/change-password", map[string]any{"title": "Change password"})
+	return http.Template("auth/change-password", map[string]any{"title": "Change password"})
 }
 
 func (c *AuthController) ChangePassword(req *http.Request) *http.Response {
@@ -191,7 +191,7 @@ func (c *AuthController) TwoFactorForm(req *http.Request) *http.Response {
 			}
 		}
 	}
-	return http.View("auth/two-factor", map[string]any{
+	return http.Template("auth/two-factor", map[string]any{
 		"title": "Two-factor authentication", "enabled": enabled,
 		"setup_secret": setupSecret, "setup_url": setupURL, "setup_codes": setupCodes,
 		"recovery_codes": recoveryCodes, "pending_setup": setupSecret != "" && !enabled,
@@ -266,7 +266,7 @@ func (c *AuthController) RegenerateRecoveryCodes(req *http.Request) *http.Respon
 }
 
 func (c *AuthController) LogoutOtherDevicesForm(req *http.Request) *http.Response {
-	return http.View("auth/logout-other-devices", map[string]any{"title": "Logout other devices"})
+	return http.Template("auth/logout-other-devices", map[string]any{"title": "Logout other devices"})
 }
 
 func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
@@ -283,7 +283,7 @@ func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) ForgotForm(req *http.Request) *http.Response {
-	return http.View("auth/forgot-password", map[string]any{
+	return http.Template("auth/forgot-password", map[string]any{
 		"title": "Forgot password",
 		"email": flash.OldValue(req, "email"),
 	})
@@ -325,7 +325,7 @@ func (c *AuthController) Forgot(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) ResetForm(req *http.Request) *http.Response {
-	return http.View("auth/reset-password", map[string]any{
+	return http.Template("auth/reset-password", map[string]any{
 		"title": "Reset password",
 		"email": req.Query("email"),
 		"token": req.Query("token"),
@@ -351,7 +351,7 @@ func (c *AuthController) Reset(req *http.Request) *http.Response {
 
 func (c *AuthController) Notice(req *http.Request) *http.Response {
 	user := pkgauth.From(c.App).User(req)
-	return http.View("auth/verify-email", map[string]any{
+	return http.Template("auth/verify-email", map[string]any{
 		"title":    "Verify email",
 		"verified": pkgauth.HasVerifiedEmail(user),
 		"email":    pkgauth.EmailForVerification(user),
@@ -402,7 +402,7 @@ func (c *AuthController) Verify(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) ConfirmPasswordForm(req *http.Request) *http.Response {
-	return http.View("auth/confirm-password", map[string]any{"title": "Confirm Password"})
+	return http.Template("auth/confirm-password", map[string]any{"title": "Confirm Password"})
 }
 
 func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
@@ -424,7 +424,7 @@ func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
 }
 
 func (c *AuthController) TwoFactorChallengeForm(req *http.Request) *http.Response {
-	return http.View("auth/two-factor-challenge", map[string]any{"title": "Two-Factor Challenge"})
+	return http.Template("auth/two-factor-challenge", map[string]any{"title": "Two-Factor Challenge"})
 }
 
 func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {

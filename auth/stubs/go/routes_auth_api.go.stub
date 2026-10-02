@@ -1,4 +1,4 @@
-package api
+﻿package api
 
 import (
 	approutes "__MODULE__/app/routes"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/ratelimit"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 func init() {

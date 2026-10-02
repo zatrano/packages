@@ -11,14 +11,14 @@ import (
 	"github.com/zatrano/packages/bootutil"
 )
 
-// MakePanelCommand scaffolds a named HTML HTTP surface (controller, routes, views/layouts).
+// MakePanelCommand scaffolds a named HTML HTTP surface (handler, routes, Canvas templates).
 type MakePanelCommand struct {
 	app contracts.App
 }
 
 func (c *MakePanelCommand) Name() string { return "make:panel" }
 func (c *MakePanelCommand) Description() string {
-	return "Scaffold a named HTTP surface: make:panel dashboard"
+	return "Scaffold a named Canvas HTTP surface: make:panel dashboard"
 }
 
 func (c *MakePanelCommand) Handle(args []string) error {
@@ -51,8 +51,8 @@ func (c *MakePanelCommand) Handle(args []string) error {
 	pairs := []filePair{
 		{[]string{"app", "http", "handlers", name, "home_handler.go"}, panelControllerStub(name, exported)},
 		{[]string{"app", "routes", name, name + ".go"}, panelRouteStub(mod, name, exported)},
-		{[]string{"views", name, "layouts", name + ".html"}, panelLayoutHTML()},
-		{[]string{"views", name, "index.html"}, panelIndexHTML(name)},
+		{[]string{"templates", name, "layouts", name + ".html"}, panelLayoutHTML()},
+		{[]string{"templates", name, "index.html"}, panelIndexHTML(name)},
 		{[]string{"lang", "en", name + ".json"}, fmt.Sprintf("{\n  \"home\": %q\n}\n", exported)},
 		{[]string{"lang", "tr", name + ".json"}, fmt.Sprintf("{\n  \"home\": %q\n}\n", exported)},
 	}
@@ -133,7 +133,7 @@ import "github.com/zatrano/framework/v3/core/kernel/http"
 type HomeHandler struct{}
 
 func (c *HomeHandler) Index(req *http.Request) *http.Response {
-	return http.Template("` + pkg + `/index", map[string]any{})
+	return http.Template("` + pkg + `.index", map[string]any{})
 }
 `
 }

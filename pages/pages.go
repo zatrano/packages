@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -38,7 +39,7 @@ func (r *Registrar) Prefix(prefix string) *Registrar {
 //	users/[id].html -> /users/{id}
 func (r *Registrar) Register(router *routing.Router) error {
 	if r.engine == nil {
-		return nil
+		return fmt.Errorf("pages: Canvas engine required (enable template / import framework/v3/core/ssr)")
 	}
 	entries := make([]pageEntry, 0)
 	err := filepath.WalkDir(r.root, func(path string, d os.DirEntry, err error) error {

@@ -28,7 +28,7 @@ type MakeAuthCommand struct {
 
 func (c *MakeAuthCommand) Name() string { return "make:auth" }
 func (c *MakeAuthCommand) Description() string {
-	return "Scaffold the auth HTTP surface (handlers/auth/{web,api}, routes/auth/{web,api}, views)"
+	return "Scaffold the auth HTTP surface (handlers/auth/{web,api}, routes/auth/{web,api}, templates)"
 }
 
 func (c *MakeAuthCommand) Handle(args []string) error {
@@ -78,22 +78,22 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	}
 
 	pairs := []filePair{
-		{"layouts/auth.html", []string{"views", "layout", "auth.html"}},
-		{"layouts/mail.html", []string{"views", "layout", "mail.html"}},
-		{"auth/login.html", []string{"views", "auth", "login.html"}},
-		{"auth/register.html", []string{"views", "auth", "register.html"}},
-		{"auth/forgot-password.html", []string{"views", "auth", "forgot-password.html"}},
-		{"auth/reset-password.html", []string{"views", "auth", "reset-password.html"}},
-		{"auth/confirm-password.html", []string{"views", "auth", "confirm-password.html"}},
-		{"auth/change-password.html", []string{"views", "auth", "change-password.html"}},
-		{"auth/profile.html", []string{"views", "auth", "profile.html"}},
-		{"auth/verify-email.html", []string{"views", "auth", "verify-email.html"}},
-		{"auth/two-factor-challenge.html", []string{"views", "auth", "two-factor-challenge.html"}},
-		{"auth/two-factor.html", []string{"views", "auth", "two-factor.html"}},
-		{"auth/logout-other-devices.html", []string{"views", "auth", "logout-other-devices.html"}},
-		{"mail/auth/password-reset.html", []string{"views", "mail", "auth", "password-reset.html"}},
-		{"mail/auth/verify-email.html", []string{"views", "mail", "auth", "verify-email.html"}},
-		{"mail/auth/password-changed.html", []string{"views", "mail", "auth", "password-changed.html"}},
+		{"layouts/auth.html", []string{"templates", "layout", "auth.html"}},
+		{"layouts/mail.html", []string{"templates", "layout", "mail.html"}},
+		{"auth/login.html", []string{"templates", "auth", "login.html"}},
+		{"auth/register.html", []string{"templates", "auth", "register.html"}},
+		{"auth/forgot-password.html", []string{"templates", "auth", "forgot-password.html"}},
+		{"auth/reset-password.html", []string{"templates", "auth", "reset-password.html"}},
+		{"auth/confirm-password.html", []string{"templates", "auth", "confirm-password.html"}},
+		{"auth/change-password.html", []string{"templates", "auth", "change-password.html"}},
+		{"auth/profile.html", []string{"templates", "auth", "profile.html"}},
+		{"auth/verify-email.html", []string{"templates", "auth", "verify-email.html"}},
+		{"auth/two-factor-challenge.html", []string{"templates", "auth", "two-factor-challenge.html"}},
+		{"auth/two-factor.html", []string{"templates", "auth", "two-factor.html"}},
+		{"auth/logout-other-devices.html", []string{"templates", "auth", "logout-other-devices.html"}},
+		{"mail/auth/password-reset.html", []string{"templates", "mail", "auth", "password-reset.html"}},
+		{"mail/auth/verify-email.html", []string{"templates", "mail", "auth", "verify-email.html"}},
+		{"mail/auth/password-changed.html", []string{"templates", "mail", "auth", "password-changed.html"}},
 		{"lang/en/auth.json", []string{"lang", "en", "auth.json"}},
 		{"lang/tr/auth.json", []string{"lang", "tr", "auth.json"}},
 	}
@@ -240,7 +240,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		fmt.Println("Mode: --views (auth HTML, layout, and mail templates only)")
 	} else {
 		fmt.Println("Next steps:")
-		fmt.Println("  1. Enable hashing, database, session, and auth (notification for mail). View and url are already enabled.")
+		fmt.Println("  1. Enable hashing, database, session, and auth (notification for mail). template (Canvas) and url are already enabled.")
 		fmt.Println("  2. In app/database/migrations/migrations.go add:")
 		migLine := "     &CreateUsersTable{}, &CreatePasswordResetTokensTable{}, &CreatePersonalAccessTokensTable{},"
 		if wantSocialGo {
@@ -256,7 +256,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			fmt.Println("  5. Run: go run ./cmd/app migrate")
 		}
 	}
-	fmt.Println("Use --force to overwrite existing files. Use --views for views only.")
+	fmt.Println("Use --force to overwrite existing files. Use --views for Canvas templates only.")
 	return nil
 }
 

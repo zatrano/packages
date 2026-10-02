@@ -1,16 +1,16 @@
-package api
+﻿package api
 
 import (
 	"errors"
 	"fmt"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	reqauth "__MODULE__/app/http/requests/auth"
 	"__MODULE__/app/models"
 	"__MODULE__/app/http/resources"
 	"__MODULE__/app/services"
 	pkgauth "github.com/zatrano/packages/auth"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/localization"
 	"github.com/zatrano/packages/url"
 	"github.com/zatrano/packages/validation"
