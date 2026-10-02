@@ -2,10 +2,15 @@ package notification
 
 import "github.com/zatrano/packages/template"
 
-// SetView attaches a view engine for template-based mail bodies (used by channels).
-func (m *MailManager) SetView(engine *view.Engine) {
+// SetTemplate attaches a template Engine for template-based mail bodies.
+func (m *MailManager) SetTemplate(engine template.Engine) {
 	if m == nil {
 		return
 	}
 	m.view = engine
+}
+
+// SetView is deprecated; use SetTemplate.
+func (m *MailManager) SetView(engine template.Engine) {
+	m.SetTemplate(engine)
 }

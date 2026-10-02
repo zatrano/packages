@@ -5,8 +5,8 @@ type App interface {
 	Make(abstract string) (any, error)
 }
 
-// From resolves the Canvas engine from the application container.
-func From(app App) *Engine {
+// From resolves the template Engine from the application container.
+func From(app App) Engine {
 	if app == nil {
 		return nil
 	}
@@ -14,6 +14,6 @@ func From(app App) *Engine {
 	if err != nil {
 		return nil
 	}
-	v, _ := raw.(*Engine)
-	return v
+	e, _ := raw.(Engine)
+	return e
 }

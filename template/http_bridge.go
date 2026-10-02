@@ -22,7 +22,7 @@ func (b *httpBridge) Finalize(reqAny any, respAny any) any {
 	return RenderTemplate(b.app, resp)
 }
 
-// RenderTemplate executes a Canvas template response when the engine is bound.
+// RenderTemplate executes a template response when the engine is bound.
 func RenderTemplate(app contracts.App, resp *http.Response) *http.Response {
 	if resp == nil || resp.TemplateName() == "" {
 		return resp

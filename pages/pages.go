@@ -13,12 +13,12 @@ import (
 // Registrar mounts file-based pages onto a router.
 type Registrar struct {
 	root   string
-	engine *view.Engine
+	engine template.Engine
 	prefix string
 }
 
-// New creates a page registrar for views under root (e.g. views/pages).
-func New(root string, engine *view.Engine) *Registrar {
+// New creates a page registrar for templates under root (e.g. templates/pages).
+func New(root string, engine template.Engine) *Registrar {
 	return &Registrar{root: root, engine: engine, prefix: ""}
 }
 

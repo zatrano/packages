@@ -36,7 +36,7 @@ type MailManager struct {
 	mailers       map[string]Mailer
 	fromAddress   string
 	fromName      string
-	view          *view.Engine
+	view          template.Engine
 }
 
 // NewMailManager creates a mail manager.

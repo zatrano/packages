@@ -9,7 +9,7 @@ func init() {
 	addons.Register(addons.Meta{
 		Name:        "template",
 		Key:         "template",
-		Description: "Canvas HTML template engine",
+		Description: "HTML template addon (pluggable engine; default Canvas)",
 		Order:       129,
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
@@ -17,7 +17,7 @@ func init() {
 	})
 }
 
-// ServiceProvider boots the Canvas template package.
+// ServiceProvider boots the template package.
 type ServiceProvider struct{}
 
 func (p *ServiceProvider) Register(app contracts.App) error {
