@@ -9,8 +9,3 @@ func (m *MailManager) SetTemplate(engine *canvas.Engine) {
 	}
 	m.template = engine
 }
-
-// SetView is deprecated; use SetTemplate.
-func (m *MailManager) SetView(engine *canvas.Engine) {
-	m.SetTemplate(engine)
-}

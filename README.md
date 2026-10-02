@@ -129,7 +129,7 @@ HTTP, routing, middleware, config, and the CLI live in the [framework](https://g
 | [`session`](session) | service | Per-visitor server-side sessions (file driver by default) |
 | [`flash`](flash) | service | One-request success/error messages and old input |
 | [`validation`](validation) | service | Form and request validation (pipe rules, FormRequest) |
-| — | — | HTML SSR: enable **`template`** (Canvas via `framework/v3/core/ssr`, dir `templates/`) — no `packages/view` |
+| — | — | HTML SSR: enable **`template`** (Canvas via `framework/v3/core/ssr`, dir `templates/`) |
 | [`assets`](assets) | service | Vite/Mix manifest URLs in templates |
 | [`localization`](localization) | service | JSON translations under `lang/` |
 | [`filesystem`](filesystem) | service | Named disks (`local`, `public`, …) |

@@ -53,17 +53,12 @@ type TemplateData struct {
 	Slug  string
 }
 
-// ViewData is a deprecated alias for TemplateData.
-type ViewData = TemplateData
-
 // Options configures route registration for documentation.
 type Options struct {
 	// Prefix is the URL prefix (default "/documentation").
 	Prefix string
 	// TemplateRenderer, when set, replaces the built-in HTML chrome for index/show.
 	TemplateRenderer func(data TemplateData) *http.Response
-	// ViewRenderer is a deprecated alias for TemplateRenderer.
-	ViewRenderer func(data TemplateData) *http.Response
 	// App, when set, lets 404 pages try Canvas template errors.docs (fallback HTML).
 	App contracts.App
 }
@@ -284,11 +279,6 @@ func (r *Repository) TemplatePayload(slug string) (TemplateData, error) {
 	}, nil
 }
 
-// ViewPayload is a deprecated alias for TemplatePayload.
-func (r *Repository) ViewPayload(slug string) (TemplateData, error) {
-	return r.TemplatePayload(slug)
-}
-
 // Register mounts documentation routes on the router.
 func (r *Repository) Register(router *routing.Router, opts Options) {
 	prefix := strings.TrimRight(opts.Prefix, "/")
@@ -302,9 +292,6 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 		return docsNotFound(opts.App)
 	}
 	renderer := opts.TemplateRenderer
-	if renderer == nil {
-		renderer = opts.ViewRenderer
-	}
 	if renderer != nil {
 		indexHandler = func(req *http.Request) *http.Response {
 			if req.WantsJSON() {
