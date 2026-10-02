@@ -91,7 +91,7 @@ func TestDocsRegisterWithViewRenderer(t *testing.T) {
 	})
 
 	raw, _ := stdhttp.NewRequest(stdhttp.MethodGet, "/docs/routing", nil)
-	resp := router.Dispatch(http.NewRequest(raw))
+	resp := router.Dispatch(http.RequestFromHTTP(raw))
 	if resp == nil || resp.StatusCode() != 200 {
 		t.Fatalf("unexpected response %#v", resp)
 	}

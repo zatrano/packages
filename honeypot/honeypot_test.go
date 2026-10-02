@@ -21,7 +21,7 @@ func TestHoneypotRejectsFilledField(t *testing.T) {
 	form := url.Values{"website": {"http://spam.test"}, "name": {"bot"}}
 	r := httptest.NewRequest(stdhttp.MethodPost, "/contact", strings.NewReader(form.Encode()))
 	r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	resp := handler(http.NewRequest(r))
+	resp := handler(http.RequestFromHTTP(r))
 	if resp.StatusCode() != 422 {
 		t.Fatalf("status=%d", resp.StatusCode())
 	}
@@ -39,7 +39,7 @@ func TestHoneypotAllowsClean(t *testing.T) {
 	}
 	r := httptest.NewRequest(stdhttp.MethodPost, "/contact", strings.NewReader(form.Encode()))
 	r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	resp := handler(http.NewRequest(r))
+	resp := handler(http.RequestFromHTTP(r))
 	if resp.StatusCode() != 200 {
 		t.Fatalf("status=%d body=%s", resp.StatusCode(), string(resp.Content()))
 	}

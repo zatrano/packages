@@ -35,7 +35,7 @@ func (s *memSession) ID() string        { return "test" }
 
 func TestToastHelpers(t *testing.T) {
 	raw, _ := stdhttp.NewRequest(stdhttp.MethodGet, "/", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	sess := &memSession{data: map[string]any{}}
 	req.SetSession(sess)
 

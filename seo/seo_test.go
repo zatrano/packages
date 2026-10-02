@@ -109,25 +109,25 @@ func TestRegisterRoutes(t *testing.T) {
 	s.Register(router)
 
 	raw, _ := stdhttp.NewRequest(stdhttp.MethodGet, "/sitemap.xml", nil)
-	resp := router.Dispatch(http.NewRequest(raw))
+	resp := router.Dispatch(http.RequestFromHTTP(raw))
 	if resp == nil || resp.StatusCode() != 200 || !strings.Contains(string(resp.Content()), "/docs") {
 		t.Fatalf("sitemap %#v body=%s", resp, respBody(resp))
 	}
 
 	raw, _ = stdhttp.NewRequest(stdhttp.MethodGet, "/llms.txt", nil)
-	resp = router.Dispatch(http.NewRequest(raw))
+	resp = router.Dispatch(http.RequestFromHTTP(raw))
 	if resp == nil || resp.StatusCode() != 200 {
 		t.Fatalf("llms %#v", resp)
 	}
 
 	raw, _ = stdhttp.NewRequest(stdhttp.MethodGet, "/llm.txt", nil)
-	resp = router.Dispatch(http.NewRequest(raw))
+	resp = router.Dispatch(http.RequestFromHTTP(raw))
 	if resp == nil || resp.StatusCode() != 301 {
 		t.Fatalf("llm redirect %#v", resp)
 	}
 
 	raw, _ = stdhttp.NewRequest(stdhttp.MethodGet, "/humans.txt", nil)
-	resp = router.Dispatch(http.NewRequest(raw))
+	resp = router.Dispatch(http.RequestFromHTTP(raw))
 	if resp == nil || !strings.Contains(string(resp.Content()), "TEAM") {
 		t.Fatalf("humans %#v", resp)
 	}

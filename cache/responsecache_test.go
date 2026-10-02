@@ -68,11 +68,11 @@ func TestResponseCache(t *testing.T) {
 		return http.JSON(map[string]any{"n": hits})
 	})
 
-	first := handler(http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/demo", nil)))
+	first := handler(http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/demo", nil)))
 	if first.Headers().Get("X-Response-Cache") != "MISS" {
 		t.Fatalf("expected MISS, got %q", first.Headers().Get("X-Response-Cache"))
 	}
-	second := handler(http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/demo", nil)))
+	second := handler(http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/demo", nil)))
 	if second.Headers().Get("X-Response-Cache") != "HIT" {
 		t.Fatalf("expected HIT, got %q", second.Headers().Get("X-Response-Cache"))
 	}

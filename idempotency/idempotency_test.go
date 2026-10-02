@@ -23,7 +23,7 @@ func TestIdempotencyMiddlewareReplays(t *testing.T) {
 	makeReq := func() *http.Request {
 		raw := httptest.NewRequest("POST", "/api/idempotent", nil)
 		raw.Header.Set(idempotency.HeaderKey, "abc-123")
-		return http.NewRequest(raw)
+		return http.RequestFromHTTP(raw)
 	}
 
 	first := handler(makeReq())
