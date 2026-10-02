@@ -1,16 +1,15 @@
 package testing
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	stdhttp "net/http"
-	"net/http/httptest"
 	"net/url"
 	"strings"
 
 	"github.com/zatrano/framework/v3/core/contracts"
+	kernelhttp "github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/rawhttp"
 )
 
 // TestCase wraps an application for HTTP feature tests.
@@ -87,64 +86,103 @@ func (t *TestCase) Delete(uri string) *TestResponse {
 }
 
 func (t *TestCase) call(method, uri string, body any, contentType string) *TestResponse {
-	var reader io.Reader
+	var bodyBytes []byte
 	switch v := body.(type) {
 	case nil:
-		reader = nil
+		bodyBytes = nil
 	case string:
-		reader = strings.NewReader(v)
+		bodyBytes = []byte(v)
 	case []byte:
-		reader = bytes.NewReader(v)
+		bodyBytes = v
 	case map[string]string:
 		if contentType == "application/json" {
-			raw, _ := json.Marshal(v)
-			reader = bytes.NewReader(raw)
+			bodyBytes, _ = json.Marshal(v)
 		} else {
 			form := url.Values{}
 			for key, value := range v {
 				form.Set(key, value)
 			}
-			reader = strings.NewReader(form.Encode())
+			bodyBytes = []byte(form.Encode())
 			if contentType == "" {
 				contentType = "application/x-www-form-urlencoded"
 			}
 		}
 	default:
-		raw, _ := json.Marshal(v)
-		reader = bytes.NewReader(raw)
+		bodyBytes, _ = json.Marshal(v)
 		if contentType == "" {
 			contentType = "application/json"
 		}
 	}
 
-	req := httptest.NewRequest(method, uri, reader)
-	for key, value := range t.headers {
-		req.Header.Set(key, value)
-	}
-	if contentType != "" {
-		req.Header.Set("Content-Type", contentType)
-	}
-	for _, cookie := range t.cookies {
-		req.AddCookie(cookie)
-	}
-
-	recorder := httptest.NewRecorder()
 	if t.App == nil {
 		panic("testing: App is nil")
 	}
-	t.App.ServeHTTP(recorder, req)
 
-	resp := recorder.Result()
-	defer resp.Body.Close()
-	raw, _ := io.ReadAll(resp.Body)
+	headers := map[string]string{}
+	for key, value := range t.headers {
+		headers[key] = value
+	}
+	if contentType != "" {
+		headers["Content-Type"] = contentType
+	}
+	if len(t.cookies) > 0 {
+		parts := make([]string, 0, len(t.cookies))
+		for _, c := range t.cookies {
+			parts = append(parts, c.Name+"="+c.Value)
+		}
+		headers["Cookie"] = strings.Join(parts, "; ")
+	}
 
-	t.cookies = append(t.cookies, resp.Cookies()...)
+	rawReq := buildRawHTTPRequest(method, uri, headers, string(bodyBytes))
+	er, err := kernelhttp.ExchangeForTest(func(ctx *rawhttp.Ctx) {
+		t.App.Handle(ctx)
+	}, rawReq)
+	if err != nil {
+		panic(fmt.Sprintf("testing: ExchangeForTest: %v", err))
+	}
+
+	// Mirror Set-Cookie into jar for follow-up requests.
+	for _, v := range er.Header.Values("Set-Cookie") {
+		if c := parseSetCookie(v); c != nil {
+			t.cookies = append(t.cookies, c)
+		}
+	}
 
 	return &TestResponse{
-		StatusCode: resp.StatusCode,
-		Headers:    resp.Header.Clone(),
-		Body:       raw,
+		StatusCode: er.Status,
+		Headers:    er.Header.Clone(),
+		Body:       er.Body,
 	}
+}
+
+func buildRawHTTPRequest(method, uri string, headers map[string]string, body string) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "%s %s HTTP/1.1\r\n", method, uri)
+	if _, ok := headers["Host"]; !ok {
+		b.WriteString("Host: localhost\r\n")
+	}
+	b.WriteString("Connection: close\r\n")
+	for k, v := range headers {
+		fmt.Fprintf(&b, "%s: %s\r\n", k, v)
+	}
+	if body != "" || method == "POST" || method == "PUT" || method == "PATCH" {
+		fmt.Fprintf(&b, "Content-Length: %d\r\n", len(body))
+	}
+	b.WriteString("\r\n")
+	b.WriteString(body)
+	return b.String()
+}
+
+func parseSetCookie(v string) *stdhttp.Cookie {
+	parts := strings.Split(v, ";")
+	if len(parts) == 0 {
+		return nil
+	}
+	nv := strings.SplitN(strings.TrimSpace(parts[0]), "=", 2)
+	if len(nv) != 2 {
+		return nil
+	}
+	return &stdhttp.Cookie{Name: nv[0], Value: nv[1]}
 }
 
 // TestResponse asserts against an HTTP response.
