@@ -5,20 +5,20 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/zatrano/canvas"
 	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/framework/v3/core/kernel/routing"
-	"github.com/zatrano/framework/v3/core/ssr"
 )
 
 // Registrar mounts file-based pages onto a router.
 type Registrar struct {
 	root   string
-	engine ssr.Engine
+	engine *canvas.Engine
 	prefix string
 }
 
 // New creates a page registrar for templates under root (e.g. templates/pages).
-func New(root string, engine ssr.Engine) *Registrar {
+func New(root string, engine *canvas.Engine) *Registrar {
 	return &Registrar{root: root, engine: engine, prefix: ""}
 }
 

@@ -1,9 +1,9 @@
 package notification
 
-import "github.com/zatrano/framework/v3/core/ssr"
+import "github.com/zatrano/canvas"
 
-// SetTemplate attaches an SSR Engine for template-based mail bodies.
-func (m *MailManager) SetTemplate(engine ssr.Engine) {
+// SetTemplate attaches a Canvas engine for template-based mail bodies.
+func (m *MailManager) SetTemplate(engine *canvas.Engine) {
 	if m == nil {
 		return
 	}
@@ -11,6 +11,6 @@ func (m *MailManager) SetTemplate(engine ssr.Engine) {
 }
 
 // SetView is deprecated; use SetTemplate.
-func (m *MailManager) SetView(engine ssr.Engine) {
+func (m *MailManager) SetView(engine *canvas.Engine) {
 	m.SetTemplate(engine)
 }

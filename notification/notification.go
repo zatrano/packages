@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/v3/core/ssr"
+	"github.com/zatrano/canvas"
 )
 
 // Notifiable can receive notifications.
@@ -72,8 +72,8 @@ func (m *Manager) SetMail(mailer *MailManager) {
 	}
 }
 
-// SetMailTemplate attaches the SSR Engine used when rendering mail templates.
-func (m *Manager) SetMailTemplate(engine ssr.Engine) {
+// SetMailTemplate attaches the Canvas engine used when rendering mail templates.
+func (m *Manager) SetMailTemplate(engine *canvas.Engine) {
 	if m == nil || m.mail == nil {
 		return
 	}
@@ -81,7 +81,7 @@ func (m *Manager) SetMailTemplate(engine ssr.Engine) {
 }
 
 // SetMailView is deprecated; use SetMailTemplate.
-func (m *Manager) SetMailView(engine ssr.Engine) {
+func (m *Manager) SetMailView(engine *canvas.Engine) {
 	m.SetMailTemplate(engine)
 }
 
