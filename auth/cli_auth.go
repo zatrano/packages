@@ -118,7 +118,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			filePair{"go/routes_auth.go.stub", []string{"app", "routes", "auth", "web", "auth.go"}},
 			filePair{"go/routes_auth_api.go.stub", []string{"app", "routes", "auth", "api", "auth.go"}},
 			filePair{"go/auth_service_provider.go.stub", []string{"app", "providers", "auth_service_provider.go"}},
-			filePair{"go/migration_auth.go.stub", []string{"database", "migrations", "create_auth_tables.go"}},
+			filePair{"sql/001_create_auth_tables.sql", []string{"database", "migrations", "001_create_auth_tables.sql"}},
 		)
 		if wantSocialGo {
 			pairs = append(pairs,
@@ -126,7 +126,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 				filePair{"go/social_auth_service.go.stub", []string{"app", "services", "social.go"}},
 				filePair{"go/social_auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "web", "social_auth_handler.go"}},
 				filePair{"go/api_social_auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "api", "social_auth_handler.go"}},
-				filePair{"go/migration_social_accounts.go.stub", []string{"database", "migrations", "create_social_accounts_table.go"}},
+				filePair{"sql/002_create_social_accounts_table.sql", []string{"database", "migrations", "002_create_social_accounts_table.sql"}},
 			)
 		}
 	}
@@ -240,20 +240,15 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		fmt.Println("Mode: --views (auth HTML, layout, and mail templates only)")
 	} else {
 		fmt.Println("Next steps:")
-		fmt.Println("  1. Enable hashing, database, session, and auth (notification for mail). template (Canvas) and url are already enabled.")
-		fmt.Println("  2. In app/database/migrations/migrations.go add:")
-		migLine := "     &CreateUsersTable{}, &CreatePasswordResetTokensTable{}, &CreatePersonalAccessTokensTable{},"
-		if wantSocialGo {
-			migLine += " &CreateSocialAccountsTable{},"
-		}
-		fmt.Println(migLine)
+		fmt.Println("  1. Enable hashing, database (packages/db), session, and auth (notification for mail). template (Canvas) and url are already enabled.")
+		fmt.Println("  2. Apply SQL under database/migrations/ (001_create_auth_tables.sql[+002 social]).")
 		fmt.Println("  3. Auth routes self-register from app/routes/auth/web and app/routes/auth/api.")
 		fmt.Println("  4. Set AUTH_MUST_VERIFY_EMAIL=true to require email confirmation (default false).")
 		if wantSocialGo {
 			fmt.Println("  5. Set GOOGLE_* env vars for social login")
-			fmt.Println("  6. Run: go run ./cmd/app migrate")
+			fmt.Println("  6. Run your db migrate tool against database/migrations/")
 		} else {
-			fmt.Println("  5. Run: go run ./cmd/app migrate")
+			fmt.Println("  5. Run your db migrate tool against database/migrations/")
 		}
 	}
 	fmt.Println("Use --force to overwrite existing files. Use --views for Canvas templates only.")
@@ -324,12 +319,12 @@ func goStubConflicts(stub, pkgDir, dst string) (string, error) {
 		if strings.Contains(stub, "RegisterAuthWeb") && strings.Contains(text, `.As("login")`) {
 			return fmt.Sprintf("login routes already in %s", entry.Name()), nil
 		}
-		if strings.Contains(stub, "CreateUsersTable") &&
-			(strings.Contains(text, "remember_token") || strings.Contains(text, "two_factor_secret") || strings.Contains(text, "CreateUsersTable")) {
+		if strings.Contains(stub, "001_create_auth_tables") &&
+			(strings.Contains(text, "remember_token") || strings.Contains(text, "two_factor_secret") || (strings.Contains(text, "CREATE TABLE") && strings.Contains(text, "users"))) {
 			return fmt.Sprintf("auth tables already in %s", entry.Name()), nil
 		}
-		if strings.Contains(stub, "CreateSocialAccountsTable") &&
-			(strings.Contains(text, "provider_uid") || strings.Contains(text, "CreateSocialAccountsTable")) {
+		if strings.Contains(stub, "002_create_social_accounts") &&
+			(strings.Contains(text, "provider_uid") || strings.Contains(text, "social_accounts")) {
 			return fmt.Sprintf("social accounts already in %s", entry.Name()), nil
 		}
 	}
@@ -383,11 +378,11 @@ func injectAuthSocialWebRoutes(path string) error {
 		return err
 	}
 	text := strings.ReplaceAll(string(body), "\r\n", "\n")
-	if strings.Contains(text, "SocialAuthController") {
+	if strings.Contains(text, "SocialAuthHandler") {
 		return nil
 	}
-	text = strings.Replace(text, "ctrl := &authctrl.AuthController{App: app}",
-		"ctrl := &authctrl.AuthController{App: app}\n	social := &authctrl.SocialAuthController{App: app}", 1)
+	text = strings.Replace(text, "ctrl := &authctrl.AuthHandler{App: app}",
+		"ctrl := &authctrl.AuthHandler{App: app}\n	social := &authctrl.SocialAuthHandler{App: app}", 1)
 	text = strings.Replace(text, "r.Post(\"/logout\", ctrl.Logout).As(\"logout\")",
 		"r.Post(\"/logout\", ctrl.Logout).As(\"logout\")\n\n		r.Get(\"/google/login\", social.GoogleRedirect).As(\"login.google\")\n		r.Get(\"/google/callback\", social.GoogleCallback).As(\"login.google.callback\")", 1)
 	return os.WriteFile(path, []byte(text), 0o644)
@@ -399,11 +394,11 @@ func injectAuthSocialAPIRoutes(path string) error {
 		return err
 	}
 	text := strings.ReplaceAll(string(body), "\r\n", "\n")
-	if strings.Contains(text, "SocialAuthController") {
+	if strings.Contains(text, "SocialAuthHandler") {
 		return nil
 	}
-	text = strings.Replace(text, "ctrl := &apictrl.AuthController{App: app}",
-		"ctrl := &apictrl.AuthController{App: app}\n	social := &apictrl.SocialAuthController{App: app}", 1)
+	text = strings.Replace(text, "ctrl := &apictrl.AuthHandler{App: app}",
+		"ctrl := &apictrl.AuthHandler{App: app}\n	social := &apictrl.SocialAuthHandler{App: app}", 1)
 	text = strings.Replace(text, "r.Post(\"/register\", ctrl.Register).As(\"api.v1.register\").Through(ratelimit.From(app).Named(\"login\"))",
 		"r.Post(\"/register\", ctrl.Register).As(\"api.v1.register\").Through(ratelimit.From(app).Named(\"login\"))\n			r.Get(\"/google\", social.GoogleRedirect).As(\"api.v1.login.google\")\n			r.Get(\"/google/callback\", social.GoogleCallback).As(\"api.v1.login.google.callback\")\n			r.Post(\"/google/callback\", social.GoogleCallback).As(\"api.v1.login.google.callback.store\")", 1)
 	return os.WriteFile(path, []byte(text), 0o644)

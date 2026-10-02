@@ -1,4 +1,4 @@
-﻿package api
+package api
 
 import (
 	"strings"
@@ -13,23 +13,23 @@ import (
 
 const sessionOAuthStatePrefix = "oauth_state_"
 
-// SocialAuthController handles Google OAuth login/register for the JSON surface.
-type SocialAuthController struct {
+// SocialAuthHandler handles Google OAuth login/register for the JSON surface.
+type SocialAuthHandler struct {
 	App contracts.App
 }
 
-func (c *SocialAuthController) svc() *services.SocialAuthService {
+func (c *SocialAuthHandler) svc() *services.SocialAuthService {
 	return services.NewSocialAuthService(c.App)
 }
 
-func (c *SocialAuthController) lang(key string, replace ...map[string]string) string {
+func (c *SocialAuthHandler) lang(key string, replace ...map[string]string) string {
 	if tr := localization.From(c.App); tr != nil {
 		return tr.Get(key, replace...)
 	}
 	return key
 }
 
-func (c *SocialAuthController) providerLabel(provider string) string {
+func (c *SocialAuthHandler) providerLabel(provider string) string {
 	p := strings.ToLower(strings.TrimSpace(provider))
 	if p == "google" {
 		return c.lang("auth.provider_google")
@@ -44,23 +44,23 @@ func (c *SocialAuthController) providerLabel(provider string) string {
 	return string(unicode.ToUpper(r)) + p[size:]
 }
 
-func (c *SocialAuthController) providerReplace(provider string) map[string]string {
+func (c *SocialAuthHandler) providerReplace(provider string) map[string]string {
 	return map[string]string{"provider": c.providerLabel(provider)}
 }
 
-func (c *SocialAuthController) fail(key string, status int, replace ...map[string]string) *http.Response {
+func (c *SocialAuthHandler) fail(key string, status int, replace ...map[string]string) *http.Response {
 	return http.JSON(map[string]any{"message": c.lang(key, replace...)}).Status(status)
 }
 
-func (c *SocialAuthController) GoogleRedirect(req *http.Request) *http.Response {
+func (c *SocialAuthHandler) GoogleRedirect(req *http.Request) *http.Response {
 	return c.redirect(req, "google")
 }
 
-func (c *SocialAuthController) GoogleCallback(req *http.Request) *http.Response {
+func (c *SocialAuthHandler) GoogleCallback(req *http.Request) *http.Response {
 	return c.callback(req, "google")
 }
 
-func (c *SocialAuthController) redirect(req *http.Request, provider string) *http.Response {
+func (c *SocialAuthHandler) redirect(req *http.Request, provider string) *http.Response {
 	repl := c.providerReplace(provider)
 	url, state, err := c.svc().Redirect(provider)
 	if err != nil {
@@ -72,7 +72,7 @@ func (c *SocialAuthController) redirect(req *http.Request, provider string) *htt
 	return http.JSON(map[string]any{"url": url, "state": state})
 }
 
-func (c *SocialAuthController) callback(req *http.Request, provider string) *http.Response {
+func (c *SocialAuthHandler) callback(req *http.Request, provider string) *http.Response {
 	repl := c.providerReplace(provider)
 	if errMsg := strings.TrimSpace(req.Query("error")); errMsg != "" {
 		desc := strings.TrimSpace(req.Query("error_description"))

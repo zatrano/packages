@@ -13,7 +13,7 @@ type PersistResult struct {
 }
 
 // Persistence stores social identities against application users.
-// Apps implement this (typically with ORM) or use the make:auth stubs.
+// Apps implement this (typically with database/sql via db.SQLFrom) or use the make:auth stubs.
 //
 // Avatar contract: CreateUser/SyncUser must write the provider picture onto the
 // authenticatable user (canonical profile photo). UpsertAccount may also store

@@ -61,6 +61,8 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 		filepath.Join(dir, "app", "http", "handlers", "auth", "api", "auth_handler.go"),
 		filepath.Join(dir, "app", "routes", "auth", "web", "auth.go"),
 		filepath.Join(dir, "app", "routes", "auth", "api", "auth.go"),
+		filepath.Join(dir, "database", "migrations", "001_create_auth_tables.sql"),
+		filepath.Join(dir, "app", "models", "user.go"),
 	}
 	for _, path := range want {
 		if _, err := os.Stat(path); err != nil {
@@ -110,11 +112,11 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 	}
 	ctrlSrc := string(apiCtrl)
 	for _, needle := range []string{
-		"func (c *AuthController) Verify",
-		"func (c *AuthController) Send",
-		"func (c *AuthController) Notice",
-		"func (c *AuthController) User",
-		"func (c *AuthController) TwoFactor",
+		"func (c *AuthHandler) Verify",
+		"func (c *AuthHandler) Send",
+		"func (c *AuthHandler) Notice",
+		"func (c *AuthHandler) User",
+		"func (c *AuthHandler) TwoFactor",
 		"verification_required",
 		"userJSON",
 	} {
@@ -140,8 +142,8 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 		{filepath.Join("templates", "auth", "login.html"), []string{"auth-social", "google/login", "continue_google"}},
 		{filepath.Join("templates", "auth", "register.html"), []string{"auth-social", "google/login", "continue_google"}},
 		{filepath.Join("templates", "layout", "auth.html"), []string{"auth-social"}},
-		{filepath.Join("app", "routes", "auth", "web", "auth.go"), []string{"SocialAuthController", "google/login"}},
-		{filepath.Join("app", "routes", "auth", "api", "auth.go"), []string{"SocialAuthController", "/google"}},
+		{filepath.Join("app", "routes", "auth", "web", "auth.go"), []string{"SocialAuthHandler", "google/login"}},
+		{filepath.Join("app", "routes", "auth", "api", "auth.go"), []string{"SocialAuthHandler", "/google"}},
 		{filepath.Join("app", "localization", "en", "auth.json"), []string{"continue_google", "provider_google", "social_"}},
 	}
 	for _, check := range checks {
@@ -185,7 +187,7 @@ func TestMakeAuthSocialBareFlagEnablesGoogle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(webRoutes), "SocialAuthController") {
+	if !strings.Contains(string(webRoutes), "SocialAuthHandler") {
 		t.Fatal("expected social routes after --social")
 	}
 }
@@ -209,7 +211,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(enabled), `"template"`) {
-		t.Fatal("make:auth must enable view")
+		t.Fatal("make:auth must enable template")
 	}
 	if !strings.Contains(string(enabled), `"url"`) {
 		t.Fatal("make:auth must enable url for signed verification links")
@@ -219,7 +221,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(addonSrc), "github.com/zatrano/framework/v3/core/ssr") {
-		t.Fatal("make:auth must blank-import view")
+		t.Fatal("make:auth must blank-import core/ssr")
 	}
 	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/url") {
 		t.Fatal("make:auth must blank-import url")

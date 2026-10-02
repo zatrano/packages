@@ -64,7 +64,7 @@ func (r *Registrar) Register(router *routing.Router) error {
 	})
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil
+			return fmt.Errorf("pages: root %q missing", r.root)
 		}
 		return err
 	}

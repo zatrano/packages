@@ -2,21 +2,22 @@
 
 import (
 	"crypto/rand"
+	"database/sql"
 	"encoding/base64"
 	"fmt"
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v3/core/contracts"
 	"__MODULE__/app/models"
-	pkgauth "github.com/zatrano/packages/auth"
-	"github.com/zatrano/packages/hashing"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/framework/v3/core/kernel/http"
-	"github.com/zatrano/packages/orm"
+	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/auth/social"
+	"github.com/zatrano/packages/db"
+	"github.com/zatrano/packages/hashing"
 )
 
-// SocialAuthService is the shared Google OAuth seam for web and API controllers.
+// SocialAuthService is the shared Google OAuth seam for web and API handlers.
 type SocialAuthService struct {
 	App contracts.App
 }
@@ -40,11 +41,15 @@ func (s *SocialAuthService) User(provider, code string) (*social.User, error) {
 }
 
 func (s *SocialAuthService) Persist(socialUser *social.User) (*social.PersistResult, *models.User, error) {
-	result, err := social.Persist(&ormSocialPersistence{}, socialUser)
+	store, err := newSQLSocialPersistence(s.App)
+	if err != nil {
+		return nil, nil, err
+	}
+	result, err := social.Persist(store, socialUser)
 	if err != nil || result == nil || result.UserID == 0 {
 		return nil, nil, fmt.Errorf("auth.social_link_failed")
 	}
-	user, err := orm.Find[models.User](result.UserID)
+	user, err := store.loadUser(result.UserID)
 	if err != nil || user == nil {
 		return nil, nil, fmt.Errorf("auth.social_user_load_failed")
 	}
@@ -65,32 +70,44 @@ func (s *SocialAuthService) ValidateState(state string) {
 	_ = social.From(s.App).ValidateState(state)
 }
 
-type ormSocialPersistence struct{}
+type sqlSocialPersistence struct {
+	db *sql.DB
+}
 
-func (p *ormSocialPersistence) FindUserIDByProvider(provider, providerID string) (int64, error) {
+func newSQLSocialPersistence(app contracts.App) (*sqlSocialPersistence, error) {
+	h, ok := db.SQLFrom(app)
+	if !ok || h.DB == nil {
+		return nil, fmt.Errorf("auth.database_unavailable")
+	}
+	return &sqlSocialPersistence{db: h.DB}, nil
+}
+
+func (p *sqlSocialPersistence) FindUserIDByProvider(provider, providerID string) (int64, error) {
 	uid := models.ProviderUIDFor(strings.ToLower(provider), providerID)
-	rows, err := orm.Query[models.SocialAccount]().Where("provider_uid", uid).Limit(1).Get()
+	var id int64
+	err := p.db.QueryRow(`SELECT user_id FROM social_accounts WHERE provider_uid = ? LIMIT 1`, uid).Scan(&id)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
 	if err != nil {
 		return 0, err
 	}
-	if len(rows) == 0 {
-		return 0, nil
-	}
-	return rows[0].UserID, nil
+	return id, nil
 }
 
-func (p *ormSocialPersistence) FindUserIDByEmail(email string) (int64, error) {
-	rows, err := orm.Query[models.User]().Where("email", email).Limit(1).Get()
+func (p *sqlSocialPersistence) FindUserIDByEmail(email string) (int64, error) {
+	var id int64
+	err := p.db.QueryRow(`SELECT id FROM users WHERE email = ? LIMIT 1`, email).Scan(&id)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
 	if err != nil {
 		return 0, err
 	}
-	if len(rows) == 0 {
-		return 0, nil
-	}
-	return rows[0].ID, nil
+	return id, nil
 }
 
-func (p *ormSocialPersistence) CreateUser(name, email, avatar string, emailVerified bool) (int64, error) {
+func (p *sqlSocialPersistence) CreateUser(name, email, avatar string, emailVerified bool) (int64, error) {
 	plain, err := randomOAuthPassword(24)
 	if err != nil {
 		return 0, err
@@ -99,24 +116,23 @@ func (p *ormSocialPersistence) CreateUser(name, email, avatar string, emailVerif
 	if err != nil {
 		return 0, err
 	}
-	user := &models.User{
-		Name:     name,
-		Email:    email,
-		Password: hashed,
-		Avatar:   avatar,
-	}
+	var verified any
 	if emailVerified {
-		now := time.Now().UTC()
-		user.EmailVerifiedAt = &now
+		verified = time.Now().UTC().Format(time.RFC3339)
 	}
-	if err := orm.Save(user); err != nil {
+	res, err := p.db.Exec(
+		`INSERT INTO users (name, email, password, avatar, email_verified_at, created_at, updated_at)
+		 VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+		name, email, hashed, avatar, verified,
+	)
+	if err != nil {
 		return 0, err
 	}
-	return user.ID, nil
+	return res.LastInsertId()
 }
 
-func (p *ormSocialPersistence) SyncUser(userID int64, name, avatar string, emailVerified bool) error {
-	user, err := orm.Find[models.User](userID)
+func (p *sqlSocialPersistence) SyncUser(userID int64, name, avatar string, emailVerified bool) error {
+	user, err := p.loadUser(userID)
 	if err != nil || user == nil {
 		return fmt.Errorf("user %d not found", userID)
 	}
@@ -136,10 +152,18 @@ func (p *ormSocialPersistence) SyncUser(userID int64, name, avatar string, email
 	if !changed {
 		return nil
 	}
-	return orm.Save(user)
+	var verified any
+	if user.EmailVerifiedAt != nil {
+		verified = user.EmailVerifiedAt.UTC().Format(time.RFC3339)
+	}
+	_, err = p.db.Exec(
+		`UPDATE users SET name = ?, avatar = ?, email_verified_at = ?, updated_at = datetime('now') WHERE id = ?`,
+		user.Name, user.Avatar, verified, userID,
+	)
+	return err
 }
 
-func (p *ormSocialPersistence) UpsertAccount(userID int64, socialUser *social.User) error {
+func (p *sqlSocialPersistence) UpsertAccount(userID int64, socialUser *social.User) error {
 	provider := strings.ToLower(strings.TrimSpace(socialUser.Provider))
 	providerID := strings.TrimSpace(socialUser.ID)
 	uid := models.ProviderUIDFor(provider, providerID)
@@ -147,38 +171,54 @@ func (p *ormSocialPersistence) UpsertAccount(userID int64, socialUser *social.Us
 	email := strings.ToLower(strings.TrimSpace(socialUser.Email))
 	avatar := strings.TrimSpace(socialUser.Avatar)
 	token := strings.TrimSpace(socialUser.Token)
-	rows, err := orm.Query[models.SocialAccount]().Where("provider_uid", uid).Limit(1).Get()
-	if err != nil {
+
+	var existingID int64
+	err := p.db.QueryRow(`SELECT id FROM social_accounts WHERE provider_uid = ? LIMIT 1`, uid).Scan(&existingID)
+	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
-	var account *models.SocialAccount
-	if len(rows) > 0 {
-		account = &rows[0]
-	} else {
-		account = &models.SocialAccount{
-			UserID:      userID,
-			Provider:    provider,
-			ProviderID:  providerID,
-			ProviderUID: uid,
+	if err == sql.ErrNoRows {
+		_, err = p.db.Exec(
+			`INSERT INTO social_accounts (user_id, provider, provider_id, provider_uid, name, email, avatar, access_token, created_at, updated_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+			userID, provider, providerID, uid, nullIfEmpty(name), nullIfEmpty(email), nullIfEmpty(avatar), nullIfEmpty(token),
+		)
+		return err
+	}
+	_, err = p.db.Exec(
+		`UPDATE social_accounts SET user_id = ?, provider = ?, provider_id = ?, name = ?, email = ?, avatar = ?, access_token = ?, updated_at = datetime('now')
+		 WHERE id = ?`,
+		userID, provider, providerID, nullIfEmpty(name), nullIfEmpty(email), nullIfEmpty(avatar), nullIfEmpty(token), existingID,
+	)
+	return err
+}
+
+func (p *sqlSocialPersistence) loadUser(id int64) (*models.User, error) {
+	var u models.User
+	var verified sql.NullString
+	err := p.db.QueryRow(
+		`SELECT id, name, email, COALESCE(is_admin,0), password, COALESCE(avatar,''), email_verified_at FROM users WHERE id = ?`,
+		id,
+	).Scan(&u.ID, &u.Name, &u.Email, &u.IsAdmin, &u.Password, &u.Avatar, &verified)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	if verified.Valid && verified.String != "" {
+		if t, perr := time.Parse(time.RFC3339, verified.String); perr == nil {
+			u.EmailVerifiedAt = &t
 		}
 	}
-	account.UserID = userID
-	account.Provider = provider
-	account.ProviderID = providerID
-	account.ProviderUID = uid
-	if name != "" {
-		account.Name = &name
+	return &u, nil
+}
+
+func nullIfEmpty(s string) any {
+	if strings.TrimSpace(s) == "" {
+		return nil
 	}
-	if email != "" {
-		account.Email = &email
-	}
-	if avatar != "" {
-		account.Avatar = &avatar
-	}
-	if token != "" {
-		account.AccessToken = &token
-	}
-	return orm.Save(account)
+	return s
 }
 
 func randomOAuthPassword(n int) (string, error) {

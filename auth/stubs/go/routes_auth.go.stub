@@ -1,4 +1,4 @@
-﻿package web
+package web
 
 import (
 	approutes "__MODULE__/app/routes"
@@ -18,7 +18,7 @@ func registerAuth(router *routing.Router) {
 	if app == nil || router == nil {
 		return
 	}
-	ctrl := &authctrl.AuthController{App: app}
+	ctrl := &authctrl.AuthHandler{App: app}
 
 	router.Group("/auth", func(r *routing.Router) {
 		r.Get("/login", ctrl.LoginForm).As("login")

@@ -1,6 +1,6 @@
 package models
 
-import "github.com/zatrano/packages/orm"
+import "time"
 
 // SocialAccount links a third-party OAuth identity to a user.
 //
@@ -8,15 +8,17 @@ import "github.com/zatrano/packages/orm"
 // APIs, or mail — always read models.User.Avatar (Persist/SyncUser copies the
 // provider picture onto the user record).
 type SocialAccount struct {
-	orm.Model
-	UserID      int64   `db:"user_id" json:"user_id"`
-	Provider    string  `db:"provider" json:"provider"`
-	ProviderID  string  `db:"provider_id" json:"provider_id"`
-	ProviderUID string  `db:"provider_uid" json:"provider_uid"`
-	Name        *string `db:"name" json:"name,omitempty"`
-	Email       *string `db:"email" json:"email,omitempty"`
-	Avatar      *string `db:"avatar" json:"avatar,omitempty"` // provider snapshot; not for display
-	AccessToken *string `db:"access_token" json:"-"`
+	ID          int64     `db:"id" json:"id"`
+	UserID      int64     `db:"user_id" json:"user_id"`
+	Provider    string    `db:"provider" json:"provider"`
+	ProviderID  string    `db:"provider_id" json:"provider_id"`
+	ProviderUID string    `db:"provider_uid" json:"provider_uid"`
+	Name        *string   `db:"name" json:"name,omitempty"`
+	Email       *string   `db:"email" json:"email,omitempty"`
+	Avatar      *string   `db:"avatar" json:"avatar,omitempty"` // provider snapshot; not for display
+	AccessToken *string   `db:"access_token" json:"-"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 }
 
 // TableName returns the social_accounts table name.
