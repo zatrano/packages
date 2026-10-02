@@ -315,13 +315,13 @@ jobs:
           cache-dependency-path: packages/go.sum
       - run: go mod download
       - name: Fuzz ${{ matrix.target }} (3m)
-        run: bash .github/scripts/run-fuzz.sh ${{ matrix.target }} ./database/query/ 3m
+        run: bash .github/scripts/run-fuzz.sh ${{ matrix.target }} ./auth/ 3m
       - name: Upload fuzz crash corpus
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: fuzz-crash-${{ matrix.target }}
-          path: packages/database/query/testdata/fuzz/
+          path: packages/auth/testdata/fuzz/
           if-no-files-found: ignore
 
   summary:

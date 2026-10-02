@@ -78,19 +78,6 @@ func (t *sqlTable) queryFirst(cols []string, vals []any) (map[string]any, error)
 	return scanRow(rows)
 }
 
-func (t *sqlTable) getWhere(col string, val any) ([]map[string]any, error) {
-	if err := requireIdent(col); err != nil {
-		return nil, err
-	}
-	q := "SELECT * FROM " + t.table + " WHERE " + col + " = " + t.ph(1)
-	rows, err := t.db.Query(q, val)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanAll(rows)
-}
-
 func (t *sqlTable) updateWhere(set map[string]any, whereCol string, whereVal any) error {
 	if err := requireIdent(whereCol); err != nil {
 		return err
@@ -131,8 +118,14 @@ func (t *sqlTable) deleteWhere(col string, val any) error {
 	if err := requireIdent(col); err != nil {
 		return err
 	}
-	q := "DELETE FROM " + t.table + " WHERE " + col + " = " + t.ph(1)
-	_, err := t.db.Exec(q, val)
+	var b strings.Builder
+	b.WriteString("DELETE FROM ")
+	b.WriteString(t.table)
+	b.WriteString(" WHERE ")
+	b.WriteString(col)
+	b.WriteString(" = ")
+	b.WriteString(t.ph(1))
+	_, err := t.db.Exec(b.String(), val)
 	return err
 }
 
@@ -242,16 +235,4 @@ func scanRow(rows *sql.Rows) (map[string]any, error) {
 		}
 	}
 	return out, nil
-}
-
-func scanAll(rows *sql.Rows) ([]map[string]any, error) {
-	out := make([]map[string]any, 0)
-	for rows.Next() {
-		m, err := scanRow(rows)
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, m)
-	}
-	return out, rows.Err()
 }
