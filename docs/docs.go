@@ -3,13 +3,16 @@ package docs
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/framework/v3/core/kernel/routing"
+	"github.com/zatrano/framework/v3/core/ssr"
 	"github.com/zatrano/packages/toolkit/markdown"
 )
 
@@ -56,6 +59,8 @@ type Options struct {
 	Prefix string
 	// ViewRenderer, when set, replaces the built-in HTML chrome for index/show.
 	ViewRenderer func(data ViewData) *http.Response
+	// App, when set, lets 404 pages try Canvas template errors.docs (fallback HTML).
+	App contracts.App
 }
 
 // Repository loads markdown docs from a directory.
@@ -283,6 +288,9 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 
 	indexHandler := r.IndexHandler()
 	showHandler := r.ShowHandler()
+	notFound := func() *http.Response {
+		return docsNotFound(opts.App)
+	}
 	if opts.ViewRenderer != nil {
 		renderer := opts.ViewRenderer
 		indexHandler = func(req *http.Request) *http.Response {
@@ -295,7 +303,7 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 				nav, navErr := r.Navigation()
 				pages, listErr := r.List()
 				if navErr != nil || listErr != nil {
-					return http.HTML("<h1>Not Found</h1>").Status(404)
+					return notFound()
 				}
 				data = ViewData{Nav: nav, Pages: pages, Slug: "index"}
 			}
@@ -308,7 +316,7 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 			}
 			data, err := r.ViewPayload(slug)
 			if err != nil {
-				return http.HTML("<h1>Not Found</h1>").Status(404)
+				return notFound()
 			}
 			return renderer(data)
 		}
@@ -336,9 +344,10 @@ func (r *Repository) IndexHandler() routing.HandlerFunc {
 h1{color:#3dd6c6}a{color:#3dd6c6}li{margin:.4rem 0}h2{margin-top:1.5rem;font-size:1rem;color:#9fb0c8}</style></head><body>`)
 		b.WriteString(`<h1>Documentation</h1>`)
 		for _, section := range nav {
-			b.WriteString(`<h2>` + section.Title + `</h2><ul>`)
+			b.WriteString(`<h2>` + html.EscapeString(section.Title) + `</h2><ul>`)
 			for _, page := range section.Pages {
-				b.WriteString(fmt.Sprintf(`<li><a href="/documentation/%s">%s</a></li>`, page.Slug, page.Title))
+				b.WriteString(fmt.Sprintf(`<li><a href="/documentation/%s">%s</a></li>`,
+					html.EscapeString(page.Slug), html.EscapeString(page.Title)))
 			}
 			b.WriteString(`</ul>`)
 		}
@@ -351,12 +360,12 @@ h1{color:#3dd6c6}a{color:#3dd6c6}li{margin:.4rem 0}h2{margin-top:1.5rem;font-siz
 func (r *Repository) ShowHandler() routing.HandlerFunc {
 	return func(req *http.Request) *http.Response {
 		slug := req.Route("slug", "index")
-		html, page, err := r.HTML(slug)
+		contentHTML, page, err := r.HTML(slug)
 		if err != nil {
 			if req.WantsJSON() {
 				return http.JSON(map[string]any{"message": "Document not found"}).Status(404)
 			}
-			return http.HTML("<h1>Not Found</h1>").Status(404)
+			return docsNotFound(nil)
 		}
 		if req.WantsJSON() {
 			prev, next, _ := r.Neighbors(slug)
@@ -374,13 +383,15 @@ func (r *Repository) ShowHandler() routing.HandlerFunc {
 		if prev != nil || next != nil {
 			navHTML.WriteString(`<p>`)
 			if prev != nil {
-				navHTML.WriteString(fmt.Sprintf(`<a href="/documentation/%s">&larr; %s</a>`, prev.Slug, prev.Title))
+				navHTML.WriteString(fmt.Sprintf(`<a href="/documentation/%s">&larr; %s</a>`,
+					html.EscapeString(prev.Slug), html.EscapeString(prev.Title)))
 			}
 			if prev != nil && next != nil {
 				navHTML.WriteString(` &middot; `)
 			}
 			if next != nil {
-				navHTML.WriteString(fmt.Sprintf(`<a href="/documentation/%s">%s &rarr;</a>`, next.Slug, next.Title))
+				navHTML.WriteString(fmt.Sprintf(`<a href="/documentation/%s">%s &rarr;</a>`,
+					html.EscapeString(next.Slug), html.EscapeString(next.Title)))
 			}
 			navHTML.WriteString(`</p>`)
 		}
@@ -388,9 +399,21 @@ func (r *Repository) ShowHandler() routing.HandlerFunc {
 <style>body{font-family:ui-sans-serif,system-ui;background:#0b1220;color:#e8eef8;padding:2rem;max-width:800px;margin:0 auto;line-height:1.6}
 h1,h2,h3{color:#3dd6c6}a{color:#3dd6c6}code{background:#121a2b;padding:.1rem .35rem;border-radius:4px}
 pre{background:#121a2b;padding:1rem;border-radius:8px;overflow:auto}</style></head>
-<body>%s%s</body></html>`, page.Title, navHTML.String(), html)
+<body>%s%s</body></html>`, html.EscapeString(page.Title), navHTML.String(), contentHTML)
 		return http.HTML(body)
 	}
+}
+
+func docsNotFound(app contracts.App) *http.Response {
+	fallback := `<!doctype html><html><head><meta charset="utf-8"><title>404 Not Found</title>
+<style>body{font-family:ui-sans-serif,system-ui;background:#0b1220;color:#e8eef8;padding:2rem;max-width:800px;margin:0 auto}
+h1{color:#3dd6c6}</style></head><body><h1>Not Found</h1><p>Document not found.</p></body></html>`
+	if page := ssr.TryRender(app, "errors.docs", map[string]any{
+		"error": "Document not found",
+	}, 404, fallback); page != nil {
+		return page
+	}
+	return http.HTML(fallback).Status(404)
 }
 
 func humanize(slug string) string {

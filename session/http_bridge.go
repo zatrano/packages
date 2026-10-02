@@ -49,7 +49,7 @@ func (b *httpBridge) finalize(req *http.Request, resp *http.Response) *http.Resp
 		if engine == nil {
 			msg := "Canvas engine not bound (enable template / import framework/v3/core/ssr)"
 			if app.IsDebug() {
-				resp = http.HTML(fmt.Sprintf("<h1>Template Error</h1><pre>%s</pre>", msg)).Status(500)
+				resp = http.DebugTemplateErrorHTML(msg)
 			} else {
 				resp = http.Abort(500, "Template rendering failed")
 			}
@@ -114,7 +114,9 @@ func (b *httpBridge) finalize(req *http.Request, resp *http.Response) *http.Resp
 			html, err := engine.Render(resp.TemplateName(), data)
 			if err != nil {
 				if app.IsDebug() {
-					resp = http.HTML(fmt.Sprintf("<h1>Template Error</h1><pre>%v</pre>", err)).Status(500)
+					msg := fmt.Sprint(err)
+					fallback := http.DebugTemplateErrorHTML(msg)
+					resp = ssr.TryRender(app, "errors.template", map[string]any{"error": msg}, 500, string(fallback.Content()))
 				} else {
 					resp = http.Abort(500, "Template rendering failed")
 				}

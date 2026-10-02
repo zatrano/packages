@@ -46,6 +46,7 @@ func (p *ServiceProvider) Boot(app contracts.App) error {
 	}
 	m, _ := raw.(*Manager)
 	if m != nil {
+		m.BindApp(app)
 		r.Use(m.Middleware())
 	}
 	return nil
