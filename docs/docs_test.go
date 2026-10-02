@@ -68,7 +68,7 @@ func TestDocsNestedSlugAndNavigation(t *testing.T) {
 	}
 }
 
-func TestDocsRegisterWithViewRenderer(t *testing.T) {
+func TestDocsRegisterWithTemplateRenderer(t *testing.T) {
 	dir := t.TempDir()
 	_ = os.WriteFile(filepath.Join(dir, "index.md"), []byte("# Docs Home\n\nStart here"), 0o644)
 	_ = os.WriteFile(filepath.Join(dir, "routing.md"), []byte("# Routing\n\nRoutes"), 0o644)
@@ -85,7 +85,7 @@ func TestDocsRegisterWithViewRenderer(t *testing.T) {
 	router := routing.New()
 	repo.Register(router, docs.Options{
 		Prefix: "/docs",
-		ViewRenderer: func(data docs.ViewData) *http.Response {
+		TemplateRenderer: func(data docs.TemplateData) *http.Response {
 			return http.HTML("<h1>" + data.Page.Title + "</h1>" + data.HTML)
 		},
 	})

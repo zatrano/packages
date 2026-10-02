@@ -42,8 +42,8 @@ type Neighbor struct {
 	Slug  string `json:"slug"`
 }
 
-// ViewData is passed to a custom documentation view renderer.
-type ViewData struct {
+// TemplateData is passed to a custom documentation template renderer.
+type TemplateData struct {
 	Page  *Page
 	HTML  string
 	Nav   []NavSection
@@ -53,12 +53,17 @@ type ViewData struct {
 	Slug  string
 }
 
+// ViewData is a deprecated alias for TemplateData.
+type ViewData = TemplateData
+
 // Options configures route registration for documentation.
 type Options struct {
 	// Prefix is the URL prefix (default "/documentation").
 	Prefix string
-	// ViewRenderer, when set, replaces the built-in HTML chrome for index/show.
-	ViewRenderer func(data ViewData) *http.Response
+	// TemplateRenderer, when set, replaces the built-in HTML chrome for index/show.
+	TemplateRenderer func(data TemplateData) *http.Response
+	// ViewRenderer is a deprecated alias for TemplateRenderer.
+	ViewRenderer func(data TemplateData) *http.Response
 	// App, when set, lets 404 pages try Canvas template errors.docs (fallback HTML).
 	App contracts.App
 }
@@ -246,29 +251,29 @@ func (r *Repository) HTML(slug string) (string, *Page, error) {
 	return markdown.ToHTML(page.Content), page, nil
 }
 
-// ViewPayload builds ViewData for a documentation slug.
-func (r *Repository) ViewPayload(slug string) (ViewData, error) {
+// TemplatePayload builds TemplateData for a documentation slug.
+func (r *Repository) TemplatePayload(slug string) (TemplateData, error) {
 	slug = strings.Trim(slug, "/")
 	if slug == "" {
 		slug = "index"
 	}
 	html, page, err := r.HTML(slug)
 	if err != nil {
-		return ViewData{}, err
+		return TemplateData{}, err
 	}
 	nav, err := r.Navigation()
 	if err != nil {
-		return ViewData{}, err
+		return TemplateData{}, err
 	}
 	pages, err := r.List()
 	if err != nil {
-		return ViewData{}, err
+		return TemplateData{}, err
 	}
 	prev, next, err := r.Neighbors(slug)
 	if err != nil {
-		return ViewData{}, err
+		return TemplateData{}, err
 	}
-	return ViewData{
+	return TemplateData{
 		Page:  page,
 		HTML:  html,
 		Nav:   nav,
@@ -277,6 +282,11 @@ func (r *Repository) ViewPayload(slug string) (ViewData, error) {
 		Pages: pages,
 		Slug:  slug,
 	}, nil
+}
+
+// ViewPayload is a deprecated alias for TemplatePayload.
+func (r *Repository) ViewPayload(slug string) (TemplateData, error) {
+	return r.TemplatePayload(slug)
 }
 
 // Register mounts documentation routes on the router.
@@ -291,13 +301,16 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 	notFound := func() *http.Response {
 		return docsNotFound(opts.App)
 	}
-	if opts.ViewRenderer != nil {
-		renderer := opts.ViewRenderer
+	renderer := opts.TemplateRenderer
+	if renderer == nil {
+		renderer = opts.ViewRenderer
+	}
+	if renderer != nil {
 		indexHandler = func(req *http.Request) *http.Response {
 			if req.WantsJSON() {
 				return r.IndexHandler()(req)
 			}
-			data, err := r.ViewPayload("index")
+			data, err := r.TemplatePayload("index")
 			if err != nil {
 				// Index markdown is optional; still show navigation shell.
 				nav, navErr := r.Navigation()
@@ -305,7 +318,7 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 				if navErr != nil || listErr != nil {
 					return notFound()
 				}
-				data = ViewData{Nav: nav, Pages: pages, Slug: "index"}
+				data = TemplateData{Nav: nav, Pages: pages, Slug: "index"}
 			}
 			return renderer(data)
 		}
@@ -314,7 +327,7 @@ func (r *Repository) Register(router *routing.Router, opts Options) {
 			if req.WantsJSON() {
 				return r.ShowHandler()(req)
 			}
-			data, err := r.ViewPayload(slug)
+			data, err := r.TemplatePayload(slug)
 			if err != nil {
 				return notFound()
 			}

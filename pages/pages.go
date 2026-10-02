@@ -58,8 +58,8 @@ func (r *Registrar) Register(router *routing.Router) error {
 			return err
 		}
 		rel = filepath.ToSlash(rel)
-		routePath, viewName := mapPage(rel)
-		entries = append(entries, pageEntry{route: routePath, view: viewName})
+		routePath, templateName := mapPage(rel)
+		entries = append(entries, pageEntry{route: routePath, template: templateName})
 		return nil
 	})
 	if err != nil {
@@ -71,7 +71,7 @@ func (r *Registrar) Register(router *routing.Router) error {
 
 	for _, entry := range entries {
 		routePath := joinURL(r.prefix, entry.route)
-		viewName := entry.view
+		templateName := entry.template
 		name := "pages" + strings.ReplaceAll(routePath, "/", ".")
 		if routePath == "/" || routePath == "" {
 			name = "pages.home"
@@ -85,18 +85,18 @@ func (r *Registrar) Register(router *routing.Router) error {
 				data["title"] = "Home"
 			}
 			rawRouteParams(req, data)
-			return http.Template(viewName, data)
+			return http.Template(templateName, data)
 		}).As(name)
 	}
 	return nil
 }
 
 type pageEntry struct {
-	route string
-	view  string
+	route    string
+	template string
 }
 
-func mapPage(rel string) (routePath, viewName string) {
+func mapPage(rel string) (routePath, templateName string) {
 	ext := filepath.Ext(rel)
 	rel = strings.TrimSuffix(rel, ext)
 	parts := strings.Split(rel, "/")
@@ -117,8 +117,8 @@ func mapPage(rel string) (routePath, viewName string) {
 	} else {
 		routePath = "/" + strings.Join(routeParts, "/")
 	}
-	viewName = "pages." + strings.ReplaceAll(rel, "/", ".")
-	return routePath, viewName
+	templateName = "pages." + strings.ReplaceAll(rel, "/", ".")
+	return routePath, templateName
 }
 
 func joinURL(prefix, path string) string {
