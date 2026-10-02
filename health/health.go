@@ -130,7 +130,7 @@ func (m *Manager) Run(ctx context.Context) (overall string, results []Result) {
 // Handler returns an HTTP handler for health checks.
 func (m *Manager) Handler() routing.HandlerFunc {
 	return func(req *http.Request) *http.Response {
-		overall, results := m.Run(req.Raw().Context())
+		overall, results := m.Run(req.Context())
 		status := 200
 		if overall == StatusFail {
 			status = 503

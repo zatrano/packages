@@ -3,7 +3,6 @@ package maintenance
 import (
 	"encoding/json"
 	"fmt"
-	"net"
 	"os"
 	"path/filepath"
 	"strings"
@@ -123,15 +122,13 @@ func (m *Manager) Middleware(except ...string) routing.MiddlewareFunc {
 }
 
 func clientIP(req *http.Request) string {
-	raw := req.Raw()
-	if raw == nil {
+	if req == nil {
 		return ""
 	}
-	host, _, err := net.SplitHostPort(raw.RemoteAddr)
-	if err != nil {
-		return raw.RemoteAddr
+	if ip := req.IP(); ip != "" {
+		return ip
 	}
-	return host
+	return req.RemoteIP()
 }
 
 func ipAllowed(ip string, allowed []string) bool {

@@ -109,16 +109,15 @@ func ServeTemporary(disk *LocalDisk) routing.HandlerFunc {
 		if disk == nil {
 			return http.Abort(500, "disk unavailable")
 		}
-		raw := req.URL()
-		if u := req.Raw(); u != nil && u.URL != nil {
-			raw = u.URL.RequestURI()
-		}
+		raw := req.RequestURI()
 		path, ok := disk.ValidateTemporaryURL(raw)
 		if !ok {
-			// also try path + query only
-			if req.Raw() != nil && req.Raw().URL != nil {
-				path, ok = disk.ValidateTemporaryURL(req.Raw().URL.Path + "?" + req.Raw().URL.RawQuery)
+			qs := req.QueryString()
+			candidate := req.Path()
+			if qs != "" {
+				candidate += "?" + qs
 			}
+			path, ok = disk.ValidateTemporaryURL(candidate)
 		}
 		if !ok {
 			return http.Abort(403, "Invalid or expired temporary URL")
