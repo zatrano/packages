@@ -189,7 +189,6 @@ Numeric OTP helpers for notifications live in [`notification/otp`](notification/
 
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`httpclient`](httpclient) | service | Outbound HTTP with JSON, retries, and fakes |
 | [`ratelimit`](ratelimit) | service | Named in-process rate limiters |
 | [`url`](url) | service | Absolute URLs, signed links (`Router.URL` for named paths) |
 | [`maintenance`](maintenance) | service | Downtime page (`down` / `up`) |
