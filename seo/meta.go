@@ -65,11 +65,6 @@ func (s *Site) TemplateData(meta Meta) map[string]any {
 	}
 }
 
-// ViewData is a deprecated alias for TemplateData.
-func (s *Site) ViewData(meta Meta) map[string]any {
-	return s.TemplateData(meta)
-}
-
 func (s *Site) graph(opts Options, meta Meta, canonical string) map[string]any {
 	appURL := strings.TrimRight(opts.BaseURL, "/")
 	logo := opts.LogoPath

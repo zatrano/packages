@@ -80,11 +80,6 @@ func (m *Manager) SetMailTemplate(engine *canvas.Engine) {
 	m.mail.SetTemplate(engine)
 }
 
-// SetMailView is deprecated; use SetMailTemplate.
-func (m *Manager) SetMailView(engine *canvas.Engine) {
-	m.SetMailTemplate(engine)
-}
-
 // SetSms registers the SMS driver manager, the default "sms" channel, and
 // named channels "sms.<driver>" for each registered driver (e.g. sms.twilio).
 func (m *Manager) SetSms(sms *SmsManager) {
