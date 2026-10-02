@@ -12,7 +12,7 @@ func init() {
 		Key:         "notification",
 		Description: "Notifications",
 		Order:       100,
-		Optional:    []string{"template", "broadcasting", "localization", "database"},
+		Optional:    []string{"template", "broadcasting", "localization", "db"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})
@@ -27,8 +27,8 @@ func (p *ServiceProvider) Register(app contracts.App) error {
 
 func (p *ServiceProvider) Boot(app contracts.App) error {
 	if n := From(app); n != nil {
-		if e := view.From(app); e != nil {
-			n.SetMailView(e)
+		if e := template.From(app); e != nil {
+			n.SetMailTemplate(e)
 		}
 	}
 	return nil

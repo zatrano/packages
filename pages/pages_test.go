@@ -17,7 +17,7 @@ func TestPagesRegister(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(pagesDir, "about.html"), []byte("<h1>About</h1>"), 0o644)
 	_ = os.WriteFile(filepath.Join(pagesDir, "users", "[id].html"), []byte("<p>id</p>"), 0o644)
 
-	engine := view.New(root)
+	engine := template.New(root)
 	router := routing.New()
 	if err := pages.New(pagesDir, engine).Prefix("/pages").Register(router); err != nil {
 		t.Fatal(err)

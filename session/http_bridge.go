@@ -44,7 +44,7 @@ func (b *httpBridge) finalize(req *http.Request, resp *http.Response) *http.Resp
 		resp = http.Abort(204)
 	}
 
-	engine := view.From(app)
+	engine := template.From(app)
 	if resp.TemplateName() != "" && engine != nil {
 		data := resp.TemplateData()
 		if data == nil {
@@ -178,7 +178,7 @@ func (b *httpBridge) localeMiddleware() routing.MiddlewareFunc {
 					_ = tr.Load(locale)
 					req.Set("locale", locale)
 				}
-				if engine := view.From(b.app); engine != nil {
+				if engine := template.From(b.app); engine != nil {
 					engine.Share("locale", locale)
 				}
 			}
