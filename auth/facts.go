@@ -35,8 +35,8 @@ type TwoFactorChallenged struct{ Occurrence }
 type TwoFactorAuthenticated struct{ Occurrence }
 
 func factContext(req *http.Request) context.Context {
-	if req != nil && req.Raw() != nil {
-		return req.Raw().Context()
+	if req != nil {
+		return req.Context()
 	}
 	return context.Background()
 }

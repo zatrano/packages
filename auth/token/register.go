@@ -4,7 +4,7 @@ import (
 	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/auth"
-	"github.com/zatrano/packages/database"
+	"github.com/zatrano/packages/db"
 )
 
 func init() {
@@ -14,7 +14,7 @@ func init() {
 		Description: "Personal access tokens",
 		Order:       52,
 		Requires:    []string{"auth"},
-		Optional:    []string{"database"},
+		Optional:    []string{"db"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 	})
 }
@@ -36,11 +36,12 @@ func boot(app contracts.App) error {
 		}
 	}
 	store := Store(NewMemoryStore())
-	if dbMgr := database.From(app); dbMgr != nil {
-		if db, err := dbMgr.DB(); err == nil && db != nil {
-			driver, _ := dbMgr.DriverName()
-			store = NewDatabaseStore(db, driver)
+	if h, ok := db.SQLFrom(app); ok && h.DB != nil {
+		driver := db.NormalizeDriver(h.Driver)
+		if driver == "" {
+			driver = "sqlite"
 		}
+		store = NewDatabaseStore(h.DB, driver)
 	}
 	app.Container().Instance("tokens", New(store, provider))
 	return nil

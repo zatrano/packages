@@ -106,7 +106,7 @@ func TestRegisterAndChangePassword(t *testing.T) {
 	manager.Extend("web", auth.NewGuard("web", provider))
 
 	raw := httptest.NewRequest(stdhttp.MethodPost, "/register", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 
 	user, err := manager.Register(req, map[string]any{
@@ -151,7 +151,7 @@ func TestRememberTokenIsHashedInProvider(t *testing.T) {
 		"email": "r@zatrano.test", "password": "x",
 	})
 	guard := auth.NewGuard("web", provider)
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	if err := guard.Login(req, user, true); err != nil {
 		t.Fatal(err)

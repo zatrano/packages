@@ -36,12 +36,12 @@ func TestMakeAuthViewsUsesEmbeddedStubs(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{
-		filepath.Join(dir, "app", "views", "layout", "auth.html"),
-		filepath.Join(dir, "app", "views", "layout", "mail.html"),
-		filepath.Join(dir, "app", "views", "auth", "login.html"),
-		filepath.Join(dir, "app", "views", "mail", "auth", "password-reset.html"),
-		filepath.Join(dir, "app", "views", "mail", "auth", "verify-email.html"),
-		filepath.Join(dir, "app", "views", "mail", "auth", "password-changed.html"),
+		filepath.Join(dir, "templates", "layout", "auth.html"),
+		filepath.Join(dir, "templates", "layout", "mail.html"),
+		filepath.Join(dir, "templates", "auth", "login.html"),
+		filepath.Join(dir, "templates", "mail", "auth", "password-reset.html"),
+		filepath.Join(dir, "templates", "mail", "auth", "verify-email.html"),
+		filepath.Join(dir, "templates", "mail", "auth", "password-changed.html"),
 	}
 	for _, path := range want {
 		if _, err := os.Stat(path); err != nil {
@@ -137,9 +137,9 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 		rel     string
 		needles []string
 	}{
-		{filepath.Join("app", "views", "auth", "login.html"), []string{"auth-social", "google/login", "continue_google"}},
-		{filepath.Join("app", "views", "auth", "register.html"), []string{"auth-social", "google/login", "continue_google"}},
-		{filepath.Join("app", "views", "layout", "auth.html"), []string{"auth-social"}},
+		{filepath.Join("templates", "auth", "login.html"), []string{"auth-social", "google/login", "continue_google"}},
+		{filepath.Join("templates", "auth", "register.html"), []string{"auth-social", "google/login", "continue_google"}},
+		{filepath.Join("templates", "layout", "auth.html"), []string{"auth-social"}},
 		{filepath.Join("app", "routes", "auth", "web", "auth.go"), []string{"SocialAuthController", "google/login"}},
 		{filepath.Join("app", "routes", "auth", "api", "auth.go"), []string{"SocialAuthController", "/google"}},
 		{filepath.Join("app", "localization", "en", "auth.json"), []string{"continue_google", "provider_google", "social_"}},
@@ -174,7 +174,7 @@ func TestMakeAuthSocialBareFlagEnablesGoogle(t *testing.T) {
 			t.Fatalf("missing %s: %v", path, err)
 		}
 	}
-	login, err := os.ReadFile(filepath.Join(dir, "app", "views", "auth", "login.html"))
+	login, err := os.ReadFile(filepath.Join(dir, "templates", "auth", "login.html"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -231,7 +231,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 	if !strings.Contains(string(home), `http.Template("web.welcome")`) {
 		t.Fatalf("starter home must switch to View:\n%s", home)
 	}
-	if _, err := os.Stat(filepath.Join(dir, "app", "views", "web", "welcome.html")); err != nil {
+	if _, err := os.Stat(filepath.Join(dir, "templates", "web", "welcome.html")); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -289,8 +289,8 @@ func TestMakePanelWritesSurface(t *testing.T) {
 	want := []string{
 		filepath.Join(dir, "app", "http", "handlers", "dashboard", "home_handler.go"),
 		filepath.Join(dir, "app", "routes", "dashboard", "dashboard.go"),
-		filepath.Join(dir, "app", "views", "dashboard", "layouts", "dashboard.html"),
-		filepath.Join(dir, "app", "views", "dashboard", "index.html"),
+		filepath.Join(dir, "templates", "dashboard", "layouts", "dashboard.html"),
+		filepath.Join(dir, "templates", "dashboard", "index.html"),
 	}
 	for _, path := range want {
 		if _, err := os.Stat(path); err != nil {

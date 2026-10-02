@@ -41,7 +41,7 @@ func TestValidateOnceLoginUsingIDAndViaRemember(t *testing.T) {
 		t.Fatalf("expected invalid credentials")
 	}
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.Once(req, user); err != nil {
 		t.Fatal(err)
@@ -53,7 +53,7 @@ func TestValidateOnceLoginUsingIDAndViaRemember(t *testing.T) {
 		t.Fatal("once must not write session")
 	}
 
-	req2 := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req2 := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	req2.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.LoginUsingID(req2, user.AuthID()); err != nil {
 		t.Fatal(err)
@@ -62,7 +62,7 @@ func TestValidateOnceLoginUsingIDAndViaRemember(t *testing.T) {
 		t.Fatal("login using id failed")
 	}
 
-	req3 := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req3 := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	req3.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.Login(req3, user, true); err != nil {
 		t.Fatal(err)
@@ -75,7 +75,7 @@ func TestValidateOnceLoginUsingIDAndViaRemember(t *testing.T) {
 	}
 	raw := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
 	raw.AddCookie(&stdhttp.Cookie{Name: "remember_web", Value: cookieValue})
-	req4 := http.NewRequest(raw)
+	req4 := http.RequestFromHTTP(raw)
 	req4.SetSession(&memSession{data: map[string]any{}})
 	if manager.User(req4) == nil || !manager.ViaRemember(req4) {
 		t.Fatal("via remember expected")
@@ -105,7 +105,7 @@ func TestLogoutOtherDevicesDestroysForeignSessions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
 	req.SetSession(current)
 	if err := manager.Login(req, user); err != nil {
 		t.Fatal(err)
@@ -133,7 +133,7 @@ func TestLockoutAfterFailedAttempts(t *testing.T) {
 	manager.Extend("web", auth.NewGuard("web", provider))
 	manager.SetLockout(3, time.Minute)
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	for i := 0; i < 3; i++ {
 		_, err := manager.Attempt(req, map[string]string{"email": "lock@zatrano.test", "password": "bad"})
@@ -150,7 +150,7 @@ func TestTwoFactorChallengeFlow(t *testing.T) {
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.Login(req, user); err != nil {
 		t.Fatal(err)
@@ -203,7 +203,7 @@ func TestShouldUseAndOnceBasic(t *testing.T) {
 
 	raw := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
 	raw.SetBasicAuth("basic@zatrano.test", "secret")
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 	if !manager.OnceBasic(req) {
 		t.Fatal("once basic failed")
@@ -228,7 +228,7 @@ func TestTwoFactorSecretsAreEncrypted(t *testing.T) {
 	}
 	manager.SetEncrypter(crypt)
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	_ = manager.Login(req, user)
 	secret, _, _, err := manager.EnableTwoFactor(user)
@@ -257,7 +257,7 @@ func TestMultiGuardSessionIsolation(t *testing.T) {
 	manager.Extend("web", auth.NewGuard("web", provider))
 	manager.Extend("api", auth.NewGuard("api", provider))
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.Guard("web").Login(req, webUser); err != nil {
 		t.Fatal(err)
@@ -293,7 +293,7 @@ func TestMarkEmailAsVerifiedPublishesFact(t *testing.T) {
 	pub := &recordingPublisher{}
 	manager.SetPublisher(pub)
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))
 	if err := manager.MarkEmailAsVerified(req, user); err != nil {
 		t.Fatal(err)
 	}
@@ -341,7 +341,7 @@ func TestLockoutUsesSharedCache(t *testing.T) {
 	counter := &memAttemptCounter{data: map[string]any{}}
 	manager.SetLockoutCache(counter)
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	_, _ = manager.Attempt(req, map[string]string{"email": "cachelock@zatrano.test", "password": "bad"})
 	_, err := manager.Attempt(req, map[string]string{"email": "cachelock@zatrano.test", "password": "bad"})
@@ -366,7 +366,7 @@ func TestTrustedDeviceSkipsTwoFactorChallenge(t *testing.T) {
 	manager.SetEncrypter(crypt)
 	manager.SetRememberDeviceDays(30)
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.Login(req, user); err != nil {
 		t.Fatal(err)
@@ -410,7 +410,7 @@ func TestTrustedDeviceSkipsTwoFactorChallenge(t *testing.T) {
 
 	raw := httptest.NewRequest(stdhttp.MethodPost, "/", nil)
 	raw.AddCookie(&stdhttp.Cookie{Name: "2fa_device_web", Value: deviceCookie})
-	req2 := http.NewRequest(raw)
+	req2 := http.RequestFromHTTP(raw)
 	req2.SetSession(&memSession{data: map[string]any{}})
 	ok, err = manager.Attempt(req2, map[string]string{"email": "device@zatrano.test", "password": "secret"})
 	if err != nil || !ok {
@@ -428,7 +428,7 @@ func TestChallengePreservesLoginRememberFlag(t *testing.T) {
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/", nil))
 	req.SetSession(&memSession{data: map[string]any{}})
 	_ = manager.Login(req, user)
 	secret, _, _, _ := manager.EnableTwoFactor(user)

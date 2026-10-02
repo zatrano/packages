@@ -11,8 +11,8 @@ func init() {
 		Key:         "auth",
 		Description: "Authentication guards",
 		Order:       50,
-		Requires:    []string{"hashing", "database", "session"},
-		Optional:    []string{"cache", "notification", "authorization", "facts", "url"},
+		Requires:    []string{"hashing", "session"},
+		Optional:    []string{"db", "cache", "notification", "authorization", "facts", "url"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

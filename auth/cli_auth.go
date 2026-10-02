@@ -103,8 +103,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			filePair{"go/user_model.go.stub", []string{"app", "models", "user.go"}},
 			filePair{"go/user_factory.go.stub", []string{"database", "factories", "user_factory.go"}},
 			filePair{"go/user_resource.go.stub", []string{"app", "http", "resources", "user_resource.go"}},
-			filePair{"go/auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "web", "auth_handler.go"}},
-			filePair{"go/api_auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "api", "auth_handler.go"}},
+			filePair{"go/auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "web", "auth_handler.go"}},
+			filePair{"go/api_auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "api", "auth_handler.go"}},
 			filePair{"go/auth_service.go.stub", []string{"app", "services", "auth.go"}},
 			filePair{"go/login_request.go.stub", []string{"app", "http", "requests", "auth", "login_request.go"}},
 			filePair{"go/register_request.go.stub", []string{"app", "http", "requests", "auth", "register_request.go"}},
@@ -125,8 +125,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			pairs = append(pairs,
 				filePair{"go/social_account_model.go.stub", []string{"app", "models", "social_account.go"}},
 				filePair{"go/social_auth_service.go.stub", []string{"app", "services", "social.go"}},
-				filePair{"go/social_auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "web", "social_auth_handler.go"}},
-				filePair{"go/api_social_auth_handler.go.stub", []string{"app", "http", "handlers", "auth", "api", "social_auth_handler.go"}},
+				filePair{"go/social_auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "web", "social_auth_handler.go"}},
+				filePair{"go/api_social_auth_controller.go.stub", []string{"app", "http", "handlers", "auth", "api", "social_auth_handler.go"}},
 				filePair{"go/migration_social_accounts.go.stub", []string{"database", "migrations", "create_social_accounts_table.go"}},
 			)
 		}

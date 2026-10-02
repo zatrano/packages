@@ -37,7 +37,7 @@ func (s *memSession) ID() string        { return "test" }
 
 func TestIntendedURLHelpers(t *testing.T) {
 	raw := httptest.NewRequest(stdhttp.MethodGet, "/dashboard?tab=1", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	sess := &memSession{data: map[string]any{}}
 	req.SetSession(sess)
 

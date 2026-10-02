@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/packages/database/query"
 	"github.com/zatrano/packages/hashing"
 )
 
@@ -51,9 +50,7 @@ func (u *GenericUser) GetEmailForPasswordReset() string {
 
 // DatabaseUserProvider retrieves users from a database table.
 type DatabaseUserProvider struct {
-	db         *sql.DB
-	driver     string
-	table      string
+	tbl        *sqlTable
 	idColumn   string
 	passColumn string
 	// Hydrate maps a DB row to an Authenticatable (e.g. *models.User). When nil, GenericUser is used.
@@ -62,10 +59,13 @@ type DatabaseUserProvider struct {
 
 // NewDatabaseUserProvider creates a database user provider.
 func NewDatabaseUserProvider(db *sql.DB, driver, table string) *DatabaseUserProvider {
+	tbl, err := newSQLTable(db, driver, table)
+	if err != nil {
+		// Keep a zero provider that fails on use rather than panicking at boot.
+		tbl = &sqlTable{db: db, driver: driver, table: table}
+	}
 	return &DatabaseUserProvider{
-		db:         db,
-		driver:     driver,
-		table:      table,
+		tbl:        tbl,
 		idColumn:   "id",
 		passColumn: "password",
 	}
@@ -89,7 +89,7 @@ func (p *DatabaseUserProvider) hydrate(row map[string]any) Authenticatable {
 
 // RetrieveByID finds a user by id.
 func (p *DatabaseUserProvider) RetrieveByID(id any) (Authenticatable, error) {
-	row, err := query.New(p.db, p.driver, p.table).Where(p.idColumn, id).First()
+	row, err := p.tbl.queryFirst([]string{p.idColumn}, []any{id})
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -101,19 +101,19 @@ func (p *DatabaseUserProvider) RetrieveByID(id any) (Authenticatable, error) {
 
 // RetrieveByCredentials finds a user by login credentials (excluding password).
 func (p *DatabaseUserProvider) RetrieveByCredentials(credentials map[string]string) (Authenticatable, error) {
-	builder := query.New(p.db, p.driver, p.table)
-	found := false
+	cols := make([]string, 0, len(credentials))
+	vals := make([]any, 0, len(credentials))
 	for key, value := range credentials {
 		if key == p.passColumn || key == "password" {
 			continue
 		}
-		builder.Where(key, value)
-		found = true
+		cols = append(cols, key)
+		vals = append(vals, value)
 	}
-	if !found {
+	if len(cols) == 0 {
 		return nil, fmt.Errorf("credentials require a non-password field")
 	}
-	row, err := builder.First()
+	row, err := p.tbl.queryFirst(cols, vals)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -134,18 +134,12 @@ func (p *DatabaseUserProvider) ValidateCredentials(user Authenticatable, credent
 
 // UpdatePassword updates a user's password by email.
 func (p *DatabaseUserProvider) UpdatePassword(email, hashedPassword string) error {
-	_, err := query.New(p.db, p.driver, p.table).
-		Where("email", email).
-		Update(map[string]any{"password": hashedPassword})
-	return err
+	return p.tbl.updateWhere(map[string]any{"password": hashedPassword}, "email", email)
 }
 
 // UpdateAttributes updates columns for a user id.
 func (p *DatabaseUserProvider) UpdateAttributes(id any, attrs map[string]any) error {
-	_, err := query.New(p.db, p.driver, p.table).
-		Where(p.idColumn, id).
-		Update(attrs)
-	return err
+	return p.tbl.updateWhere(attrs, p.idColumn, id)
 }
 
 // RetrieveByToken finds a user by id + remember token.
@@ -153,10 +147,7 @@ func (p *DatabaseUserProvider) RetrieveByToken(id, token string) (Authenticatabl
 	if strings.TrimSpace(token) == "" {
 		return nil, nil
 	}
-	row, err := query.New(p.db, p.driver, p.table).
-		Where(p.idColumn, id).
-		Where("remember_token", token).
-		First()
+	row, err := p.tbl.queryFirst([]string{p.idColumn, "remember_token"}, []any{id, token})
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -183,7 +174,7 @@ func (p *DatabaseUserProvider) Create(attrs map[string]any) (Authenticatable, er
 	if len(attrs) == 0 {
 		return nil, fmt.Errorf("attributes required")
 	}
-	id, err := query.New(p.db, p.driver, p.table).InsertGetID(attrs)
+	id, err := p.tbl.insertGetID(attrs)
 	if err != nil {
 		return nil, err
 	}

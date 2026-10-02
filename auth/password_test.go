@@ -122,7 +122,7 @@ func TestRegisterSendsEmailVerification(t *testing.T) {
 	})
 
 	raw := httptest.NewRequest(stdhttp.MethodPost, "/register", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 
 	_, err := manager.Register(req, map[string]any{
@@ -148,7 +148,7 @@ func TestRegisterSkipsVerificationWhenNotRequired(t *testing.T) {
 	})
 
 	raw := httptest.NewRequest(stdhttp.MethodPost, "/register", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 
 	user, err := manager.Register(req, map[string]any{
@@ -178,7 +178,7 @@ func TestVerifyEmailMiddlewareHonorsMustVerifyEmail(t *testing.T) {
 		return http.Text("ok")
 	})
 	raw := httptest.NewRequest(stdhttp.MethodGet, "/account", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 	if err := manager.Login(req, user); err != nil {
 		t.Fatal(err)
@@ -195,7 +195,7 @@ func TestVerifyEmailMiddlewareHonorsMustVerifyEmail(t *testing.T) {
 		t.Fatalf("flag true must redirect unverified users, status=%v", statusOf(resp))
 	}
 
-	req.Raw().Header.Set("Accept", "application/json")
+	req.SetHeader("Accept", "application/json")
 	resp = ok(req)
 	if resp == nil || resp.StatusCode() != 403 {
 		t.Fatalf("JSON must 403 unverified users, status=%v", statusOf(resp))
@@ -218,7 +218,7 @@ func TestUpdateProfileKeepsVerifiedWhenNotRequired(t *testing.T) {
 	})
 
 	raw := httptest.NewRequest(stdhttp.MethodPost, "/profile", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 	user, err := manager.Register(req, map[string]any{
 		"name": "Ada", "email": "ada@zatrano.test", "password": "secret1",
@@ -249,7 +249,7 @@ func TestPasswordChangedSender(t *testing.T) {
 	manager := auth.NewManager("web")
 	manager.Extend("web", auth.NewGuard("web", provider))
 	raw := httptest.NewRequest(stdhttp.MethodPost, "/register", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 	user, err := manager.Register(req, map[string]any{
 		"name": "Ada", "email": "ada@zatrano.test", "password": "secret1",

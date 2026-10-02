@@ -13,7 +13,6 @@ import (
 	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/framework/v3/core/kernel/routing"
 	"github.com/zatrano/packages/auth"
-	"github.com/zatrano/packages/database/query"
 )
 
 // Token is a personal access token record.
@@ -141,19 +140,17 @@ func (s *MemoryStore) Touch(id int64) error {
 
 // DatabaseStore stores tokens in personal_access_tokens.
 type DatabaseStore struct {
-	db     *sql.DB
-	driver string
-	table  string
+	tbl *sqlTable
 }
 
 // NewDatabaseStore creates a database-backed store.
 func NewDatabaseStore(db *sql.DB, driver string) *DatabaseStore {
-	return &DatabaseStore{db: db, driver: driver, table: "personal_access_tokens"}
+	return &DatabaseStore{tbl: newSQLTable(db, driver, "personal_access_tokens")}
 }
 
 func (s *DatabaseStore) Create(token *Token) error {
 	abilities := strings.Join(token.Abilities, ",")
-	id, err := query.New(s.db, s.driver, s.table).InsertGetID(map[string]any{
+	id, err := s.tbl.insertGetID(map[string]any{
 		"tokenable_id": token.UserID,
 		"name":         token.Name,
 		"token":        token.TokenHash,
@@ -171,7 +168,7 @@ func (s *DatabaseStore) Create(token *Token) error {
 }
 
 func (s *DatabaseStore) FindByHash(hash string) (*Token, error) {
-	row, err := query.New(s.db, s.driver, s.table).Where("token", hash).First()
+	row, err := s.tbl.queryFirst("token", hash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -182,17 +179,15 @@ func (s *DatabaseStore) FindByHash(hash string) (*Token, error) {
 }
 
 func (s *DatabaseStore) Delete(id int64) error {
-	_, err := query.New(s.db, s.driver, s.table).Where("id", id).Delete()
-	return err
+	return s.tbl.deleteWhere("id", id)
 }
 
 func (s *DatabaseStore) DeleteForUser(userID any) error {
-	_, err := query.New(s.db, s.driver, s.table).Where("tokenable_id", userID).Delete()
-	return err
+	return s.tbl.deleteWhere("tokenable_id", userID)
 }
 
 func (s *DatabaseStore) ListForUser(userID any) ([]Token, error) {
-	rows, err := query.New(s.db, s.driver, s.table).Where("tokenable_id", userID).Get()
+	rows, err := s.tbl.getWhere("tokenable_id", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -204,10 +199,9 @@ func (s *DatabaseStore) ListForUser(userID any) ([]Token, error) {
 }
 
 func (s *DatabaseStore) Touch(id int64) error {
-	_, err := query.New(s.db, s.driver, s.table).Where("id", id).Update(map[string]any{
+	return s.tbl.updateWhere(map[string]any{
 		"last_used_at": time.Now().UTC(),
-	})
-	return err
+	}, "id", id)
 }
 
 func rowToToken(row map[string]any) *Token {
