@@ -3,12 +3,6 @@ go 1.25.0
 use (
 	.
 	../framework
-	./database/driver/mongo
-	./database/driver/mssql
-	./database/driver/mysql
-	./database/driver/oracle
-	./database/driver/pgsql
-	./database/driver/sqlite
 	./db/mariadb
 	./db/mysql
 	./db/oracle

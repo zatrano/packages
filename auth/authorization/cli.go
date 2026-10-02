@@ -40,7 +40,7 @@ import "github.com/zatrano/packages/auth/authorization"
 
 func New%s() *authorization.Policy {
 	return authorization.NewPolicy().
-		Define("view", func(user authorization.Authenticatable, arguments ...any) bool {
+		Define("read", func(user authorization.Authenticatable, arguments ...any) bool {
 			return user != nil
 		}).
 		Define("update", func(user authorization.Authenticatable, arguments ...any) bool {

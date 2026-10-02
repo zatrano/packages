@@ -41,6 +41,8 @@ jobs:
   mod-tidy:
     runs-on: ubuntu-24.04
     name: go mod tidy
+    env:
+      GOWORK: 'off'
     defaults:
       run:
         working-directory: packages
@@ -56,6 +58,20 @@ jobs:
           repository: zatrano/framework
           ref: main
           path: framework
+
+      - name: Checkout canvas
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/canvas
+          ref: main
+          path: canvas
+
+      - name: Checkout rawhttp
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/rawhttp
+          ref: main
+          path: rawhttp
 
       - name: Setup Go
         uses: actions/setup-go@v6

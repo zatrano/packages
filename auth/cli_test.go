@@ -29,10 +29,10 @@ func TestAuthCLIRegistered(t *testing.T) {
 	}
 }
 
-func TestMakeAuthViewsUsesEmbeddedStubs(t *testing.T) {
+func TestMakeAuthTemplatesUsesEmbeddedStubs(t *testing.T) {
 	dir := t.TempDir()
 	cmd := &MakeAuthCommand{app: kernel.NewApplication(dir)}
-	if err := cmd.Handle([]string{"--views"}); err != nil {
+	if err := cmd.Handle([]string{"--templates"}); err != nil {
 		t.Fatal(err)
 	}
 	want := []string{
@@ -231,7 +231,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !strings.Contains(string(home), `http.Template("web.welcome")`) {
-		t.Fatalf("starter home must switch to View:\n%s", home)
+		t.Fatalf("starter home must switch to Template:\n%s", home)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "templates", "web", "welcome.html")); err != nil {
 		t.Fatal(err)

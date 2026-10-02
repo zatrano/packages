@@ -10,8 +10,8 @@ import (
 
 	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 	"github.com/zatrano/framework/v3/core/contracts"
-	"github.com/zatrano/packages/bootutil"
 	"github.com/zatrano/framework/v3/core/ssr/starter"
+	"github.com/zatrano/packages/bootutil"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
@@ -33,15 +33,15 @@ func (c *MakeAuthCommand) Description() string {
 
 func (c *MakeAuthCommand) Handle(args []string) error {
 	force := false
-	viewsOnly := false
+	templatesOnly := false
 	socialFlagSet := false
 	var socialProviders []string
 	for _, arg := range args {
 		switch {
 		case arg == "--force" || arg == "-f":
 			force = true
-		case arg == "--views":
-			viewsOnly = true
+		case arg == "--templates":
+			templatesOnly = true
 		case arg == "--social":
 			socialFlagSet = true
 			socialProviders = appendUnique(socialProviders, "google")
@@ -70,7 +70,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		socialProviders = nil
 	}
 	wantSocial := socialFlagSet
-	wantSocialGo := !viewsOnly && wantSocial
+	wantSocialGo := !templatesOnly && wantSocial
 
 	type filePair struct {
 		stub string
@@ -98,7 +98,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 		{"lang/tr/auth.json", []string{"lang", "tr", "auth.json"}},
 	}
 
-	if !viewsOnly {
+	if !templatesOnly {
 		pairs = append(pairs,
 			filePair{"go/user_model.go.stub", []string{"app", "models", "user.go"}},
 			filePair{"go/user_resource.go.stub", []string{"app", "http", "resources", "user_resource.go"}},
@@ -186,12 +186,12 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	}
 
 	if wantSocial {
-		if !viewsOnly && routesAuthPath != "" {
+		if !templatesOnly && routesAuthPath != "" {
 			if err := injectAuthSocialWebRoutes(routesAuthPath); err != nil {
 				return err
 			}
 		}
-		if !viewsOnly && routesAuthAPIPath != "" {
+		if !templatesOnly && routesAuthAPIPath != "" {
 			if err := injectAuthSocialAPIRoutes(routesAuthAPIPath); err != nil {
 				return err
 			}
@@ -222,7 +222,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			}
 		}
 	}
-	if !viewsOnly {
+	if !templatesOnly {
 		mod := bootutil.ConsumerModule(c.app)
 		provider := c.app.BasePath("app", "providers", "route_service_provider.go")
 		_ = bootutil.EnsureBlankImport(provider, mod+"/app/routes/auth/web")
@@ -236,8 +236,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	}
 
 	fmt.Printf("\nAuth scaffold ready (%d created, %d skipped).\n", created, skipped)
-	if viewsOnly {
-		fmt.Println("Mode: --views (auth HTML, layout, and mail templates only)")
+	if templatesOnly {
+		fmt.Println("Mode: --templates (auth HTML, layout, and mail templates only)")
 	} else {
 		fmt.Println("Next steps:")
 		fmt.Println("  1. Enable hashing, database (packages/db), session, and auth (notification for mail). template (Canvas) and url are already enabled.")
@@ -251,7 +251,7 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 			fmt.Println("  5. Run your db migrate tool against database/migrations/")
 		}
 	}
-	fmt.Println("Use --force to overwrite existing files. Use --views for Canvas templates only.")
+	fmt.Println("Use --force to overwrite existing files. Use --templates for Canvas templates only.")
 	return nil
 }
 

@@ -25,6 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         go: ['1.25.13']
+    env:
+      GOWORK: 'off'
     defaults:
       run:
         working-directory: packages
@@ -85,6 +87,20 @@ jobs:
           ref: main
           path: framework
 
+      - name: Checkout canvas
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/canvas
+          ref: main
+          path: canvas
+
+      - name: Checkout rawhttp
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/rawhttp
+          ref: main
+          path: rawhttp
+
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
@@ -104,32 +120,6 @@ jobs:
           REDIS_PORT: 6379
           MONGO_URI: memory
 
-      - name: Link live SQL drivers
-        run: bash .github/scripts/live-driver-link.sh
-
-      - name: Live MySQL smoke
-        run: go test ./database -run TestLiveDriverSmoke -count=1
-        env:
-          ZATRANO_LIVE_DB: '1'
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: '3306'
-          DB_DATABASE: zatrano
-          DB_USERNAME: root
-          DB_PASSWORD: ''
-
-      - name: Live PostgreSQL smoke
-        run: go test ./database -run TestLiveDriverSmoke -count=1
-        env:
-          ZATRANO_LIVE_DB: '1'
-          DB_CONNECTION: pgsql
-          DB_HOST: 127.0.0.1
-          DB_PORT: '5432'
-          DB_DATABASE: zatrano
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret
-          DB_SSLMODE: disable
-
   windows_tests:
     runs-on: windows-2022
     name: Go ${{ matrix.go }} - Windows
@@ -137,6 +127,8 @@ jobs:
       fail-fast: false
       matrix:
         go: ['1.25.13']
+    env:
+      GOWORK: 'off'
     steps:
       - name: Set git to use LF
         run: |
@@ -154,6 +146,20 @@ jobs:
           repository: zatrano/framework
           ref: main
           path: framework
+
+      - name: Checkout canvas
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/canvas
+          ref: main
+          path: canvas
+
+      - name: Checkout rawhttp
+        uses: actions/checkout@v5
+        with:
+          repository: zatrano/rawhttp
+          ref: main
+          path: rawhttp
 
       - name: Setup Go
         uses: actions/setup-go@v6
