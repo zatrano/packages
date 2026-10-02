@@ -3,7 +3,7 @@ package auth
 import (
 	"strings"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 const intendedKey = "url.intended"
@@ -54,16 +54,15 @@ func RedirectIntended(req *http.Request, fallback string) *http.Response {
 
 // CaptureIntendedFromRequest stores the current GET path as the intended URL.
 func CaptureIntendedFromRequest(req *http.Request) {
-	if req == nil || req.Raw() == nil {
+	if req == nil {
 		return
 	}
 	if !strings.EqualFold(req.Method(), "GET") {
 		return
 	}
-	u := req.Raw().URL
-	path := u.Path
-	if u.RawQuery != "" {
-		path += "?" + u.RawQuery
+	path := req.Path()
+	if qs := req.QueryString(); qs != "" {
+		path += "?" + qs
 	}
 	SetIntendedURL(req, path)
 }

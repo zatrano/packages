@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 	"github.com/zatrano/packages/docs"
 )
 
@@ -91,7 +91,7 @@ func TestDocsRegisterWithViewRenderer(t *testing.T) {
 	})
 
 	raw, _ := stdhttp.NewRequest(stdhttp.MethodGet, "/docs/routing", nil)
-	resp := router.Dispatch(http.NewRequest(raw))
+	resp := router.Dispatch(http.RequestFromHTTP(raw))
 	if resp == nil || resp.StatusCode() != 200 {
 		t.Fatalf("unexpected response %#v", resp)
 	}

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 type cachedHTTPResponse struct {
@@ -75,8 +75,8 @@ func ResponseCache(store Store, ttl time.Duration, keyFn ...func(*http.Request) 
 // DefaultResponseCacheKey builds a stable cache key for the request.
 func DefaultResponseCacheKey(req *http.Request) string {
 	raw := strings.ToUpper(req.Method()) + " " + req.Path()
-	if req.Raw() != nil && req.Raw().URL != nil && req.Raw().URL.RawQuery != "" {
-		raw += "?" + req.Raw().URL.RawQuery
+	if qs := req.QueryString(); qs != "" {
+		raw += "?" + qs
 	}
 	sum := sha1.Sum([]byte(raw))
 	return "response:" + hex.EncodeToString(sum[:])

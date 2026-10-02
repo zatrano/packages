@@ -1,24 +1,25 @@
 package pages
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/canvas"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 // Registrar mounts file-based pages onto a router.
 type Registrar struct {
 	root   string
-	engine *view.Engine
+	engine *canvas.Engine
 	prefix string
 }
 
-// New creates a page registrar for views under root (e.g. views/pages).
-func New(root string, engine *view.Engine) *Registrar {
+// New creates a page registrar for templates under root (e.g. templates/pages).
+func New(root string, engine *canvas.Engine) *Registrar {
 	return &Registrar{root: root, engine: engine, prefix: ""}
 }
 
@@ -38,7 +39,7 @@ func (r *Registrar) Prefix(prefix string) *Registrar {
 //	users/[id].html -> /users/{id}
 func (r *Registrar) Register(router *routing.Router) error {
 	if r.engine == nil {
-		return nil
+		return fmt.Errorf("pages: Canvas engine required (enable template / import framework/v3/core/ssr)")
 	}
 	entries := make([]pageEntry, 0)
 	err := filepath.WalkDir(r.root, func(path string, d os.DirEntry, err error) error {
@@ -63,7 +64,7 @@ func (r *Registrar) Register(router *routing.Router) error {
 	})
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil
+			return fmt.Errorf("pages: root %q missing", r.root)
 		}
 		return err
 	}
@@ -84,7 +85,7 @@ func (r *Registrar) Register(router *routing.Router) error {
 				data["title"] = "Home"
 			}
 			rawRouteParams(req, data)
-			return http.View(viewName, data)
+			return http.Template(viewName, data)
 		}).As(name)
 	}
 	return nil

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/maintenance"
 )
 
@@ -26,19 +26,19 @@ func TestMaintenanceToggleAndMiddleware(t *testing.T) {
 		return http.JSON(map[string]any{"ok": true})
 	})
 
-	blocked := handler(http.NewRequest(httptest.NewRequest("GET", "/", nil)))
+	blocked := handler(http.RequestFromHTTP(httptest.NewRequest("GET", "/", nil)))
 	if blocked.StatusCode() != 503 {
 		t.Fatalf("expected 503, got %d", blocked.StatusCode())
 	}
 
 	raw := httptest.NewRequest("GET", "/?secret=bypass", nil)
-	allowed := handler(http.NewRequest(raw))
+	allowed := handler(http.RequestFromHTTP(raw))
 	if allowed.StatusCode() != 200 {
 		t.Fatalf("expected 200 with secret, got %d", allowed.StatusCode())
 	}
 
 	up := httptest.NewRequest("GET", "/up", nil)
-	health := handler(http.NewRequest(up))
+	health := handler(http.RequestFromHTTP(up))
 	if health.StatusCode() != 200 {
 		t.Fatalf("expected /up allowed, got %d", health.StatusCode())
 	}

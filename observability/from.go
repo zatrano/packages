@@ -1,6 +1,6 @@
 package observability
 
-import "github.com/zatrano/framework/v2/contracts"
+import "github.com/zatrano/framework/v3/core/contracts"
 
 // From resolves the metrics collector from the application container.
 func From(app contracts.App) *Metrics {

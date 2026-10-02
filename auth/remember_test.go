@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/hashing"
 	"github.com/zatrano/packages/session"
@@ -74,7 +74,7 @@ func (p *memoryRememberProvider) UpdateRememberToken(user auth.Authenticatable, 
 
 func newAuthRequest(path string) *http.Request {
 	raw := httptest.NewRequest(stdhttp.MethodGet, path, nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 	return req
 }
@@ -120,7 +120,7 @@ func TestRememberMeLoginRestoreAndLogout(t *testing.T) {
 	// New request with empty session but remember cookie restores login.
 	raw2 := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
 	raw2.AddCookie(&stdhttp.Cookie{Name: "remember_web", Value: rememberValue})
-	req2 := http.NewRequest(raw2)
+	req2 := http.RequestFromHTTP(raw2)
 	req2.SetSession(&memSession{data: map[string]any{}})
 	restored := guard.User(req2)
 	if restored == nil || fmt.Sprint(restored.AuthID()) != "7" {
@@ -153,7 +153,7 @@ func TestRememberMeLoginRestoreAndLogout(t *testing.T) {
 	// Cookie no longer valid after token clear.
 	raw3 := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
 	raw3.AddCookie(&stdhttp.Cookie{Name: "remember_web", Value: rememberValue})
-	req3 := http.NewRequest(raw3)
+	req3 := http.RequestFromHTTP(raw3)
 	req3.SetSession(&memSession{data: map[string]any{}})
 	if guard.User(req3) != nil {
 		t.Fatal("stale remember cookie should not authenticate")
@@ -188,7 +188,7 @@ func TestInvalidRememberCookieIgnored(t *testing.T) {
 
 	raw := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
 	raw.AddCookie(&stdhttp.Cookie{Name: "remember_web", Value: "1|bad"})
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(&memSession{data: map[string]any{}})
 	if guard.User(req) != nil {
 		t.Fatal("bad token should not authenticate")
@@ -276,7 +276,7 @@ func TestSessionFixation(t *testing.T) {
 	guard := auth.NewGuard("web", newMemoryRememberProvider(user))
 
 	raw := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	req.SetSession(bag)
 
 	if err := guard.Login(req, user); err != nil {

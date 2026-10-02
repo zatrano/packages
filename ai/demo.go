@@ -3,7 +3,7 @@ package ai
 import (
 	"strings"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 type demoChatBody struct {
@@ -26,7 +26,7 @@ func DemoChatHandler(mgr *Manager) func(*http.Request) *http.Response {
 		if msg == "" {
 			return http.JSON(map[string]any{"message": "message is required"}).Status(422)
 		}
-		ctx := req.Raw().Context()
+		ctx := req.Context()
 		chatReq := ChatRequest{
 			Model: strings.TrimSpace(body.Model),
 			Messages: []Message{

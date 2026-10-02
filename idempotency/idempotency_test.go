@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/cache"
 	"github.com/zatrano/packages/idempotency"
 )
@@ -23,7 +23,7 @@ func TestIdempotencyMiddlewareReplays(t *testing.T) {
 	makeReq := func() *http.Request {
 		raw := httptest.NewRequest("POST", "/api/idempotent", nil)
 		raw.Header.Set(idempotency.HeaderKey, "abc-123")
-		return http.NewRequest(raw)
+		return http.RequestFromHTTP(raw)
 	}
 
 	first := handler(makeReq())

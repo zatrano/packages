@@ -1,8 +1,8 @@
 package backup
 
 import (
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 )
 
 func init() {
@@ -10,7 +10,7 @@ func init() {
 		Name:        "backup",
 		Key:         "backup",
 		Description: "Database backup/restore (SQLite + native dump tools)",
-		Optional:    []string{"database"},
+		Optional:    []string{"db"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         backupCLI,
 	})

@@ -7,18 +7,18 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/bootutil"
 )
 
-// MakePanelCommand scaffolds a named HTML HTTP surface (controller, routes, views/layouts).
+// MakePanelCommand scaffolds a named HTML HTTP surface (handler, routes, Canvas templates).
 type MakePanelCommand struct {
 	app contracts.App
 }
 
 func (c *MakePanelCommand) Name() string { return "make:panel" }
 func (c *MakePanelCommand) Description() string {
-	return "Scaffold a named HTTP surface: make:panel dashboard"
+	return "Scaffold a named Canvas HTTP surface: make:panel dashboard"
 }
 
 func (c *MakePanelCommand) Handle(args []string) error {
@@ -49,10 +49,10 @@ func (c *MakePanelCommand) Handle(args []string) error {
 		content string
 	}
 	pairs := []filePair{
-		{[]string{"app", "http", "controllers", name, "home_controller.go"}, panelControllerStub(name, exported)},
+		{[]string{"app", "http", "handlers", name, "home_handler.go"}, panelControllerStub(name, exported)},
 		{[]string{"app", "routes", name, name + ".go"}, panelRouteStub(mod, name, exported)},
-		{[]string{"views", name, "layouts", name + ".html"}, panelLayoutHTML()},
-		{[]string{"views", name, "index.html"}, panelIndexHTML(name)},
+		{[]string{"templates", name, "layouts", name + ".html"}, panelLayoutHTML()},
+		{[]string{"templates", name, "index.html"}, panelIndexHTML(name)},
 		{[]string{"lang", "en", name + ".json"}, fmt.Sprintf("{\n  \"home\": %q\n}\n", exported)},
 		{[]string{"lang", "tr", name + ".json"}, fmt.Sprintf("{\n  \"home\": %q\n}\n", exported)},
 	}
@@ -128,12 +128,12 @@ func panelName(raw string) (string, error) {
 func panelControllerStub(pkg, exported string) string {
 	return `package ` + pkg + `
 
-import "github.com/zatrano/framework/v2/kernel/http"
+import "github.com/zatrano/framework/v3/core/kernel/http"
 
-type HomeController struct{}
+type HomeHandler struct{}
 
-func (c *HomeController) Index(req *http.Request) *http.Response {
-	return http.View("` + pkg + `/index", map[string]any{})
+func (c *HomeHandler) Index(req *http.Request) *http.Response {
+	return http.Template("` + pkg + `.index", map[string]any{})
 }
 `
 }
@@ -143,10 +143,10 @@ func panelRouteStub(mod, pkg, exported string) string {
 
 import (
 	approutes "` + `__MODULE__/app/routes` + `"
-	` + pkg + `ctrl "` + `__MODULE__/app/http/controllers/` + pkg + `"
+	` + pkg + `ctrl "` + `__MODULE__/app/http/handlers/` + pkg + `"
 
 	pkgauth "github.com/zatrano/packages/auth"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 func init() {
@@ -160,7 +160,7 @@ func register` + exported + `(router *routing.Router) {
 	}
 	a := pkgauth.From(app)
 	router.Group("", func(r *routing.Router) {
-		routing.Controller(r, &` + pkg + `ctrl.HomeController{}, func(rr routing.RouteRegistrar, c *` + pkg + `ctrl.HomeController) {
+		routing.Controller(r, &` + pkg + `ctrl.HomeHandler{}, func(rr routing.RouteRegistrar, c *` + pkg + `ctrl.HomeHandler) {
 			rr.Get("/` + pkg + `", c.Index).As("` + pkg + `.home")
 		})
 	}, pkgauth.Middleware(a), pkgauth.VerifyEmailMiddleware(a))

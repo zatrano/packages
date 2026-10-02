@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/validation"
 )
 
@@ -73,8 +73,8 @@ func TestValidateRequest(t *testing.T) {
 	form := url.Values{}
 	form.Set("title", "Hi")
 	form.Set("body", "World")
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
-	req.Raw().Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
+	req.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 
 	_, err := validation.ValidateRequest(req, map[string]string{
 		"title": "required|min:3",
@@ -88,8 +88,8 @@ func TestValidateRequest(t *testing.T) {
 		t.Fatalf("expected ValidationException with title, got %T %v", err, err)
 	}
 	form.Set("title", "Hello")
-	req = http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
-	req.Raw().Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req = http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
+	req.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 	data, err := validation.ValidateRequest(req, map[string]string{
 		"title": "required|min:3",
 		"body":  "required",
@@ -103,9 +103,9 @@ func TestPrecognitionSuccess(t *testing.T) {
 	form := url.Values{}
 	form.Set("title", "Hello")
 	form.Set("body", "World")
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
-	req.Raw().Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Raw().Header.Set("Precognition", "true")
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
+	req.SetHeader("Content-Type", "application/x-www-form-urlencoded")
+	req.SetHeader("Precognition", "true")
 
 	resp := validation.WithForm(sampleRequest{}, func(req *http.Request, data map[string]string) *http.Response {
 		t.Fatal("handler should not run for precognition")
@@ -120,9 +120,9 @@ func TestPrecognitionSuccess(t *testing.T) {
 func TestFormRequestValidation(t *testing.T) {
 	form := url.Values{}
 	form.Set("title", "Hi")
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
-	req.Raw().Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Raw().Header.Set("Accept", "application/json")
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(form.Encode())))
+	req.SetHeader("Content-Type", "application/x-www-form-urlencoded")
+	req.SetHeader("Accept", "application/json")
 
 	resp := validation.WithForm(sampleRequest{}, func(req *http.Request, data map[string]string) *http.Response {
 		return http.JSON(map[string]any{"ok": true})
@@ -140,7 +140,7 @@ func TestResponseForHTMLRedirect(t *testing.T) {
 	raw.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	raw.Header.Set("Accept", "text/html")
 	raw.Header.Set("Referer", "http://example.test/demo/profile")
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	sess := &memSession{data: map[string]any{}}
 	req.SetSession(sess)
 
@@ -165,7 +165,7 @@ func TestNamedErrorBagFlashAndForm(t *testing.T) {
 	raw.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	raw.Header.Set("Accept", "text/html")
 	raw.Header.Set("Referer", "http://example.test/demo/validation/login")
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	sess := &memSession{data: map[string]any{}}
 	req.SetSession(sess)
 
@@ -216,8 +216,8 @@ func (existsProductRequest) Rules() map[string]string {
 
 func formPOST(t *testing.T, values url.Values) *http.Request {
 	t.Helper()
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(values.Encode())))
-	req.Raw().Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodPost, "/posts", strings.NewReader(values.Encode())))
+	req.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 	return req
 }
 

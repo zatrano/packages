@@ -1,8 +1,8 @@
 package queue
 
 import (
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 )
 
 func init() {
@@ -11,7 +11,7 @@ func init() {
 		Key:         "queue",
 		Description: "Job queues",
 		Order:       40,
-		Optional:    []string{"database", "cache"},
+		Optional:    []string{"db", "cache"},
 		Factory:     func() contracts.Provider { return &ServiceProvider{} },
 		CLI:         Commands,
 	})

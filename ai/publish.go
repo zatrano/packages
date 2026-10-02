@@ -2,7 +2,7 @@ package ai
 
 const publishedAIConfig = `package config
 
-import "github.com/zatrano/framework/v2/kernel/env"
+import "github.com/zatrano/framework/v3/core/kernel/env"
 
 // AI returns AI manager configuration (named providers + profiles + flat legacy keys).
 func AI() map[string]any {

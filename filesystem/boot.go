@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/framework/v2/kernel/env"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/framework/v3/core/kernel/env"
 )
 
 func boot(app contracts.App) error {

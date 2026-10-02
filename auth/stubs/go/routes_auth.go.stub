@@ -2,11 +2,11 @@ package web
 
 import (
 	approutes "__MODULE__/app/routes"
-	authctrl "__MODULE__/app/http/controllers/auth/web"
+	authctrl "__MODULE__/app/http/handlers/auth/web"
 
 	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/ratelimit"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 func init() {
@@ -18,7 +18,7 @@ func registerAuth(router *routing.Router) {
 	if app == nil || router == nil {
 		return
 	}
-	ctrl := &authctrl.AuthController{App: app}
+	ctrl := &authctrl.AuthHandler{App: app}
 
 	router.Group("/auth", func(r *routing.Router) {
 		r.Get("/login", ctrl.LoginForm).As("login")

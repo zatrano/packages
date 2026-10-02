@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 )
 
 //go:embed all:stubs

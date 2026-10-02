@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 // Publisher receives authentication Facts. Bind facts.From(app) when the facts package is enabled.
@@ -35,8 +35,8 @@ type TwoFactorChallenged struct{ Occurrence }
 type TwoFactorAuthenticated struct{ Occurrence }
 
 func factContext(req *http.Request) context.Context {
-	if req != nil && req.Raw() != nil {
-		return req.Raw().Context()
+	if req != nil {
+		return req.Context()
 	}
 	return context.Background()
 }

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/zatrano/packages/database"
+	"github.com/zatrano/packages/db"
 )
 
 func (m *Manager) createMySQL(dest string) error {
@@ -17,7 +17,7 @@ func (m *Manager) createMySQL(dest string) error {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	port := database.DefaultPort(m.cfg.Port, "3306")
+	port := db.DefaultPort(m.cfg.Port, "3306")
 	args := []string{
 		"-h", host,
 		"-P", port,
@@ -48,7 +48,7 @@ func (m *Manager) restoreMySQL(backupPath string) error {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	port := database.DefaultPort(m.cfg.Port, "3306")
+	port := db.DefaultPort(m.cfg.Port, "3306")
 	args := []string{
 		"-h", host,
 		"-P", port,
@@ -71,7 +71,7 @@ func (m *Manager) createPostgres(dest string) error {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	port := database.DefaultPort(m.cfg.Port, "5432")
+	port := db.DefaultPort(m.cfg.Port, "5432")
 	ssl := m.cfg.SSLMode
 	if ssl == "" {
 		ssl = "disable"
@@ -100,7 +100,7 @@ func (m *Manager) restorePostgres(backupPath string) error {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	port := database.DefaultPort(m.cfg.Port, "5432")
+	port := db.DefaultPort(m.cfg.Port, "5432")
 	ssl := m.cfg.SSLMode
 	if ssl == "" {
 		ssl = "disable"
@@ -150,7 +150,7 @@ func (m *Manager) mssqlConnectionString() string {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	port := database.DefaultPort(m.cfg.Port, "1433")
+	port := db.DefaultPort(m.cfg.Port, "1433")
 	return fmt.Sprintf(
 		"Server=%s,%s;Database=%s;User Id=%s;Password=%s;TrustServerCertificate=True;",
 		host, port, m.cfg.Database, m.cfg.Username, m.cfg.Password,
@@ -201,7 +201,7 @@ func (m *Manager) oracleUserID() string {
 	if host == "" {
 		host = "127.0.0.1"
 	}
-	port := database.DefaultPort(m.cfg.Port, "1521")
+	port := db.DefaultPort(m.cfg.Port, "1521")
 	// user/pass@//host:port/service
 	return fmt.Sprintf("%s/%s@//%s:%s/%s", m.cfg.Username, m.cfg.Password, host, port, service)
 }
@@ -247,7 +247,7 @@ func (m *Manager) mongoConfigYAML() (string, []string) {
 		if host == "" {
 			host = "127.0.0.1"
 		}
-		port := database.DefaultPort(m.cfg.Port, "27017")
+		port := db.DefaultPort(m.cfg.Port, "27017")
 		fmt.Fprintf(&b, "host: %q\n", host+":"+port)
 		if m.cfg.Username != "" {
 			fmt.Fprintf(&b, "username: %q\n", m.cfg.Username)

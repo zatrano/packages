@@ -4,7 +4,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 
 	_ "github.com/zatrano/packages/agent"
 	_ "github.com/zatrano/packages/auth"
@@ -16,7 +16,6 @@ import (
 	_ "github.com/zatrano/packages/facts"
 	_ "github.com/zatrano/packages/flash"
 	_ "github.com/zatrano/packages/notification"
-	_ "github.com/zatrano/packages/orm"
 	_ "github.com/zatrano/packages/queue"
 	_ "github.com/zatrano/packages/rag"
 	_ "github.com/zatrano/packages/redisx"
@@ -29,13 +28,13 @@ func TestAuthRequiresClosure(t *testing.T) {
 	if !ok {
 		t.Fatal("auth must be registered")
 	}
-	if !containsAll(meta.Requires, "hashing", "database", "session") {
+	if !containsAll(meta.Requires, "hashing", "session") {
 		t.Fatalf("auth Requires=%v", meta.Requires)
 	}
-	if containsAny(meta.Requires, "cache", "notification", "authorization", "facts") {
-		t.Fatalf("optional names must not be Requires: %v", meta.Requires)
+	if containsAny(meta.Requires, "database", "db", "cache", "notification", "authorization", "facts") {
+		t.Fatalf("optional/legacy names must not be Requires: %v", meta.Requires)
 	}
-	if !containsAll(meta.Optional, "cache", "notification", "authorization", "facts") {
+	if !containsAll(meta.Optional, "db", "cache", "notification", "authorization", "facts") {
 		t.Fatalf("auth Optional=%v", meta.Optional)
 	}
 
@@ -44,8 +43,11 @@ func TestAuthRequiresClosure(t *testing.T) {
 		t.Fatal(err)
 	}
 	names := metaNames(got)
-	if !containsAll(names, "auth", "hashing", "database", "session") {
+	if !containsAll(names, "auth", "hashing", "session") {
 		t.Fatalf("auth closure=%v", names)
+	}
+	if containsAny(names, "database", "db") {
+		t.Fatalf("db must not auto-expand from auth: %v", names)
 	}
 }
 
@@ -57,10 +59,10 @@ func TestApitokenTransitiveRequires(t *testing.T) {
 	if !containsAll(meta.Requires, "auth") {
 		t.Fatalf("apitoken Requires=%v", meta.Requires)
 	}
-	if containsAny(meta.Requires, "database") {
-		t.Fatal("apitoken must not require database (memory store exists)")
+	if containsAny(meta.Requires, "database", "db") {
+		t.Fatal("apitoken must not require database/db (memory store exists)")
 	}
-	if !containsAll(meta.Optional, "database") {
+	if !containsAll(meta.Optional, "db") {
 		t.Fatalf("apitoken Optional=%v", meta.Optional)
 	}
 
@@ -69,16 +71,19 @@ func TestApitokenTransitiveRequires(t *testing.T) {
 		t.Fatal(err)
 	}
 	names := metaNames(got)
-	if !containsAll(names, "apitoken", "auth", "hashing", "database", "session") {
+	if !containsAll(names, "apitoken", "auth", "hashing", "session") {
 		t.Fatalf("apitoken transitive closure=%v", names)
+	}
+	if containsAny(names, "database", "db") {
+		t.Fatalf("db must not auto-expand: %v", names)
 	}
 }
 
 func TestOptionalNotInRequires(t *testing.T) {
 	cases := map[string][]string{
-		"queue":        {"database", "cache"},
-		"notification": {"view", "broadcasting", "localization", "database"},
-		"backup":       {"database"},
+		"queue":        {"db", "cache"},
+		"notification": {"template", "broadcasting", "localization", "db"},
+		"backup":       {"db"},
 		"seo":          {"docs"},
 	}
 	for name, optional := range cases {
@@ -149,10 +154,8 @@ func TestNegativePathMissingRequires(t *testing.T) {
 		meta     addons.Meta
 		selected string
 	}{
-		{name: "auth without hashing", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "database", "session"}}},
-		{name: "auth without database", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "database", "session"}}},
-		{name: "auth without session", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "database", "session"}}},
-		{name: "orm without database", selected: "orm", meta: addons.Meta{Name: "orm", Requires: []string{"database"}}},
+		{name: "auth without hashing", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "session"}}},
+		{name: "auth without session", selected: "auth", meta: addons.Meta{Name: "auth", Requires: []string{"hashing", "session"}}},
 		{name: "flash without session", selected: "flash", meta: addons.Meta{Name: "flash", Requires: []string{"session"}}},
 	}
 	for _, tc := range cases {
@@ -172,10 +175,10 @@ func TestNegativePathMissingRequires(t *testing.T) {
 
 func TestNegativePathOptionalAbsent(t *testing.T) {
 	cases := []addons.Meta{
-		{Name: "auth", Requires: []string{"hashing", "database", "session"}, Optional: []string{"cache", "notification", "authorization", "facts", "url"}},
-		{Name: "queue", Optional: []string{"database", "cache"}},
-		{Name: "notification", Optional: []string{"view", "broadcasting", "localization", "database"}},
-		{Name: "backup", Optional: []string{"database"}},
+		{Name: "auth", Requires: []string{"hashing", "session"}, Optional: []string{"db", "cache", "notification", "authorization", "facts", "url"}},
+		{Name: "queue", Optional: []string{"db", "cache"}},
+		{Name: "notification", Optional: []string{"template", "broadcasting", "localization", "db"}},
+		{Name: "backup", Optional: []string{"db"}},
 	}
 	for _, meta := range cases {
 		t.Run(meta.Name, func(t *testing.T) {

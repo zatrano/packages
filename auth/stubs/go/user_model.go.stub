@@ -3,13 +3,12 @@ package models
 import (
 	"fmt"
 	"time"
-
-	"github.com/zatrano/packages/orm"
 )
 
-// User is the authenticatable application user.
+// User is the authenticatable application user (sqlc-friendly plain struct).
+// Persistence is packages/db + app SQL/sqlc — no ORM package.
 type User struct {
-	orm.Model
+	ID                     int64      `db:"id" json:"id"`
 	Name                   string     `db:"name" json:"name"`
 	Email                  string     `db:"email" json:"email"`
 	IsAdmin                bool       `db:"is_admin" json:"is_admin"`
@@ -21,6 +20,8 @@ type User struct {
 	TwoFactorRecoveryCodes *string    `db:"two_factor_recovery_codes" json:"-"`
 	TwoFactorConfirmedAt   *time.Time `db:"two_factor_confirmed_at" json:"-"`
 	StripeCustomerID       *string    `db:"stripe_customer_id" json:"stripe_customer_id,omitempty"`
+	CreatedAt              time.Time  `db:"created_at" json:"created_at"`
+	UpdatedAt              time.Time  `db:"updated_at" json:"updated_at"`
 }
 
 // HasVerifiedEmail reports whether the user verified their email.
@@ -47,10 +48,6 @@ func (m *User) MarkEmailAsVerified() {
 // TableName returns the users table name.
 func (m *User) TableName() string {
 	return "users"
-}
-
-func (m *User) Fillable() []string {
-	return []string{"name", "email", "password", "avatar"}
 }
 
 // AuthID implements auth.Authenticatable.

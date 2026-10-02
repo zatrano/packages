@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zatrano/framework/v2/contracts"
-	"github.com/zatrano/packages/database"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/packages/db"
 )
 
 // BasePather is satisfied by contracts.App (and test fakes that only need paths).
@@ -21,7 +21,7 @@ func ConfigFromApp(app BasePather, cfg contracts.ConfigRepository, connection st
 	if cfg == nil {
 		return Config{}, fmt.Errorf("backup: config unavailable")
 	}
-	defaultName := database.NormalizeDriverName(cfg.GetString("database.default"))
+	defaultName := db.NormalizeDriver(cfg.GetString("database.default"))
 	name := strings.TrimSpace(connection)
 	if name == "" {
 		name = defaultName
@@ -29,11 +29,11 @@ func ConfigFromApp(app BasePather, cfg contracts.ConfigRepository, connection st
 		if !validBackupConnectionName(name) {
 			return Config{}, fmt.Errorf("backup: invalid connection name")
 		}
-		name = database.NormalizeDriverName(name)
+		name = db.NormalizeDriver(name)
 	}
 
 	prefix := "database.connections." + name + "."
-	driver := database.NormalizeDriverName(cfg.GetString(prefix+"driver", name))
+	driver := db.NormalizeDriver(cfg.GetString(prefix+"driver", name))
 	if driver == "" {
 		driver = name
 	}

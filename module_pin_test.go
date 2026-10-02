@@ -26,37 +26,52 @@ func TestGoModPinsReleasedFramework(t *testing.T) {
 	if strings.Contains(text, "module github.com/zatrano/packages/v2") {
 		t.Fatal("do not introduce a /v2 module path")
 	}
-	if !strings.Contains(text, "github.com/zatrano/framework/v2 v2.8.0") {
-		t.Fatal("go.mod must require github.com/zatrano/framework/v2 v2.8.0")
+	if !strings.Contains(text, "github.com/zatrano/framework/v3 v3.0.0") {
+		t.Fatal("go.mod must require github.com/zatrano/framework/v3 v3.0.0")
 	}
-	if !strings.Contains(text, "replace github.com/zatrano/framework/v2 => ../framework") {
-		t.Fatal("development replace must remain in the packages module")
+	if !strings.Contains(text, "github.com/zatrano/canvas v0.2.0") {
+		t.Fatal("go.mod must require github.com/zatrano/canvas v0.2.0")
+	}
+	if !strings.Contains(text, "github.com/zatrano/rawhttp v0.2.2") {
+		t.Fatal("go.mod must require github.com/zatrano/rawhttp v0.2.2")
+	}
+	if !strings.Contains(text, "replace github.com/zatrano/framework/v3 => ../framework") {
+		t.Fatal("development replace must remain in the packages module until framework/v3 is tagged publicly")
 	}
 	if i := strings.Index(text, "require ("); i >= 0 {
 		if j := strings.Index(text[i:], "\n)"); j >= 0 {
-			if strings.Contains(text[i:i+j], "github.com/zatrano/packages/database/driver/") {
+			block := text[i : i+j]
+			if strings.Contains(block, "github.com/zatrano/packages/database/driver/") {
 				t.Fatal("root require must not include nested database drivers")
+			}
+			if strings.Contains(block, "github.com/zatrano/packages/orm") {
+				t.Fatal("root require must not include removed packages/orm")
 			}
 		}
 	}
 }
 
-func TestPublicFrameworkModuleResolvesWithoutSibling(t *testing.T) {
+func TestPublicCanvasAndRawHTTPResolveWithoutSibling(t *testing.T) {
 	dir := t.TempDir()
 	mod := "module consumer.test\n\ngo 1.25.0\n"
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(mod), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	cmd := exec.Command("go", "get", "github.com/zatrano/framework/v2@v2.8.0")
-	cmd.Dir = dir
-	cmd.Env = append(os.Environ(), "GOWORK=off")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		msg := string(out)
-		if strings.Contains(msg, "checksum mismatch") || strings.Contains(msg, "invalid version") {
-			t.Skip("public module proxy has not ingested framework v2.8.0 yet")
+	for _, spec := range []string{
+		"github.com/zatrano/canvas@v0.2.0",
+		"github.com/zatrano/rawhttp@v0.2.2",
+	} {
+		cmd := exec.Command("go", "get", spec)
+		cmd.Dir = dir
+		cmd.Env = append(os.Environ(), "GOWORK=off")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			msg := string(out)
+			if strings.Contains(msg, "checksum mismatch") || strings.Contains(msg, "invalid version") || strings.Contains(msg, "404") {
+				t.Skipf("public module proxy has not ingested %s yet: %s", spec, msg)
+			}
+			t.Fatalf("public resolve %s failed: %v\n%s", spec, err, out)
 		}
-		t.Fatalf("public framework resolve failed: %v\n%s", err, out)
 	}
 	raw, err := os.ReadFile(filepath.Join(dir, "go.mod"))
 	if err != nil {
@@ -66,7 +81,10 @@ func TestPublicFrameworkModuleResolvesWithoutSibling(t *testing.T) {
 	if strings.Contains(text, "replace ") {
 		t.Fatalf("public consumer must not use replace:\n%s", text)
 	}
-	if !strings.Contains(text, "github.com/zatrano/framework/v2 v2.8.0") {
-		t.Fatalf("expected framework v2.8.0:\n%s", text)
+	if !strings.Contains(text, "github.com/zatrano/canvas v0.2.0") {
+		t.Fatalf("expected canvas v0.2.0:\n%s", text)
+	}
+	if !strings.Contains(text, "github.com/zatrano/rawhttp v0.2.2") {
+		t.Fatalf("expected rawhttp v0.2.2:\n%s", text)
 	}
 }

@@ -3,7 +3,7 @@ package url_test
 import (
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 	"github.com/zatrano/packages/url"
 )
 

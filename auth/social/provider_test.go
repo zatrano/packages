@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel"
+	"github.com/zatrano/framework/v3/core/kernel"
 )
 
 func TestRegisterDoesNotInventPlaceholderCredentials(t *testing.T) {

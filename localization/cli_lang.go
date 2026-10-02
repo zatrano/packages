@@ -2,15 +2,15 @@ package localization
 
 import (
 	"fmt"
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/bootutil"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/zatrano/framework/v2/kernel/dirs"
+	"github.com/zatrano/framework/v3/core/kernel/dirs"
 	"github.com/zatrano/packages/localization/defaults"
 )
 

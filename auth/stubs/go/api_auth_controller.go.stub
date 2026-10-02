@@ -4,41 +4,41 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	reqauth "__MODULE__/app/http/requests/auth"
 	"__MODULE__/app/models"
 	"__MODULE__/app/http/resources"
 	"__MODULE__/app/services"
 	pkgauth "github.com/zatrano/packages/auth"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/localization"
 	"github.com/zatrano/packages/url"
 	"github.com/zatrano/packages/validation"
 )
 
-type AuthController struct {
+type AuthHandler struct {
 	App contracts.App
 }
 
-func (c *AuthController) svc() *services.AuthService {
+func (c *AuthHandler) svc() *services.AuthService {
 	return services.NewAuthService(c.App)
 }
 
-func (c *AuthController) lang(key string, replace ...map[string]string) string {
+func (c *AuthHandler) lang(key string, replace ...map[string]string) string {
 	if tr := localization.From(c.App); tr != nil {
 		return tr.Get(key, replace...)
 	}
 	return key
 }
 
-func (c *AuthController) authMsg(err error) string {
+func (c *AuthHandler) authMsg(err error) string {
 	if err == nil {
 		return ""
 	}
 	return c.lang(err.Error())
 }
 
-func (c *AuthController) validateForm(req *http.Request, form validation.FormRequest) (map[string]string, *http.Response) {
+func (c *AuthHandler) validateForm(req *http.Request, form validation.FormRequest) (map[string]string, *http.Response) {
 	data, err := validation.ValidateForm(req, form)
 	if err != nil {
 		return nil, validation.ResponseFor(req, err)
@@ -46,7 +46,7 @@ func (c *AuthController) validateForm(req *http.Request, form validation.FormReq
 	return data, nil
 }
 
-func (c *AuthController) requireManager() (*pkgauth.Manager, *http.Response) {
+func (c *AuthHandler) requireManager() (*pkgauth.Manager, *http.Response) {
 	m := c.svc().Manager()
 	if m == nil {
 		return nil, http.JSON(map[string]any{"message": c.lang("auth.guard_unavailable")}).Status(503)
@@ -54,14 +54,14 @@ func (c *AuthController) requireManager() (*pkgauth.Manager, *http.Response) {
 	return m, nil
 }
 
-func (c *AuthController) resetURL() string {
+func (c *AuthHandler) resetURL() string {
 	if gen := url.From(c.App); gen != nil {
 		return gen.To("/auth/reset-password")
 	}
 	return "/auth/reset-password"
 }
 
-func (c *AuthController) userJSON(user pkgauth.Authenticatable) map[string]any {
+func (c *AuthHandler) userJSON(user pkgauth.Authenticatable) map[string]any {
 	if user == nil {
 		return nil
 	}
@@ -82,7 +82,7 @@ func (c *AuthController) userJSON(user pkgauth.Authenticatable) map[string]any {
 	return payload
 }
 
-func (c *AuthController) Login(req *http.Request) *http.Response {
+func (c *AuthHandler) Login(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.LoginRequest{})
 	if fail != nil {
 		return fail
@@ -113,7 +113,7 @@ func (c *AuthController) Login(req *http.Request) *http.Response {
 	})
 }
 
-func (c *AuthController) Logout(req *http.Request) *http.Response {
+func (c *AuthHandler) Logout(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -122,7 +122,7 @@ func (c *AuthController) Logout(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"message": c.lang("auth.logged_out")})
 }
 
-func (c *AuthController) Register(req *http.Request) *http.Response {
+func (c *AuthHandler) Register(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.RegisterRequest{})
 	if fail != nil {
 		return fail
@@ -145,7 +145,7 @@ func (c *AuthController) Register(req *http.Request) *http.Response {
 	}).Status(201)
 }
 
-func (c *AuthController) User(req *http.Request) *http.Response {
+func (c *AuthHandler) User(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -157,7 +157,7 @@ func (c *AuthController) User(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"user": c.userJSON(user)})
 }
 
-func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
+func (c *AuthHandler) UpdateProfile(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.ProfileUpdateRequest{})
 	if fail != nil {
 		return fail
@@ -175,7 +175,7 @@ func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
 	})
 }
 
-func (c *AuthController) ChangePassword(req *http.Request) *http.Response {
+func (c *AuthHandler) ChangePassword(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.ChangePasswordRequest{})
 	if fail != nil {
 		return fail
@@ -190,7 +190,7 @@ func (c *AuthController) ChangePassword(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"message": c.lang("auth.password_updated")})
 }
 
-func (c *AuthController) TwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) TwoFactor(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -199,7 +199,7 @@ func (c *AuthController) TwoFactor(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"enabled": m.HasTwoFactorEnabled(user)})
 }
 
-func (c *AuthController) EnableTwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) EnableTwoFactor(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -211,7 +211,7 @@ func (c *AuthController) EnableTwoFactor(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"secret": secret, "url": otpauthURL, "recovery_codes": codes})
 }
 
-func (c *AuthController) ConfirmTwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) ConfirmTwoFactor(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.TwoFactorConfirmRequest{})
 	if fail != nil {
 		return fail
@@ -226,7 +226,7 @@ func (c *AuthController) ConfirmTwoFactor(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"ok": true, "enabled": true})
 }
 
-func (c *AuthController) DisableTwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) DisableTwoFactor(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -237,7 +237,7 @@ func (c *AuthController) DisableTwoFactor(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"ok": true, "enabled": false})
 }
 
-func (c *AuthController) RegenerateRecoveryCodes(req *http.Request) *http.Response {
+func (c *AuthHandler) RegenerateRecoveryCodes(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -249,7 +249,7 @@ func (c *AuthController) RegenerateRecoveryCodes(req *http.Request) *http.Respon
 	return http.JSON(map[string]any{"recovery_codes": codes})
 }
 
-func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
+func (c *AuthHandler) LogoutOtherDevices(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -260,7 +260,7 @@ func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"ok": true})
 }
 
-func (c *AuthController) Forgot(req *http.Request) *http.Response {
+func (c *AuthHandler) Forgot(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.ForgotPasswordRequest{})
 	if fail != nil {
 		return fail
@@ -277,7 +277,7 @@ func (c *AuthController) Forgot(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"message": c.lang("auth.reset_link_if_exists")})
 }
 
-func (c *AuthController) Reset(req *http.Request) *http.Response {
+func (c *AuthHandler) Reset(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.ResetPasswordRequest{})
 	if fail != nil {
 		return fail
@@ -292,7 +292,7 @@ func (c *AuthController) Reset(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"message": c.lang("auth.password_reset")})
 }
 
-func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
+func (c *AuthHandler) ConfirmPassword(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.ConfirmPasswordRequest{})
 	if fail != nil {
 		return fail
@@ -308,7 +308,7 @@ func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"confirmed": true})
 }
 
-func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {
+func (c *AuthHandler) TwoFactorChallenge(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, reqauth.TwoFactorChallengeRequest{})
 	if fail != nil {
 		return fail
@@ -331,7 +331,7 @@ func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {
 	})
 }
 
-func (c *AuthController) Send(req *http.Request) *http.Response {
+func (c *AuthHandler) Send(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -349,7 +349,7 @@ func (c *AuthController) Send(req *http.Request) *http.Response {
 	return http.JSON(map[string]any{"message": c.lang("auth.verify_email_sent")})
 }
 
-func (c *AuthController) Notice(req *http.Request) *http.Response {
+func (c *AuthHandler) Notice(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable
@@ -364,7 +364,7 @@ func (c *AuthController) Notice(req *http.Request) *http.Response {
 	})
 }
 
-func (c *AuthController) Verify(req *http.Request) *http.Response {
+func (c *AuthHandler) Verify(req *http.Request) *http.Response {
 	m, unavailable := c.requireManager()
 	if unavailable != nil {
 		return unavailable

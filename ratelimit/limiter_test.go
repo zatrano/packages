@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/ratelimit"
 )
 
@@ -26,7 +26,7 @@ func TestNamedLimiter(t *testing.T) {
 	call := func() int {
 		r := httptest.NewRequest(stdhttp.MethodGet, "/x", nil)
 		r.RemoteAddr = "1.2.3.4:1234"
-		return handler(http.NewRequest(r)).StatusCode()
+		return handler(http.RequestFromHTTP(r)).StatusCode()
 	}
 
 	first := call()
@@ -41,7 +41,7 @@ func TestNamedLimiter(t *testing.T) {
 	missing := limiter.Named("missing")(func(req *http.Request) *http.Response {
 		return http.JSON(map[string]any{"ok": true})
 	})
-	if missing(http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/", nil))).StatusCode() != 500 {
+	if missing(http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/", nil))).StatusCode() != 500 {
 		t.Fatal("undefined named policy is fail-closed")
 	}
 }

@@ -4,7 +4,9 @@ go 1.25.0
 
 require (
 	github.com/redis/go-redis/v9 v9.11.0
-	github.com/zatrano/framework/v2 v2.8.0
+	github.com/zatrano/canvas v0.2.0
+	github.com/zatrano/framework/v3 v3.0.0
+	github.com/zatrano/rawhttp v0.2.2
 	golang.org/x/crypto v0.55.0
 	golang.org/x/sys v0.47.0
 	modernc.org/sqlite v1.38.2
@@ -25,14 +27,12 @@ require (
 	modernc.org/memory v1.11.0 // indirect
 )
 
-replace github.com/zatrano/framework/v2 => ../framework
-
-replace github.com/zatrano/packages/database/driver/sqlite => ./database/driver/sqlite
-
-replace github.com/zatrano/packages/database/driver/mysql => ./database/driver/mysql
-
-replace github.com/zatrano/packages/database/driver/pgsql => ./database/driver/pgsql
+replace github.com/zatrano/framework/v3 => ../framework
 
 replace github.com/zatrano/packages/mongo => ./mongo
 
 replace github.com/zatrano/packages/webauthn => ./webauthn
+
+replace github.com/zatrano/rawhttp => ../rawhttp
+
+replace github.com/zatrano/canvas => ../canvas

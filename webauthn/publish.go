@@ -2,7 +2,7 @@ package webauthn
 
 const publishedWebAuthnConfig = `package config
 
-import "github.com/zatrano/framework/v2/kernel/env"
+import "github.com/zatrano/framework/v3/core/kernel/env"
 
 // WebAuthn returns WebAuthn/passkey configuration defaults.
 func WebAuthn() map[string]any {

@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
-	"github.com/zatrano/framework/v2/kernel/support/uuid"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/support/uuid"
 )
 
 // Client is an OAuth2 client application.

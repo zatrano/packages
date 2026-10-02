@@ -3,9 +3,9 @@ package ratelimit
 import (
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/middleware"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/middleware"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 var _ middleware.AttemptLimiter = (*Limiter)(nil)

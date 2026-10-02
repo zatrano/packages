@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/flash"
 )
 
@@ -35,7 +35,7 @@ func (s *memSession) ID() string        { return "test" }
 
 func TestToastHelpers(t *testing.T) {
 	raw, _ := stdhttp.NewRequest(stdhttp.MethodGet, "/", nil)
-	req := http.NewRequest(raw)
+	req := http.RequestFromHTTP(raw)
 	sess := &memSession{data: map[string]any{}}
 	req.SetSession(sess)
 

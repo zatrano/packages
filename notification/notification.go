@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/canvas"
 )
 
 // Notifiable can receive notifications.
@@ -72,12 +72,17 @@ func (m *Manager) SetMail(mailer *MailManager) {
 	}
 }
 
-// SetMailView attaches the view engine used when rendering mail templates.
-func (m *Manager) SetMailView(engine *view.Engine) {
+// SetMailTemplate attaches the Canvas engine used when rendering mail templates.
+func (m *Manager) SetMailTemplate(engine *canvas.Engine) {
 	if m == nil || m.mail == nil {
 		return
 	}
-	m.mail.SetView(engine)
+	m.mail.SetTemplate(engine)
+}
+
+// SetMailView is deprecated; use SetMailTemplate.
+func (m *Manager) SetMailView(engine *canvas.Engine) {
+	m.SetMailTemplate(engine)
 }
 
 // SetSms registers the SMS driver manager, the default "sms" channel, and

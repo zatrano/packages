@@ -4,7 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/broadcasting"
 )
 
@@ -15,7 +15,7 @@ func TestChannelAuthorization(t *testing.T) {
 	mgr.Channel("public", func(req *http.Request, channel string) bool { return true })
 	mgr.Channel("private.*", func(req *http.Request, channel string) bool { return false })
 
-	req := http.NewRequest(httptest.NewRequest("POST", "/broadcasting/auth", nil))
+	req := http.RequestFromHTTP(httptest.NewRequest("POST", "/broadcasting/auth", nil))
 	ok, err := mgr.Channels().Authorize(req, "public")
 	if err != nil || !ok {
 		t.Fatalf("public auth failed ok=%v err=%v", ok, err)

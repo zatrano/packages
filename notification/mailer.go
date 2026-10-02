@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/packages/view"
+	"github.com/zatrano/canvas"
 )
 
 // MailMessage represents an email message.
@@ -36,7 +36,7 @@ type MailManager struct {
 	mailers       map[string]Mailer
 	fromAddress   string
 	fromName      string
-	view          *view.Engine
+	view          *canvas.Engine
 }
 
 // NewMailManager creates a mail manager.

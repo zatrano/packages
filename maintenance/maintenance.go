@@ -3,14 +3,16 @@ package maintenance
 import (
 	"encoding/json"
 	"fmt"
-	"net"
+	"html"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/contracts"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
+	"github.com/zatrano/framework/v3/core/ssr"
 )
 
 // Payload describes an active maintenance window.
@@ -25,11 +27,19 @@ type Payload struct {
 // Manager toggles maintenance mode via a down file.
 type Manager struct {
 	path string
+	app  contracts.App
 }
 
 // New creates a maintenance manager rooted at framework storage.
 func New(frameworkPath string) *Manager {
 	return &Manager{path: filepath.Join(frameworkPath, "down")}
+}
+
+// BindApp attaches the application for optional Canvas maintenance pages.
+func (m *Manager) BindApp(app contracts.App) {
+	if m != nil {
+		m.app = app
+	}
 }
 
 // Path returns the down-file path.
@@ -114,7 +124,11 @@ func (m *Manager) Middleware(except ...string) routing.MiddlewareFunc {
 			}
 			resp := http.JSON(body).Status(503)
 			if !req.WantsJSON() {
-				resp = http.HTML(fmt.Sprintf("<h1>Service Unavailable</h1><p>%s</p>", payload.Message)).Status(503)
+				msg := html.EscapeString(payload.Message)
+				fallback := fmt.Sprintf("<h1>Service Unavailable</h1><p>%s</p>", msg)
+				resp = ssr.TryRender(m.app, "errors.maintenance", map[string]any{
+					"message": payload.Message,
+				}, 503, fallback)
 			}
 			resp.Header("Retry-After", fmt.Sprintf("%d", payload.RetryAfter))
 			return resp
@@ -123,15 +137,13 @@ func (m *Manager) Middleware(except ...string) routing.MiddlewareFunc {
 }
 
 func clientIP(req *http.Request) string {
-	raw := req.Raw()
-	if raw == nil {
+	if req == nil {
 		return ""
 	}
-	host, _, err := net.SplitHostPort(raw.RemoteAddr)
-	if err != nil {
-		return raw.RemoteAddr
+	if ip := req.IP(); ip != "" {
+		return ip
 	}
-	return host
+	return req.RemoteIP()
 }
 
 func ipAllowed(ip string, allowed []string) bool {

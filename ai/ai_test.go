@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	zhttp "github.com/zatrano/framework/v2/kernel/http"
+	zhttp "github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/ai"
 )
 
@@ -322,7 +322,7 @@ func TestDemoChatHandler(t *testing.T) {
 
 	raw := httptest.NewRequest(http.MethodPost, "/demo/ai/chat", bytes.NewBufferString(`{"message":"ping"}`))
 	raw.Header.Set("Content-Type", "application/json")
-	req := zhttp.NewRequest(raw)
+	req := zhttp.RequestFromHTTP(raw)
 	resp := handler(req)
 	if resp.StatusCode() != 200 {
 		t.Fatalf("status=%d", resp.StatusCode())
@@ -334,7 +334,7 @@ func TestDemoChatHandler(t *testing.T) {
 
 	raw2 := httptest.NewRequest(http.MethodPost, "/demo/ai/chat", bytes.NewBufferString(`{}`))
 	raw2.Header.Set("Content-Type", "application/json")
-	resp2 := handler(zhttp.NewRequest(raw2))
+	resp2 := handler(zhttp.RequestFromHTTP(raw2))
 	if resp2.StatusCode() != 422 {
 		t.Fatalf("status=%d", resp2.StatusCode())
 	}

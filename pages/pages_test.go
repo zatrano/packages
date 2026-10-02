@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/canvas"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 	"github.com/zatrano/packages/pages"
-	"github.com/zatrano/packages/view"
 )
 
 func TestPagesRegister(t *testing.T) {
@@ -17,7 +17,7 @@ func TestPagesRegister(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(pagesDir, "about.html"), []byte("<h1>About</h1>"), 0o644)
 	_ = os.WriteFile(filepath.Join(pagesDir, "users", "[id].html"), []byte("<p>id</p>"), 0o644)
 
-	engine := view.New(root)
+	engine := canvas.New(root)
 	router := routing.New()
 	if err := pages.New(pagesDir, engine).Prefix("/pages").Register(router); err != nil {
 		t.Fatal(err)
@@ -33,6 +33,6 @@ func TestPagesRegister(t *testing.T) {
 		}
 	}
 	if !foundAbout || !foundUser {
-		t.Fatalf("routes=%#v", snap)
+		t.Fatalf("routes missing: about=%v user=%v snap=%v", foundAbout, foundUser, snap)
 	}
 }

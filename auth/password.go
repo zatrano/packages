@@ -13,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/packages/database/query"
 	"github.com/zatrano/packages/hashing"
 	"github.com/zatrano/packages/session"
 )
@@ -107,10 +106,8 @@ func (r *MemoryTokenRepository) RecentlyCreated(email string, within time.Durati
 
 // DatabaseTokenRepository stores tokens in password_reset_tokens.
 type DatabaseTokenRepository struct {
-	db     *sql.DB
-	driver string
-	table  string
-	ttl    time.Duration
+	tbl *sqlTable
+	ttl time.Duration
 }
 
 // NewDatabaseTokenRepository creates a database-backed token repository.
@@ -126,23 +123,26 @@ func NewDatabaseTokenRepositoryTable(db *sql.DB, driver, table string, ttl time.
 	if strings.TrimSpace(table) == "" {
 		table = "password_reset_tokens"
 	}
-	return &DatabaseTokenRepository{db: db, driver: driver, table: table, ttl: ttl}
+	tbl, err := newSQLTable(db, driver, table)
+	if err != nil {
+		tbl = &sqlTable{db: db, driver: driver, table: table}
+	}
+	return &DatabaseTokenRepository{tbl: tbl, ttl: ttl}
 }
 
 func (r *DatabaseTokenRepository) Create(email, token string) error {
 	email = strings.ToLower(email)
 	_ = r.Delete(email)
-	_, err := query.New(r.db, r.driver, r.table).Insert(map[string]any{
+	return r.tbl.insert(map[string]any{
 		"email":      email,
 		"token":      hashToken(token),
 		"created_at": time.Now().UTC(),
 	})
-	return err
 }
 
 func (r *DatabaseTokenRepository) Exists(email, token string) bool {
 	email = strings.ToLower(email)
-	row, err := query.New(r.db, r.driver, r.table).Where("email", email).First()
+	row, err := r.tbl.queryFirst([]string{"email"}, []any{email})
 	if err != nil || row == nil {
 		return false
 	}
@@ -156,8 +156,7 @@ func (r *DatabaseTokenRepository) Exists(email, token string) bool {
 }
 
 func (r *DatabaseTokenRepository) Delete(email string) error {
-	_, err := query.New(r.db, r.driver, r.table).Where("email", strings.ToLower(email)).Delete()
-	return err
+	return r.tbl.deleteWhere("email", strings.ToLower(email))
 }
 
 func (r *DatabaseTokenRepository) RecentlyCreated(email string, within time.Duration) bool {
@@ -165,7 +164,7 @@ func (r *DatabaseTokenRepository) RecentlyCreated(email string, within time.Dura
 		return false
 	}
 	email = strings.ToLower(email)
-	row, err := query.New(r.db, r.driver, r.table).Where("email", email).First()
+	row, err := r.tbl.queryFirst([]string{"email"}, []any{email})
 	if err != nil || row == nil {
 		return false
 	}

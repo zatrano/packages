@@ -1,8 +1,8 @@
 package resources
 
 import (
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/packages/orm/pagination"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/packages/pagination"
 )
 
 // Transformer converts a model into an API array.

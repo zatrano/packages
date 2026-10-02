@@ -2,7 +2,7 @@ package oauth
 
 const publishedOAuthConfig = `package config
 
-import "github.com/zatrano/framework/v2/kernel/env"
+import "github.com/zatrano/framework/v3/core/kernel/env"
 
 // OAuth returns OAuth2 server configuration defaults.
 func OAuth() map[string]any {

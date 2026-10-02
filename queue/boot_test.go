@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/zatrano/framework/v2/kernel"
+	"github.com/zatrano/framework/v3/core/kernel"
 	"github.com/zatrano/packages/redisx"
 )
 

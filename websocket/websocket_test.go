@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 )
 
 func TestWriteBinaryPingPongClose(t *testing.T) {
@@ -111,21 +111,37 @@ func mustReadUnmaskedFrame(t *testing.T, data []byte) (opcode byte, payload []by
 	return opcode, payload, rest
 }
 
-func TestUpgradeHijackUnsupported(t *testing.T) {
-	raw := httptest.NewRequest(stdhttp.MethodGet, "/ws", nil)
+func TestUpgradeRejectsMissingKey(t *testing.T) {
+	raw := &stdhttp.Request{Method: stdhttp.MethodGet, Header: stdhttp.Header{}}
 	raw.Header.Set("Upgrade", "websocket")
-	raw.Header.Set("Connection", "Upgrade")
+	resp := Upgrade(func(conn *Conn) error { return nil })(http.RequestFromHTTP(raw))
+	if resp.StatusCode() != 400 {
+		t.Fatalf("status=%d want 400", resp.StatusCode())
+	}
+}
+
+func TestUpgradeRejectsBadOrigin(t *testing.T) {
+	raw := &stdhttp.Request{Method: stdhttp.MethodGet, Host: "app.example", Header: stdhttp.Header{}}
+	raw.Header.Set("Upgrade", "websocket")
 	raw.Header.Set("Sec-WebSocket-Key", "dGhlIHNhbXBsZSBub25jZQ==")
-	resp := Upgrade(func(conn *Conn) error { return nil })(http.NewRequest(raw))
+	raw.Header.Set("Origin", "https://evil.example")
+	resp := Upgrade(func(conn *Conn) error { return nil })(http.RequestFromHTTP(raw))
+	if resp.StatusCode() != 403 {
+		t.Fatalf("status=%d want 403", resp.StatusCode())
+	}
+}
+
+func TestUpgradeReturnsHijackResponse(t *testing.T) {
+	raw := &stdhttp.Request{Method: stdhttp.MethodGet, Host: "app.example", Header: stdhttp.Header{}}
+	raw.Header.Set("Upgrade", "websocket")
+	raw.Header.Set("Sec-WebSocket-Key", "dGhlIHNhbXBsZSBub25jZQ==")
+	resp := Upgrade(func(conn *Conn) error { return nil })(http.RequestFromHTTP(raw))
 	if resp.StatusCode() != 101 {
-		t.Fatalf("status=%d", resp.StatusCode())
+		t.Fatalf("status=%d want 101", resp.StatusCode())
 	}
 	rec := httptest.NewRecorder()
 	err := resp.WriteTo(rec)
-	if err == nil || !strings.Contains(err.Error(), "hijacking not supported") {
-		t.Fatalf("err=%v", err)
-	}
-	if rec.Code != stdhttp.StatusInternalServerError {
-		t.Fatalf("code=%d", rec.Code)
+	if err == nil || !strings.Contains(err.Error(), "rawhttp Commit") {
+		t.Fatalf("WriteTo err=%v want Commit-required", err)
 	}
 }

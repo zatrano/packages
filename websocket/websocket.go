@@ -2,17 +2,18 @@ package websocket
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/binary"
 	"fmt"
 	"io"
-	stdhttp "net/http"
+	"net"
 	"net/url"
 	"strings"
 
-	"github.com/zatrano/framework/v2/kernel/http"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 const acceptGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
@@ -25,9 +26,8 @@ type Handler func(conn *Conn) error
 type CheckOrigin func(req *http.Request) bool
 
 // Upgrade upgrades matching requests to WebSocket using SameOrigin checks.
-// HTTP 101 takeover uses kernel/http.Hijack; this package implements RFC 6455 frames.
-// Hijack requires net/http.Hijacker (typical for HTTP/1.1). HTTP/2 writers usually
-// do not implement it; Upgrade then returns 500 "hijacking not supported".
+// HTTP 101 takeover uses kernel/http.Hijack → rawhttp.Ctx.Hijack; this package
+// implements RFC 6455 frames only.
 func Upgrade(handler Handler) routing.HandlerFunc {
 	return UpgradeWithCheckOrigin(handler, nil)
 }
@@ -40,27 +40,19 @@ func UpgradeWithCheckOrigin(handler Handler, check CheckOrigin) routing.HandlerF
 		check = SameOrigin
 	}
 	return func(req *http.Request) *http.Response {
-		return http.Hijack(func(w stdhttp.ResponseWriter) error {
-			hj, ok := w.(stdhttp.Hijacker)
-			if !ok {
-				stdhttp.Error(w, "hijacking not supported", stdhttp.StatusInternalServerError)
-				return fmt.Errorf("hijacking not supported")
-			}
-			key := req.Header("Sec-WebSocket-Key")
-			if key == "" || !strings.EqualFold(req.Header("Upgrade"), "websocket") {
-				stdhttp.Error(w, "expected websocket upgrade", stdhttp.StatusBadRequest)
-				return nil
-			}
-			if !check(req) {
-				stdhttp.Error(w, "origin not allowed", stdhttp.StatusForbidden)
-				return nil
-			}
-
-			conn, bufrw, err := hj.Hijack()
-			if err != nil {
-				return err
-			}
+		key := req.Header("Sec-WebSocket-Key")
+		if key == "" || !strings.EqualFold(req.Header("Upgrade"), "websocket") {
+			return http.Abort(400, "expected websocket upgrade")
+		}
+		if !check(req) {
+			return http.Abort(403, "origin not allowed")
+		}
+		return http.Hijack(func(conn net.Conn, leftover []byte) error {
 			defer conn.Close()
+
+			br := bufio.NewReader(io.MultiReader(bytes.NewReader(leftover), conn))
+			bw := bufio.NewWriter(conn)
+			bufrw := bufio.NewReadWriter(br, bw)
 
 			accept := acceptKey(key)
 			response := "HTTP/1.1 101 Switching Protocols\r\n" +

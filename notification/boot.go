@@ -3,11 +3,11 @@ package notification
 import (
 	"strings"
 
-	"github.com/zatrano/framework/v2/contracts"
-	pkgconfig "github.com/zatrano/framework/v2/kernel/config"
-	"github.com/zatrano/framework/v2/kernel/env"
+	"github.com/zatrano/framework/v3/core/contracts"
+	pkgconfig "github.com/zatrano/framework/v3/core/kernel/config"
+	"github.com/zatrano/framework/v3/core/kernel/env"
 	"github.com/zatrano/packages/broadcasting"
-	"github.com/zatrano/packages/database"
+	"github.com/zatrano/packages/db"
 	"github.com/zatrano/packages/localization"
 )
 
@@ -84,12 +84,13 @@ func boot(app contracts.App) error {
 		app.Config().GetString("app.locale", env.Get("APP_LOCALE", "en")),
 		app.Config().GetString("app.name", env.Get("APP_NAME", "ZATRANO")),
 	)
-	if dbMgr := database.From(app); dbMgr != nil {
-		if db, err := dbMgr.DB(); err == nil {
-			driver, _ := dbMgr.DriverName()
-			mgr.Extend("database", NewDatabaseChannel(db, "notifications", driver))
-			mgr.SetStore(NewStore(db, "notifications", driver))
+	if h, ok := db.SQLFrom(app); ok {
+		driver := db.NormalizeDriver(h.Driver)
+		if driver == "" {
+			driver = "sqlite"
 		}
+		mgr.Extend("database", NewDatabaseChannel(h.DB, "notifications", driver))
+		mgr.SetStore(NewStore(h.DB, "notifications", driver))
 	}
 	app.Container().Instance("notifications", mgr)
 	return nil

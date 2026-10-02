@@ -1,7 +1,7 @@
 package openapi
 
 import (
-	"github.com/zatrano/framework/v2/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 )
 
 func init() {

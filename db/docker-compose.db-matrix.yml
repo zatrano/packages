@@ -1,0 +1,77 @@
+# Live DB matrix for packages/db adapters (optional CI / local).
+#
+# Usage:
+#   docker compose -f docker-compose.db-matrix.yml up -d
+#   # then from packages/:
+#   set GOWORK=off
+#   set ZATRANO_TEST_POSTGRES_DSN=postgres://zatrano:secret@127.0.0.1:5432/zatrano?sslmode=disable
+#   set ZATRANO_TEST_MYSQL_DSN=zatrano:secret@tcp(127.0.0.1:3306)/zatrano
+#   set ZATRANO_TEST_MARIADB_DSN=zatrano:secret@tcp(127.0.0.1:3307)/zatrano
+#   set ZATRANO_TEST_SQLSERVER_DSN=sqlserver://sa:Your_strong_Password123@127.0.0.1:1433?database=master
+#   go test ./db/postgres/ ./db/mysql/ ./db/mariadb/ ./db/sqlserver/ ./db/sqlite/ -count=1
+#
+# Oracle is optional (heavy image); set ZATRANO_TEST_ORACLE_DSN after:
+#   docker compose -f docker-compose.db-matrix.yml --profile oracle up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: zatrano
+      POSTGRES_USER: zatrano
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zatrano -d zatrano"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: zatrano
+      MYSQL_USER: zatrano
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-psecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: zatrano
+      MARIADB_USER: zatrano
+      MARIADB_PASSWORD: secret
+      MARIADB_ROOT_PASSWORD: secret
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_strong_Password123"
+    ports:
+      - "1433:1433"
+
+  oracle:
+    profiles: ["oracle"]
+    image: gvenzl/oracle-free:23-slim
+    environment:
+      ORACLE_PASSWORD: secret
+      APP_USER: zatrano
+      APP_USER_PASSWORD: secret
+    ports:
+      - "1521:1521"

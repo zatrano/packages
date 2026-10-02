@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/safepath"
-	"github.com/zatrano/packages/database"
+	"github.com/zatrano/framework/v3/core/kernel/safepath"
+	"github.com/zatrano/packages/db"
 )
 
 // Config describes the database connection to back up and where files go.
@@ -45,7 +45,7 @@ func New(source, dir string) *Manager {
 
 // NewManager creates a backup manager for any supported driver.
 func NewManager(cfg Config) *Manager {
-	cfg.Driver = database.NormalizeDriverName(cfg.Driver)
+	cfg.Driver = db.NormalizeDriver(cfg.Driver)
 	if cfg.Driver == "" {
 		cfg.Driver = "sqlite"
 	}
@@ -144,7 +144,7 @@ func (m *Manager) Restore(backupPath string) error {
 	}
 	driver := m.cfg.Driver
 	if meta := readMeta(backupPath); meta != "" {
-		driver = database.NormalizeDriverName(meta)
+		driver = db.NormalizeDriver(meta)
 	} else {
 		driver = driverFromExt(backupPath, driver)
 	}
@@ -189,7 +189,7 @@ func resolveBackupPath(dir, backupPath string) (string, error) {
 }
 
 func extensionFor(driver string) string {
-	switch database.NormalizeDriverName(driver) {
+	switch db.NormalizeDriver(driver) {
 	case "sqlite":
 		return ".sqlite"
 	case "mysql":

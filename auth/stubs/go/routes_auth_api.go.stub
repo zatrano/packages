@@ -2,11 +2,11 @@ package api
 
 import (
 	approutes "__MODULE__/app/routes"
-	apictrl "__MODULE__/app/http/controllers/auth/api"
+	apictrl "__MODULE__/app/http/handlers/auth/api"
 
 	"github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/ratelimit"
-	"github.com/zatrano/framework/v2/kernel/routing"
+	"github.com/zatrano/framework/v3/core/kernel/routing"
 )
 
 func init() {
@@ -18,7 +18,7 @@ func registerAuthAPI(router *routing.Router) {
 	if app == nil || router == nil {
 		return
 	}
-	ctrl := &apictrl.AuthController{App: app}
+	ctrl := &apictrl.AuthHandler{App: app}
 	a := auth.From(app)
 
 	routing.Version(router, "v1", func(api *routing.Router) {

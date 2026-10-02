@@ -1,39 +1,39 @@
 package web
 
 import (
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"errors"
 	"fmt"
 
 	requests "__MODULE__/app/http/requests/auth"
 	pkgauth "github.com/zatrano/packages/auth"
 	"github.com/zatrano/packages/flash"
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/localization"
 	"github.com/zatrano/packages/url"
 	"github.com/zatrano/packages/validation"
 )
 
-// AuthController handles all authentication screens and actions.
-type AuthController struct {
+// AuthHandler handles all authentication screens and actions.
+type AuthHandler struct {
 	App contracts.App
 }
 
-func (c *AuthController) lang(key string, replace ...map[string]string) string {
+func (c *AuthHandler) lang(key string, replace ...map[string]string) string {
 	if tr := localization.From(c.App); tr != nil {
 		return tr.Get(key, replace...)
 	}
 	return key
 }
 
-func (c *AuthController) authMsg(err error) string {
+func (c *AuthHandler) authMsg(err error) string {
 	if err == nil {
 		return ""
 	}
 	return c.lang(err.Error())
 }
 
-func (c *AuthController) validateForm(req *http.Request, form validation.FormRequest) (map[string]string, *http.Response) {
+func (c *AuthHandler) validateForm(req *http.Request, form validation.FormRequest) (map[string]string, *http.Response) {
 	data, err := validation.ValidateForm(req, form)
 	if err != nil {
 		return nil, validation.ResponseFor(req, err)
@@ -41,14 +41,14 @@ func (c *AuthController) validateForm(req *http.Request, form validation.FormReq
 	return data, nil
 }
 
-func (c *AuthController) LoginForm(req *http.Request) *http.Response {
-	return http.View("auth/login", map[string]any{
+func (c *AuthHandler) LoginForm(req *http.Request) *http.Response {
+	return http.Template("auth.login", map[string]any{
 		"title": "Login",
 		"email": flash.OldValue(req, "email"),
 	})
 }
 
-func (c *AuthController) Login(req *http.Request) *http.Response {
+func (c *AuthHandler) Login(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.LoginRequest{})
 	if fail != nil {
 		return fail
@@ -85,7 +85,7 @@ func (c *AuthController) Login(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.welcome_back"), pkgauth.PullIntendedURL(req, "/"))
 }
 
-func (c *AuthController) Logout(req *http.Request) *http.Response {
+func (c *AuthHandler) Logout(req *http.Request) *http.Response {
 	_ = pkgauth.From(c.App).Logout(req)
 	if req.WantsJSON() {
 		return http.JSON(map[string]any{"message": c.lang("auth.logged_out")})
@@ -93,15 +93,15 @@ func (c *AuthController) Logout(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.logged_out"), "/auth/login")
 }
 
-func (c *AuthController) RegisterForm(req *http.Request) *http.Response {
-	return http.View("auth/register", map[string]any{
+func (c *AuthHandler) RegisterForm(req *http.Request) *http.Response {
+	return http.Template("auth.register", map[string]any{
 		"title": "Register",
 		"name":  flash.OldValue(req, "name"),
 		"email": flash.OldValue(req, "email"),
 	})
 }
 
-func (c *AuthController) Register(req *http.Request) *http.Response {
+func (c *AuthHandler) Register(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.RegisterRequest{})
 	if fail != nil {
 		return fail
@@ -122,17 +122,17 @@ func (c *AuthController) Register(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.account_ready"), "/")
 }
 
-func (c *AuthController) ProfileForm(req *http.Request) *http.Response {
+func (c *AuthHandler) ProfileForm(req *http.Request) *http.Response {
 	user := pkgauth.From(c.App).User(req)
 	name, email := "", pkgauth.EmailForVerification(user)
 	if g, ok := user.(*pkgauth.GenericUser); ok {
 		name = fmt.Sprint(g.Get("name"))
 		email = fmt.Sprint(g.Get("email"))
 	}
-	return http.View("auth/profile", map[string]any{"title": "Profile", "name": name, "email": email})
+	return http.Template("auth.profile", map[string]any{"title": "Profile", "name": name, "email": email})
 }
 
-func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
+func (c *AuthHandler) UpdateProfile(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.ProfileUpdateRequest{})
 	if fail != nil {
 		return fail
@@ -149,11 +149,11 @@ func (c *AuthController) UpdateProfile(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.profile_updated"), "/auth/profile")
 }
 
-func (c *AuthController) ChangePasswordForm(req *http.Request) *http.Response {
-	return http.View("auth/change-password", map[string]any{"title": "Change password"})
+func (c *AuthHandler) ChangePasswordForm(req *http.Request) *http.Response {
+	return http.Template("auth.change-password", map[string]any{"title": "Change password"})
 }
 
-func (c *AuthController) ChangePassword(req *http.Request) *http.Response {
+func (c *AuthHandler) ChangePassword(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.ChangePasswordRequest{})
 	if fail != nil {
 		return fail
@@ -170,7 +170,7 @@ func (c *AuthController) ChangePassword(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.password_updated"), "/")
 }
 
-func (c *AuthController) TwoFactorForm(req *http.Request) *http.Response {
+func (c *AuthHandler) TwoFactorForm(req *http.Request) *http.Response {
 	user := pkgauth.From(c.App).User(req)
 	enabled := pkgauth.From(c.App).HasTwoFactorEnabled(user)
 	var setupSecret, setupURL string
@@ -191,14 +191,14 @@ func (c *AuthController) TwoFactorForm(req *http.Request) *http.Response {
 			}
 		}
 	}
-	return http.View("auth/two-factor", map[string]any{
+	return http.Template("auth.two-factor", map[string]any{
 		"title": "Two-factor authentication", "enabled": enabled,
 		"setup_secret": setupSecret, "setup_url": setupURL, "setup_codes": setupCodes,
 		"recovery_codes": recoveryCodes, "pending_setup": setupSecret != "" && !enabled,
 	})
 }
 
-func (c *AuthController) EnableTwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) EnableTwoFactor(req *http.Request) *http.Response {
 	secret, url, codes, err := pkgauth.From(c.App).EnableTwoFactor(pkgauth.From(c.App).User(req))
 	if err != nil {
 		if req.WantsJSON() {
@@ -215,7 +215,7 @@ func (c *AuthController) EnableTwoFactor(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.two_factor_confirm_hint"), "/auth/user/two-factor")
 }
 
-func (c *AuthController) ConfirmTwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) ConfirmTwoFactor(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.TwoFactorConfirmRequest{})
 	if fail != nil {
 		return fail
@@ -235,7 +235,7 @@ func (c *AuthController) ConfirmTwoFactor(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.two_factor_enabled"), "/auth/user/two-factor")
 }
 
-func (c *AuthController) DisableTwoFactor(req *http.Request) *http.Response {
+func (c *AuthHandler) DisableTwoFactor(req *http.Request) *http.Response {
 	if err := pkgauth.From(c.App).DisableTwoFactor(pkgauth.From(c.App).User(req), pkgauth.NormalizePasswordField(req)); err != nil {
 		if req.WantsJSON() {
 			return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
@@ -248,7 +248,7 @@ func (c *AuthController) DisableTwoFactor(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.two_factor_disabled"), "/auth/user/two-factor")
 }
 
-func (c *AuthController) RegenerateRecoveryCodes(req *http.Request) *http.Response {
+func (c *AuthHandler) RegenerateRecoveryCodes(req *http.Request) *http.Response {
 	codes, err := pkgauth.From(c.App).ReplaceRecoveryCodes(pkgauth.From(c.App).User(req))
 	if err != nil {
 		if req.WantsJSON() {
@@ -265,11 +265,11 @@ func (c *AuthController) RegenerateRecoveryCodes(req *http.Request) *http.Respon
 	return flash.WithSuccess(req, c.lang("auth.recovery_regenerated"), "/auth/user/two-factor")
 }
 
-func (c *AuthController) LogoutOtherDevicesForm(req *http.Request) *http.Response {
-	return http.View("auth/logout-other-devices", map[string]any{"title": "Logout other devices"})
+func (c *AuthHandler) LogoutOtherDevicesForm(req *http.Request) *http.Response {
+	return http.Template("auth.logout-other-devices", map[string]any{"title": "Logout other devices"})
 }
 
-func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
+func (c *AuthHandler) LogoutOtherDevices(req *http.Request) *http.Response {
 	if err := pkgauth.From(c.App).LogoutOtherDevices(req, pkgauth.NormalizePasswordField(req)); err != nil {
 		if req.WantsJSON() {
 			return http.JSON(map[string]any{"message": c.authMsg(err)}).Status(422)
@@ -282,14 +282,14 @@ func (c *AuthController) LogoutOtherDevices(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.other_devices_logged_out"), "/auth/user/logout-other-devices")
 }
 
-func (c *AuthController) ForgotForm(req *http.Request) *http.Response {
-	return http.View("auth/forgot-password", map[string]any{
+func (c *AuthHandler) ForgotForm(req *http.Request) *http.Response {
+	return http.Template("auth.forgot-password", map[string]any{
 		"title": "Forgot password",
 		"email": flash.OldValue(req, "email"),
 	})
 }
 
-func (c *AuthController) Forgot(req *http.Request) *http.Response {
+func (c *AuthHandler) Forgot(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.ForgotPasswordRequest{})
 	if fail != nil {
 		return fail
@@ -324,15 +324,15 @@ func (c *AuthController) Forgot(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.reset_link_if_exists"), "/auth/forgot-password")
 }
 
-func (c *AuthController) ResetForm(req *http.Request) *http.Response {
-	return http.View("auth/reset-password", map[string]any{
+func (c *AuthHandler) ResetForm(req *http.Request) *http.Response {
+	return http.Template("auth.reset-password", map[string]any{
 		"title": "Reset password",
 		"email": req.Query("email"),
 		"token": req.Query("token"),
 	})
 }
 
-func (c *AuthController) Reset(req *http.Request) *http.Response {
+func (c *AuthHandler) Reset(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.ResetPasswordRequest{})
 	if fail != nil {
 		return fail
@@ -349,16 +349,16 @@ func (c *AuthController) Reset(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.password_reset"), "/auth/login")
 }
 
-func (c *AuthController) Notice(req *http.Request) *http.Response {
+func (c *AuthHandler) Notice(req *http.Request) *http.Response {
 	user := pkgauth.From(c.App).User(req)
-	return http.View("auth/verify-email", map[string]any{
+	return http.Template("auth.verify-email", map[string]any{
 		"title":    "Verify email",
 		"verified": pkgauth.HasVerifiedEmail(user),
 		"email":    pkgauth.EmailForVerification(user),
 	})
 }
 
-func (c *AuthController) Send(req *http.Request) *http.Response {
+func (c *AuthHandler) Send(req *http.Request) *http.Response {
 	user := pkgauth.From(c.App).User(req)
 	if user == nil {
 		return http.JSON(map[string]any{"message": c.lang("auth.unauthenticated")}).Status(401)
@@ -378,7 +378,7 @@ func (c *AuthController) Send(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.verify_email_sent"), "/auth/email/verify")
 }
 
-func (c *AuthController) Verify(req *http.Request) *http.Response {
+func (c *AuthHandler) Verify(req *http.Request) *http.Response {
 	if !c.validSignature(req) {
 		return http.JSON(map[string]any{"message": "Invalid signature"}).Status(403)
 	}
@@ -401,11 +401,11 @@ func (c *AuthController) Verify(req *http.Request) *http.Response {
 	return flash.WithSuccess(req, c.lang("auth.email_verified"), "/")
 }
 
-func (c *AuthController) ConfirmPasswordForm(req *http.Request) *http.Response {
-	return http.View("auth/confirm-password", map[string]any{"title": "Confirm Password"})
+func (c *AuthHandler) ConfirmPasswordForm(req *http.Request) *http.Response {
+	return http.Template("auth.confirm-password", map[string]any{"title": "Confirm Password"})
 }
 
-func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
+func (c *AuthHandler) ConfirmPassword(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.ConfirmPasswordRequest{})
 	if fail != nil {
 		return fail
@@ -423,11 +423,11 @@ func (c *AuthController) ConfirmPassword(req *http.Request) *http.Response {
 	return pkgauth.RedirectIntended(req, "/")
 }
 
-func (c *AuthController) TwoFactorChallengeForm(req *http.Request) *http.Response {
-	return http.View("auth/two-factor-challenge", map[string]any{"title": "Two-Factor Challenge"})
+func (c *AuthHandler) TwoFactorChallengeForm(req *http.Request) *http.Response {
+	return http.Template("auth.two-factor-challenge", map[string]any{"title": "Two-Factor Challenge"})
 }
 
-func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {
+func (c *AuthHandler) TwoFactorChallenge(req *http.Request) *http.Response {
 	data, fail := c.validateForm(req, requests.TwoFactorChallengeRequest{})
 	if fail != nil {
 		return fail
@@ -452,7 +452,7 @@ func (c *AuthController) TwoFactorChallenge(req *http.Request) *http.Response {
 	return pkgauth.RedirectIntended(req, "/")
 }
 
-func (c *AuthController) validSignature(req *http.Request) bool {
+func (c *AuthHandler) validSignature(req *http.Request) bool {
 	if req == nil || req.Raw() == nil || req.Raw().URL == nil {
 		return false
 	}

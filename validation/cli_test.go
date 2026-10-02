@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel"
+	"github.com/zatrano/framework/v3/core/kernel"
 )
 
 func TestToRuleName(t *testing.T) {

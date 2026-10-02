@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/auth/social"
 )
 
@@ -52,7 +52,7 @@ func TestStubAuthorizeSameOrigin(t *testing.T) {
 		t.Fatalf("expected same-origin authorize, got %s", authURL)
 	}
 
-	req := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, authURL, nil))
+	req := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, authURL, nil))
 	resp := p.AuthorizeHandler()(req)
 	if resp.StatusCode() != 302 {
 		t.Fatalf("status=%d", resp.StatusCode())
@@ -65,7 +65,7 @@ func TestStubAuthorizeSameOrigin(t *testing.T) {
 		t.Fatalf("callback missing code/state: %s", loc)
 	}
 
-	bad := http.NewRequest(httptest.NewRequest(stdhttp.MethodGet, "/oauth/google/authorize?redirect_uri=https://evil.test/cb&state=x", nil))
+	bad := http.RequestFromHTTP(httptest.NewRequest(stdhttp.MethodGet, "/oauth/google/authorize?redirect_uri=https://evil.test/cb&state=x", nil))
 	denied := p.AuthorizeHandler()(bad)
 	if denied.StatusCode() != 400 {
 		t.Fatalf("expected 400 for foreign redirect, got %d", denied.StatusCode())

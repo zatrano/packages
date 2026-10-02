@@ -21,9 +21,13 @@
 </p>
 
 <p align="center">
-  Current stable: <a href="https://github.com/zatrano/packages/releases/tag/v1.13.1"><code>v1.13.1</code></a>
+  V3 line (branch <code>v3</code>): Framework <code>github.com/zatrano/framework/v3</code>
   ·
-  Framework pin: <code>github.com/zatrano/framework/v2@v2.8.0</code>
+  Carrier <code>rawhttp@v0.2.2</code>
+  ·
+  Canvas <code>canvas@v0.2.0</code> via <code>framework/v3/core/ssr</code>
+  ·
+  Last v2 packages release: <a href="https://github.com/zatrano/packages/releases/tag/v1.13.1"><code>v1.13.1</code></a>
 </p>
 
 ---
@@ -32,16 +36,16 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module: the import path has no `/v2` suffix and must not be tagged `v2.x`. Current stable release: **`v1.13.1`**. It requires `github.com/zatrano/framework/v2 v2.8.0`. The two modules version independently. Nested package `VERSION` files (drivers, auth, …) are informational only.
+It is a **v1** Go module path (no `/v2` suffix). The **v3** branch requires `github.com/zatrano/framework/v3 v3.0.0` (local `replace` until the framework tag is published). Nested package `VERSION` files are informational only.
 
-Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z` (nested: `scripts/release.sh --dry-run database/driver/sqlite/vX.Y.Z`).
+Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z`.
 
-The kernel lives in [github.com/zatrano/framework/v2](https://github.com/zatrano/framework): HTTP, routing, middleware, config, the CLI, `zatrano new`. Everything that used to look like “the rest of the framework” — sessions, auth, database, views, queues, AI — lives **here**, next to OAuth and the import-only helpers.
+The kernel lives in [github.com/zatrano/framework](https://github.com/zatrano/framework) (`v3` branch): HTTP (rawhttp), routing, middleware, config, the CLI, `zatrano new`, Canvas wiring (`core/ssr`). Optional capabilities — sessions, auth, `packages/db`, queues, AI — live **here**.
 
 The two modules cannot be merged: this one already requires the framework.
 
 ```text
-  github.com/zatrano/framework/v2          github.com/zatrano/packages
+  github.com/zatrano/framework/v3          github.com/zatrano/packages
   ────────────────────────────          ──────────────────────────
   kernel/http  kernel/routing           session  auth  database  view
   contracts    bootstrap.App()          queue    ai    auth/oauth  auth/social
@@ -73,7 +77,7 @@ import (
     _ "github.com/zatrano/packages/session"
     _ "github.com/zatrano/packages/auth"
     _ "github.com/zatrano/packages/database"
-    _ "github.com/zatrano/packages/view"
+    _ "github.com/zatrano/framework/v3/core/ssr"
 )
 
 app := bootstrap.App(bootstrap.WithProviders(providers.All()...))
@@ -170,9 +174,7 @@ Numeric OTP helpers for notifications live in [`notification/otp`](notification/
 
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`database`](database) | service | SQL connections, query builder, schema, migrations, seeders |
-| [`orm`](orm) | service | Models, relations, eager loading, soft deletes |
-| [`factory`](factory) | library | Model factories for tests and seeders |
+| [`db`](db) | library | SQL-first adapters (postgres/mysql/mariadb/sqlite/sqlserver/oracle); app owns SQL/sqlc |
 | [`cache`](cache) | service | Temporary key/value store (file / memory / redis) |
 | [`redisx`](redisx) | library | Redis client helper; cache owns the connection |
 | [`mongo`](mongo) | heavy | Document store client, not SQL ORM (own `go.mod`) |
@@ -191,7 +193,6 @@ Numeric OTP helpers for notifications live in [`notification/otp`](notification/
 
 | Package | Kind | What it does |
 | --- | --- | --- |
-| [`httpclient`](httpclient) | service | Outbound HTTP with JSON, retries, and fakes |
 | [`ratelimit`](ratelimit) | service | Named in-process rate limiters |
 | [`url`](url) | service | Absolute URLs, signed links (`Router.URL` for named paths) |
 | [`maintenance`](maintenance) | service | Downtime page (`down` / `up`) |
@@ -288,7 +289,7 @@ The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named
 This repository may use a sibling framework checkout and `go.work`:
 
 ```text
-replace github.com/zatrano/framework/v2 => ../framework
+replace github.com/zatrano/framework/v3 => ../framework
 ```
 
 That replace is **development-only**. Public consumers resolve `github.com/zatrano/framework/v2@v2.8.0` from the module proxy; they do not clone this tree next to the framework.
@@ -303,7 +304,7 @@ Work lands on **`main`**, same default branch as the framework.
 
 ```go
 import "github.com/zatrano/packages/auth"
-import "github.com/zatrano/framework/v2/kernel/http"   // kernel, not this module
+import "github.com/zatrano/framework/v3/core/kernel/http"   // kernel, not this module
 ```
 
 Kernel types (`http.Request`, the router, CSRF) stay in the framework. This module implements the rest and talks to the kernel through `contracts.App`.

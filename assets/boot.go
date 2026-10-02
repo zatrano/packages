@@ -3,7 +3,7 @@ package assets
 import (
 	"strings"
 
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/contracts"
 )
 
 func boot(app contracts.App) error {

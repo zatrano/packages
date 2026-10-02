@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zatrano/framework/v2/bootstrap/addons"
-	"github.com/zatrano/framework/v2/contracts"
+	"github.com/zatrano/framework/v3/core/bootstrap/addons"
+	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/bootutil"
 )
 

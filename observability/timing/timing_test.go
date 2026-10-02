@@ -7,15 +7,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zatrano/framework/v2/kernel/http"
+	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/packages/observability/timing"
 )
 
 func TestTimingMarks(t *testing.T) {
 	r := httptest.NewRequest(stdhttp.MethodGet, "/", nil)
-	req := http.NewRequest(r)
+	req := http.RequestFromHTTP(r)
 	timing.Add(req, "db", 12*time.Millisecond, "query")
-	timing.Add(req, "view", 5*time.Millisecond)
+	timing.Add(req, "template", 5*time.Millisecond)
 	header := timing.Header(req, 20*time.Millisecond)
 	if !strings.Contains(header, "app;dur=") || !strings.Contains(header, "db;") || !strings.Contains(header, "total;") {
 		t.Fatal(header)
