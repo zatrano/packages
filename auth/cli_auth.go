@@ -11,7 +11,7 @@ import (
 	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 	"github.com/zatrano/framework/v3/core/contracts"
 	"github.com/zatrano/packages/bootutil"
-	"github.com/zatrano/packages/template/starter"
+	"github.com/zatrano/framework/v3/core/ssr/starter"
 )
 
 func Commands(app contracts.App) []addons.CLICommand {
@@ -264,7 +264,7 @@ func enableViewForAuth(app contracts.App) error {
 	if err := bootutil.EnsureEnabledAddon(app, "template"); err != nil {
 		return err
 	}
-	if err := bootutil.EnsureBlankImport(app.BasePath("bootstrap", "addons.go"), "github.com/zatrano/packages/template"); err != nil {
+	if err := bootutil.EnsureBlankImport(app.BasePath("bootstrap", "addons.go"), "github.com/zatrano/framework/v3/core/ssr"); err != nil {
 		return err
 	}
 	return starter.Write(app)

@@ -11,10 +11,10 @@ import (
 	"github.com/zatrano/framework/v3/core/kernel/env"
 	"github.com/zatrano/framework/v3/core/kernel/http"
 	"github.com/zatrano/framework/v3/core/kernel/routing"
+	"github.com/zatrano/framework/v3/core/ssr"
 	"github.com/zatrano/packages/flash"
 	"github.com/zatrano/packages/localization"
 	"github.com/zatrano/packages/validation"
-	"github.com/zatrano/packages/template"
 )
 
 type httpBridge struct {
@@ -44,7 +44,7 @@ func (b *httpBridge) finalize(req *http.Request, resp *http.Response) *http.Resp
 		resp = http.Abort(204)
 	}
 
-	engine := template.From(app)
+	engine := ssr.From(app)
 	if resp.TemplateName() != "" && engine != nil {
 		data := resp.TemplateData()
 		if data == nil {
@@ -178,7 +178,7 @@ func (b *httpBridge) localeMiddleware() routing.MiddlewareFunc {
 					_ = tr.Load(locale)
 					req.Set("locale", locale)
 				}
-				if engine := template.From(b.app); engine != nil {
+				if engine := ssr.From(b.app); engine != nil {
 					engine.Share("locale", locale)
 				}
 			}

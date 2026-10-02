@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zatrano/packages/template"
+	"github.com/zatrano/framework/v3/core/ssr"
 )
 
 // Notifiable can receive notifications.
@@ -72,8 +72,8 @@ func (m *Manager) SetMail(mailer *MailManager) {
 	}
 }
 
-// SetMailTemplate attaches the template Engine used when rendering mail templates.
-func (m *Manager) SetMailTemplate(engine template.Engine) {
+// SetMailTemplate attaches the SSR Engine used when rendering mail templates.
+func (m *Manager) SetMailTemplate(engine ssr.Engine) {
 	if m == nil || m.mail == nil {
 		return
 	}
@@ -81,7 +81,7 @@ func (m *Manager) SetMailTemplate(engine template.Engine) {
 }
 
 // SetMailView is deprecated; use SetMailTemplate.
-func (m *Manager) SetMailView(engine template.Engine) {
+func (m *Manager) SetMailView(engine ssr.Engine) {
 	m.SetMailTemplate(engine)
 }
 

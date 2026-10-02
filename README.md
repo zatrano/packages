@@ -73,7 +73,7 @@ import (
     _ "github.com/zatrano/packages/session"
     _ "github.com/zatrano/packages/auth"
     _ "github.com/zatrano/packages/database"
-    _ "github.com/zatrano/packages/template"
+    _ "github.com/zatrano/framework/v3/core/ssr"
 )
 
 app := bootstrap.App(bootstrap.WithProviders(providers.All()...))

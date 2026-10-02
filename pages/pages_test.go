@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/zatrano/framework/v3/core/kernel/routing"
+	"github.com/zatrano/framework/v3/core/ssr"
 	"github.com/zatrano/packages/pages"
-	"github.com/zatrano/packages/template"
 )
 
 func TestPagesRegister(t *testing.T) {
@@ -17,7 +17,7 @@ func TestPagesRegister(t *testing.T) {
 	_ = os.WriteFile(filepath.Join(pagesDir, "about.html"), []byte("<h1>About</h1>"), 0o644)
 	_ = os.WriteFile(filepath.Join(pagesDir, "users", "[id].html"), []byte("<p>id</p>"), 0o644)
 
-	engine := template.New(root)
+	engine := ssr.New(root)
 	router := routing.New()
 	if err := pages.New(pagesDir, engine).Prefix("/pages").Register(router); err != nil {
 		t.Fatal(err)

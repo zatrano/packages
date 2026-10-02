@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zatrano/packages/template"
+	"github.com/zatrano/framework/v3/core/ssr"
 )
 
 // MailMessage represents an email message.
@@ -36,7 +36,7 @@ type MailManager struct {
 	mailers       map[string]Mailer
 	fromAddress   string
 	fromName      string
-	view          template.Engine
+	view          ssr.Engine
 }
 
 // NewMailManager creates a mail manager.

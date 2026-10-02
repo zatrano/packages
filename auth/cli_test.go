@@ -218,7 +218,7 @@ func TestMakeAuthEnablesViewAndSwitchesHome(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/template") {
+	if !strings.Contains(string(addonSrc), "github.com/zatrano/framework/v3/core/ssr") {
 		t.Fatal("make:auth must blank-import view")
 	}
 	if !strings.Contains(string(addonSrc), "github.com/zatrano/packages/url") {

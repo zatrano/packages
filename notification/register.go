@@ -3,7 +3,7 @@ package notification
 import (
 	"github.com/zatrano/framework/v3/core/bootstrap/addons"
 	"github.com/zatrano/framework/v3/core/contracts"
-	"github.com/zatrano/packages/template"
+	"github.com/zatrano/framework/v3/core/ssr"
 )
 
 func init() {
@@ -27,7 +27,7 @@ func (p *ServiceProvider) Register(app contracts.App) error {
 
 func (p *ServiceProvider) Boot(app contracts.App) error {
 	if n := From(app); n != nil {
-		if e := template.From(app); e != nil {
+		if e := ssr.From(app); e != nil {
 			n.SetMailTemplate(e)
 		}
 	}

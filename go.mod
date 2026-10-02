@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/redis/go-redis/v9 v9.11.0
-	github.com/zatrano/canvas v0.2.0
 	github.com/zatrano/framework/v3 v3.0.0
 	github.com/zatrano/rawhttp v0.2.2
 	golang.org/x/crypto v0.55.0
@@ -20,6 +19,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/zatrano/canvas v0.2.0 // indirect
 	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/tools v0.48.0 // indirect
 	modernc.org/libc v1.66.3 // indirect
@@ -34,5 +34,3 @@ replace github.com/zatrano/packages/mongo => ./mongo
 replace github.com/zatrano/packages/webauthn => ./webauthn
 
 replace github.com/zatrano/rawhttp => ../rawhttp
-
-replace github.com/zatrano/canvas => ../canvas
