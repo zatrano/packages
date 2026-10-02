@@ -2,5 +2,5 @@ filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
 filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
 github.com/go-sql-driver/mysql v1.9.2 h1:4cNKDYQ1I84SXslGddlsrMhc8k4LeDVj6Ad6WRjiHuU=
 github.com/go-sql-driver/mysql v1.9.2/go.mod h1:qn46aNg1333BRMNU69Lq93t8du/dwxI64Gl8i5p1WMU=
-github.com/zatrano/packages v1.13.2-0.20261002200350-3b4d59d11c88 h1:eBfhPb2zKoLa3iCn4GKwUfu9IBXCVa6SETjzMcrIkMQ=
-github.com/zatrano/packages v1.13.2-0.20261002200350-3b4d59d11c88/go.mod h1:vLp2lthSLqmgH+lGMIsnXVgQyv2FQdrxSC7rF2LydQo=
+github.com/zatrano/packages v1.14.0 h1:/RBBpFkSjXyvi6cAZVm6JYt88b0r+2WHZ8I6RMtTSnY=
+github.com/zatrano/packages v1.14.0/go.mod h1:mVlCNCxt2SmTaUlRuGez0Lesp5sJOeR9PHDtXnPmcV0=

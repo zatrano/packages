@@ -1,4 +1,4 @@
 github.com/sijms/go-ora/v2 v2.8.24 h1:TODRWjWGwJ1VlBOhbTLat+diTYe8HXq2soJeB+HMjnw=
 github.com/sijms/go-ora/v2 v2.8.24/go.mod h1:QgFInVi3ZWyqAiJwzBQA+nbKYKH77tdp1PYoCqhR2dU=
-github.com/zatrano/packages v1.13.2-0.20261002200350-3b4d59d11c88 h1:eBfhPb2zKoLa3iCn4GKwUfu9IBXCVa6SETjzMcrIkMQ=
-github.com/zatrano/packages v1.13.2-0.20261002200350-3b4d59d11c88/go.mod h1:vLp2lthSLqmgH+lGMIsnXVgQyv2FQdrxSC7rF2LydQo=
+github.com/zatrano/packages v1.14.0 h1:/RBBpFkSjXyvi6cAZVm6JYt88b0r+2WHZ8I6RMtTSnY=
+github.com/zatrano/packages v1.14.0/go.mod h1:mVlCNCxt2SmTaUlRuGez0Lesp5sJOeR9PHDtXnPmcV0=
