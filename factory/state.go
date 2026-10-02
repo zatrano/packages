@@ -1,10 +1,6 @@
 package factory
 
-import (
-	"fmt"
-
-	"github.com/zatrano/packages/orm"
-)
+import "fmt"
 
 var states = map[string]map[string]Definition{}
 
@@ -48,7 +44,7 @@ func stateOf(typeKey, name string) (Definition, error) {
 	return def, nil
 }
 
-// Builder fluently builds models with optional states and overrides.
+// Builder fluently builds attribute maps with optional states and overrides.
 type Builder[T any] struct {
 	stateNames []string
 	overrides  map[string]any
@@ -111,24 +107,12 @@ func (b *Builder[T]) MakeMany(count int) ([]map[string]any, error) {
 	return out, nil
 }
 
-// Create persists a model.
+// Create is removed in V3 (no ORM).
 func (b *Builder[T]) Create() (*T, error) {
-	attrs, err := b.Make()
-	if err != nil {
-		return nil, err
-	}
-	return orm.Create[T](attrs)
+	return nil, ErrDeprecatedPersist
 }
 
-// CreateMany persists many models.
+// CreateMany is removed in V3 (no ORM).
 func (b *Builder[T]) CreateMany(count int) ([]T, error) {
-	out := make([]T, 0, count)
-	for i := 0; i < count; i++ {
-		model, err := b.Create()
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, *model)
-	}
-	return out, nil
+	return nil, ErrDeprecatedPersist
 }

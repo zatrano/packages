@@ -1,24 +1,18 @@
 package factory_test
 
 import (
-	"database/sql"
+	"errors"
 	"testing"
 	"time"
 
-	_ "modernc.org/sqlite"
-
 	"github.com/zatrano/packages/factory"
-	"github.com/zatrano/packages/orm"
 )
 
 type stateUser struct {
-	orm.Model
-	Name            string     `db:"name"`
-	Email           string     `db:"email"`
-	EmailVerifiedAt *time.Time `db:"email_verified_at"`
+	Name            string
+	Email           string
+	EmailVerifiedAt *time.Time
 }
-
-func (stateUser) TableName() string { return "state_users" }
 
 func TestFactoryStates(t *testing.T) {
 	factory.ClearStates()
@@ -50,29 +44,8 @@ func TestFactoryStates(t *testing.T) {
 		t.Fatalf("attrs=%v", attrs)
 	}
 
-	db, err := sql.Open("sqlite", ":memory:")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer db.Close()
-	_, err = db.Exec(`CREATE TABLE state_users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT,
-		email TEXT,
-		email_verified_at DATETIME,
-		created_at DATETIME,
-		updated_at DATETIME
-	)`)
-	if err != nil {
-		t.Fatal(err)
-	}
-	orm.Configure(db, "sqlite")
-
-	user, err := factory.Of[stateUser]().State("verified").Create()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if user.Name != "Verified" || user.EmailVerifiedAt == nil {
-		t.Fatalf("user=%+v", user)
+	_, err = factory.Of[stateUser]().State("verified").Create()
+	if !errors.Is(err, factory.ErrDeprecatedPersist) {
+		t.Fatalf("Create want ErrDeprecatedPersist, got %v", err)
 	}
 }

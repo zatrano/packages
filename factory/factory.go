@@ -5,8 +5,6 @@ import (
 	"math/rand"
 	"sync"
 	"time"
-
-	"github.com/zatrano/packages/orm"
 )
 
 var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -31,7 +29,6 @@ func For[T any](definition Definition) {
 	Register(typeName[T](), definition)
 }
 
-// definitionOf resolves a registered definition.
 func definitionOf(name string) (Definition, error) {
 	mu.RLock()
 	defer mu.RUnlock()
@@ -70,29 +67,18 @@ func MakeMany[T any](count int, overrides ...map[string]any) ([]map[string]any, 
 	return out, nil
 }
 
-// Create persists a model using ORM.
+// ErrDeprecatedPersist is returned by Create / CreateMany (ORM removed in V3).
+var ErrDeprecatedPersist = fmt.Errorf("factory.Create removed in V3 — use packages/db + sqlc / database/seeders")
+
+// Create is removed in V3 (no ORM). Use Make + app SQL/sqlc.
 func Create[T any](overrides ...map[string]any) (*T, error) {
-	attrs, err := Make[T](overrides...)
-	if err != nil {
-		return nil, err
-	}
-	return orm.Create[T](attrs)
+	return nil, ErrDeprecatedPersist
 }
 
-// CreateMany persists many models.
+// CreateMany is removed in V3 (no ORM).
 func CreateMany[T any](count int, overrides ...map[string]any) ([]T, error) {
-	out := make([]T, 0, count)
-	for i := 0; i < count; i++ {
-		model, err := Create[T](overrides...)
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, *model)
-	}
-	return out, nil
+	return nil, ErrDeprecatedPersist
 }
-
-// Fake helpers
 
 // FakeName returns a random name.
 func FakeName() string {
@@ -110,7 +96,6 @@ func FakePassword() string {
 	return "password"
 }
 
-// Sequence returns an incrementing value for a key.
 var sequences = map[string]int{}
 var seqMu sync.Mutex
 
