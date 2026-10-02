@@ -52,6 +52,7 @@ Config: `auth.two_factor.issuer`, `auth.two_factor.remember_device_days`, `auth.
 
 ```bash
 zatrano make:auth
+zatrano make:auth --templates   # Canvas HTML/layout/mail stubs only
 ```
 
 `make:auth` / `make:panel` wrap account and panel routes with `VerifyEmailMiddleware`. Scaffold flashes use `auth.*` locale keys (`APP_LOCALE` + `lang/{locale}/auth.json`). Package errors such as `auth.ErrEmailTaken` return those keys from `Error()`.

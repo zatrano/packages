@@ -29,10 +29,10 @@ func TestAuthCLIRegistered(t *testing.T) {
 	}
 }
 
-func TestMakeAuthViewsUsesEmbeddedStubs(t *testing.T) {
+func TestMakeAuthTemplatesUsesEmbeddedStubs(t *testing.T) {
 	dir := t.TempDir()
 	cmd := &MakeAuthCommand{app: kernel.NewApplication(dir)}
-	if err := cmd.Handle([]string{"--views"}); err != nil {
+	if err := cmd.Handle([]string{"--templates"}); err != nil {
 		t.Fatal(err)
 	}
 	want := []string{
