@@ -9,12 +9,12 @@ nested=(
   mongo
   webauthn
   qr
-  database/driver/sqlite
-  database/driver/mysql
-  database/driver/pgsql
-  database/driver/mssql
-  database/driver/oracle
-  database/driver/mongo
+  db/postgres
+  db/mysql
+  db/mariadb
+  db/sqlite
+  db/sqlserver
+  db/oracle
 )
 for d in "${nested[@]}"; do
   if [[ -f "$d/go.mod" ]]; then

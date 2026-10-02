@@ -27,7 +27,7 @@
   ·
   Canvas <code>canvas@v0.2.0</code> via <code>framework/v3/core/ssr</code>
   ·
-  Last v2 packages release: <a href="https://github.com/zatrano/packages/releases/tag/v1.13.1"><code>v1.13.1</code></a>
+  Packages <a href="https://github.com/zatrano/packages/releases/tag/v1.14.0"><code>v1.14.0</code></a>
 </p>
 
 ---
@@ -88,13 +88,13 @@ From the app CLI:
 
 ```bash
 go get github.com/zatrano/framework/v2@v2.8.0
-go get github.com/zatrano/packages@v1.13.1
+go get github.com/zatrano/packages@v1.14.0
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.13.1` is the current public packages tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0` → `v1.11.0` → `v1.11.1` → `v1.12.0` → `v1.13.0` → `v1.13.1`. Do not use `@main` for application consumption. A sibling framework checkout is only for this repository's development (`go.work` / `replace`).
+`v1.14.0` is the current public packages tag (V3). `v1.13.1` remains the last v2 tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0` → `v1.11.0` → `v1.11.1` → `v1.12.0` → `v1.13.0` → `v1.13.1` → `v1.14.0`. Do not use `@main` for application consumption.
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -266,39 +266,33 @@ These have their own `go.mod`:
 mongo/
 webauthn/
 qr/
-database/driver/sqlite/
-database/driver/mysql/
-database/driver/pgsql/
-database/driver/mssql/
-database/driver/oracle/
-database/driver/mongo/
+db/postgres/
+db/mysql/
+db/mariadb/
+db/sqlite/
+db/sqlserver/
+db/oracle/
 ```
 
-Public consumption of a nested driver (after that module is tagged correctly) is a separate `go get`, for example:
+Public consumption of a nested driver is a separate `go get`, for example:
 
 ```text
-go get github.com/zatrano/packages/database/driver/sqlite@v1.0.0
+go get github.com/zatrano/packages/db/postgres@v1.0.0
 ```
 
-The Git tag for that module must be `database/driver/sqlite/v1.0.0`. A tag named `packages/database/driver/sqlite/v1.0.0` is not a valid Go module version. Publishing those nested tags is a **separate release operation**; it is not part of root `v1.13.1`.
+The Git tag for that module must be `db/postgres/v1.0.0`. A tag named `packages/db/postgres/v1.0.0` is not a valid Go module version. Nested tags are a separate release operation; they are not part of root `v1.14.0`.
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.13.1` does not require those nested module paths.
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.14.0` does not require those nested module paths.
 
 ## Local development
 
-This repository may use a sibling framework checkout and `go.work`:
-
-```text
-replace github.com/zatrano/framework/v3 => ../framework
-```
-
-That replace is **development-only**. Public consumers resolve `github.com/zatrano/framework/v2@v2.8.0` from the module proxy; they do not clone this tree next to the framework.
+Dependencies come from the module proxy. This repository has no `replace` directives and no `go.work`.
 
 ```bash
 go test ./...
 ```
 
-Work lands on **`main`**, same default branch as the framework.
+Nested modules have their own `go.mod`. `.github/scripts/test-all.sh` tests the root module and each nested module. Work lands on **`main`**, same default branch as the framework.
 
 ## Import path
 

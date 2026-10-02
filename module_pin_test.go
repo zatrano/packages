@@ -35,8 +35,8 @@ func TestGoModPinsReleasedFramework(t *testing.T) {
 	if !strings.Contains(text, "github.com/zatrano/rawhttp v0.2.2") {
 		t.Fatal("go.mod must require github.com/zatrano/rawhttp v0.2.2")
 	}
-	if !strings.Contains(text, "replace github.com/zatrano/framework/v3 => ../framework") {
-		t.Fatal("development replace must remain in the packages module until framework/v3 is tagged publicly")
+	if strings.Contains(text, "replace ") {
+		t.Fatal("go.mod must not use replace; depend on published module versions")
 	}
 	if i := strings.Index(text, "require ("); i >= 0 {
 		if j := strings.Index(text[i:], "\n)"); j >= 0 {

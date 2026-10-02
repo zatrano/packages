@@ -7,6 +7,24 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.14.0 - 2026-10-02
+
+Why now: Publish the V3 package line so apps resolve it from the module proxy. `v1.13.1` stays the last v2 tag.
+
+### Breaking
+
+- Removed `packages/database` and `packages/orm`. SQL access is `packages/db` (`db.SQLFrom`). Drivers are nested modules: `db/postgres`, `db/mysql`, `db/mariadb`, `db/sqlite`, `db/sqlserver`, `db/oracle`.
+- Removed `packages/template`, `packages/factory`, and `packages/httpclient`. Rendering goes through Canvas. Outbound HTTP is `net/http`.
+- View aliases (`View*`, `SetView`, `make:auth --views`) are template-only.
+
+### Changed
+
+- Require `github.com/zatrano/framework/v3 v3.0.0`, `canvas v0.2.0`, and `rawhttp v0.2.2`. No `replace` directives and no `go.work`.
+- Auth, session, pages, notification, and maintenance render through Canvas.
+- WebSocket upgrade uses rawhttp Hijack. Pagination is its own package.
+
+Install with `go get github.com/zatrano/packages@v1.14.0`.
+
 ## 1.13.1 - 2026-09-20
 
 Why now: Pin the kernel that actually contains `middleware.Throttle` so CI and public consumers can compile `ratelimit`.

@@ -4,8 +4,6 @@ go 1.25.0
 
 require github.com/zatrano/framework/v3 v3.0.0
 
-replace github.com/zatrano/framework/v3 => ../../framework
-
 require github.com/go-webauthn/webauthn v0.17.4
 
 require (

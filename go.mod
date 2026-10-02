@@ -26,13 +26,3 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
-
-replace github.com/zatrano/framework/v3 => ../framework
-
-replace github.com/zatrano/packages/mongo => ./mongo
-
-replace github.com/zatrano/packages/webauthn => ./webauthn
-
-replace github.com/zatrano/rawhttp => ../rawhttp
-
-replace github.com/zatrano/canvas => ../canvas

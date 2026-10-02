@@ -3,7 +3,7 @@ module github.com/zatrano/packages/db/sqlite
 go 1.25.0
 
 require (
-	github.com/zatrano/packages v0.0.0
+	github.com/zatrano/packages v1.13.2-0.20261002200350-3b4d59d11c88
 	modernc.org/sqlite v1.38.2
 )
 
@@ -19,5 +19,3 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
-
-replace github.com/zatrano/packages => ../..
