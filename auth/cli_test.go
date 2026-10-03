@@ -36,8 +36,8 @@ func TestMakeAuthTemplatesUsesEmbeddedStubs(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{
-		filepath.Join(dir, "templates", "layout", "auth.html"),
-		filepath.Join(dir, "templates", "layout", "mail.html"),
+		filepath.Join(dir, "templates", "layouts", "auth.html"),
+		filepath.Join(dir, "templates", "layouts", "mail.html"),
 		filepath.Join(dir, "templates", "auth", "login.html"),
 		filepath.Join(dir, "templates", "mail", "auth", "password-reset.html"),
 		filepath.Join(dir, "templates", "mail", "auth", "verify-email.html"),
@@ -47,6 +47,23 @@ func TestMakeAuthTemplatesUsesEmbeddedStubs(t *testing.T) {
 		if _, err := os.Stat(path); err != nil {
 			t.Fatalf("expected embedded stub at %s: %v", path, err)
 		}
+	}
+	login, err := os.ReadFile(filepath.Join(dir, "templates", "auth", "login.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(login), "@extends('layouts.auth')") {
+		t.Fatalf("auth pages must extend layouts.auth:\n%s", login)
+	}
+	mail, err := os.ReadFile(filepath.Join(dir, "templates", "mail", "auth", "password-reset.html"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(mail), "@extends('layouts.mail')") {
+		t.Fatalf("mail templates must extend layouts.mail:\n%s", mail)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "templates", "layout")); !os.IsNotExist(err) {
+		t.Fatalf("make:auth must write templates/layouts, not templates/layout")
 	}
 }
 
@@ -141,7 +158,7 @@ func TestMakeAuthWritesNestedSurfaces(t *testing.T) {
 	}{
 		{filepath.Join("templates", "auth", "login.html"), []string{"auth-social", "google/login", "continue_google"}},
 		{filepath.Join("templates", "auth", "register.html"), []string{"auth-social", "google/login", "continue_google"}},
-		{filepath.Join("templates", "layout", "auth.html"), []string{"auth-social"}},
+		{filepath.Join("templates", "layouts", "auth.html"), []string{"auth-social"}},
 		{filepath.Join("app", "routes", "auth", "web", "auth.go"), []string{"SocialAuthHandler", "google/login"}},
 		{filepath.Join("app", "routes", "auth", "api", "auth.go"), []string{"SocialAuthHandler", "/google"}},
 		{filepath.Join("app", "localization", "en", "auth.json"), []string{"continue_google", "provider_google", "social_"}},

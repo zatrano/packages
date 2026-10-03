@@ -78,8 +78,8 @@ func (c *MakeAuthCommand) Handle(args []string) error {
 	}
 
 	pairs := []filePair{
-		{"layouts/auth.html", []string{"templates", "layout", "auth.html"}},
-		{"layouts/mail.html", []string{"templates", "layout", "mail.html"}},
+		{"layouts/auth.html", []string{"templates", "layouts", "auth.html"}},
+		{"layouts/mail.html", []string{"templates", "layouts", "mail.html"}},
 		{"auth/login.html", []string{"templates", "auth", "login.html"}},
 		{"auth/register.html", []string{"templates", "auth", "register.html"}},
 		{"auth/forgot-password.html", []string{"templates", "auth", "forgot-password.html"}},
