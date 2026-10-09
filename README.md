@@ -21,9 +21,9 @@
 </p>
 
 <p align="center">
-  V3 line (branch <code>main</code>): Framework <code>github.com/zatrano/framework/v3</code> @ <code>v3.0.0</code>
+  V3 line (branch <code>main</code>): Framework <code>github.com/zatrano/framework/v3</code> @ <code>v3.1.0</code>
   ·
-  Carrier <code>rawhttp@v0.2.2</code>
+  Carrier <code>rawhttp@v0.2.4</code>
   ·
   Canvas <code>canvas@v0.2.0</code> via <code>framework/v3/core/ssr</code>
   ·
@@ -36,7 +36,7 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module path (no `/v2` suffix). **`main`** requires `github.com/zatrano/framework/v3 v3.0.0`. Nested package `VERSION` files are informational only.
+It is a **v1** Go module path (no `/v2` suffix). **`main`** requires `github.com/zatrano/framework/v3 v3.1.0`. Nested package `VERSION` files are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z`.
 

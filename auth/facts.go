@@ -14,6 +14,8 @@ type Publisher interface {
 
 // Occurrence is shared request/user context on auth Facts. It is business data, not infrastructure metadata.
 type Occurrence struct {
+	// Request may be invalid after the handler returns. Async consumers must
+	// Clone. The pool is opt-in in framework v3.2.0.
 	Request     *http.Request
 	User        Authenticatable
 	Credentials map[string]string

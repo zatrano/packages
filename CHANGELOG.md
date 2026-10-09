@@ -7,6 +7,18 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.15.0 - 2026-10-09
+
+Why now: Graceful WebSocket shutdown uses `RegisterShutdownHook`, which is in the published framework v3.1.0. `v3.0.0` is retracted.
+
+### Added
+
+- WebSocket connections close gracefully on shutdown.
+
+### Changed
+
+- Minimum framework is `github.com/zatrano/framework/v3 v3.1.0`. That release requires `rawhttp v0.2.4`.
+
 ## 1.14.0 - 2026-10-02
 
 Why now: Publish the V3 package line so apps resolve it from the module proxy. `v1.13.1` stays the last v2 tag.
