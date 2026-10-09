@@ -26,14 +26,14 @@ func TestGoModPinsReleasedFramework(t *testing.T) {
 	if strings.Contains(text, "module github.com/zatrano/packages/v2") {
 		t.Fatal("do not introduce a /v2 module path")
 	}
-	if !strings.Contains(text, "github.com/zatrano/framework/v3 v3.0.0") {
-		t.Fatal("go.mod must require github.com/zatrano/framework/v3 v3.0.0")
+	if !strings.Contains(text, "github.com/zatrano/framework/v3 v3.1.0") {
+		t.Fatal("go.mod must require github.com/zatrano/framework/v3 v3.1.0")
 	}
 	if !strings.Contains(text, "github.com/zatrano/canvas v0.2.0") {
 		t.Fatal("go.mod must require github.com/zatrano/canvas v0.2.0")
 	}
-	if !strings.Contains(text, "github.com/zatrano/rawhttp v0.2.2") {
-		t.Fatal("go.mod must require github.com/zatrano/rawhttp v0.2.2")
+	if !strings.Contains(text, "github.com/zatrano/rawhttp v0.2.4") {
+		t.Fatal("go.mod must require github.com/zatrano/rawhttp v0.2.4")
 	}
 	if strings.Contains(text, "replace ") {
 		t.Fatal("go.mod must not use replace; depend on published module versions")
