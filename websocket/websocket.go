@@ -47,6 +47,9 @@ func UpgradeWithCheckOrigin(handler Handler, check CheckOrigin) routing.HandlerF
 		if !check(req) {
 			return http.Abort(403, "origin not allowed")
 		}
+		if closing.Load() {
+			return http.Abort(503, "server is shutting down")
+		}
 		return http.Hijack(func(conn net.Conn, leftover []byte) error {
 			defer conn.Close()
 
@@ -66,7 +69,9 @@ func UpgradeWithCheckOrigin(handler Handler, check CheckOrigin) routing.HandlerF
 				return err
 			}
 
-			ws := &Conn{bufrw: bufrw}
+			ws := &Conn{bufrw: bufrw, raw: conn}
+			track(ws)
+			defer untrack(ws)
 			return handler(ws)
 		})
 	}
@@ -96,9 +101,14 @@ func acceptKey(key string) string {
 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
+// FrameworkMin is the framework release this package needs for shutdown hooks.
+const FrameworkMin = "v3.1.0"
+
 // Conn is a WebSocket connection supporting text, binary, and control frames.
 type Conn struct {
 	bufrw *bufio.ReadWriter
+	raw   net.Conn
+	shard int
 }
 
 // ReadMessage reads the next text/binary frame payload.
