@@ -63,11 +63,13 @@ func TestMixedSyncAsync(t *testing.T) {
 			return nil
 		})),
 		facts.Async(facts.ReactionFunc[UserRegistered](func(ctx context.Context, fact UserRegistered) error {
-			asyncN.Add(1)
+			if asyncN.Add(1) == 2 {
+				close(asyncDone)
+			}
 			return nil
 		})),
 		facts.Async(facts.ReactionFunc[UserRegistered](func(ctx context.Context, fact UserRegistered) error {
-			if asyncN.Add(1) >= 2 {
+			if asyncN.Add(1) == 2 {
 				close(asyncDone)
 			}
 			return nil
