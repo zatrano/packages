@@ -2,7 +2,7 @@ module github.com/zatrano/packages/webauthn
 
 go 1.25.0
 
-require github.com/zatrano/framework/v3 v3.1.0
+require github.com/zatrano/framework/v3 v3.1.2
 
 require github.com/go-webauthn/webauthn v0.17.4
 

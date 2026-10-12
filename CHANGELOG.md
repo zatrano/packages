@@ -7,6 +7,12 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+## 1.15.1 - 2026-10-12
+
+### Changed
+
+- Require `github.com/zatrano/framework/v3 v3.1.2` and `github.com/zatrano/rawhttp v0.2.5`. The nested `mongo` and `webauthn` modules require the same framework tag. Tag `v1.15.0` stays on framework `v3.1.0` and rawhttp `v0.2.4`.
+
 ## 1.15.0 - 2026-10-09
 
 Why now: Graceful WebSocket shutdown uses `RegisterShutdownHook`, which is in the published framework v3.1.0. `v3.0.0` is retracted.
