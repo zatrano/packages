@@ -38,7 +38,7 @@ _ = tx.Commit(ctx)
 pool := db.Native()
 ```
 
-**Forbidden:** `database.Open("postgres")`, blank-import of all drivers, global registry.
+Open one driver module directly. Drivers are not selected from a name registry and are not blank-imported together.
 
 Each adapter is its **own Go module** so unused drivers stay out of your `go.mod`.
 

@@ -21,9 +21,9 @@
 </p>
 
 <p align="center">
-  V3 line (branch <code>main</code>): Framework <code>github.com/zatrano/framework/v3</code> @ <code>v3.1.0</code>
+  Current releases: Framework <a href="https://github.com/zatrano/framework/releases/tag/v3.1.1"><code>v3.1.1</code></a>
   ·
-  Carrier <code>rawhttp@v0.2.4</code>
+  rawhttp <a href="https://github.com/zatrano/rawhttp/releases/tag/v0.2.5"><code>v0.2.5</code></a>
   ·
   Canvas <code>canvas@v0.2.0</code> via <code>framework/v3/core/ssr</code>
   ·
@@ -36,7 +36,7 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module path (no `/v2` suffix). **`main`** requires `github.com/zatrano/framework/v3 v3.1.0`. Nested package `VERSION` files are informational only.
+It is a **v1** Go module path (no `/v2` suffix). This module requires `github.com/zatrano/framework/v3 v3.1.0` and `github.com/zatrano/rawhttp v0.2.4`. Install the current framework release `v3.1.1` with the packages release `v1.15.0`. Nested package `VERSION` files are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z`.
 
@@ -76,7 +76,6 @@ The **application** blank-imports the package and lists it in `bootstrap/enabled
 import (
     _ "github.com/zatrano/packages/session"
     _ "github.com/zatrano/packages/auth"
-    _ "github.com/zatrano/packages/database"
     _ "github.com/zatrano/framework/v3/core/ssr"
 )
 
@@ -100,7 +99,7 @@ go run ./cmd/app package:doctor
 
 | Kind | In the binary when | Examples |
 | --- | --- | --- |
-| **Service** | Blank-import **and** list in `EnabledAddons` (`Enabled ∩ Imported`) | `auth`, `database`, `queue`, `ai`, `oauth` |
+| **Service** | Blank-import **and** list in `EnabledAddons` (`Enabled ∩ Imported`) | `auth`, `queue`, `ai`, `oauth` |
 | **Library** | You `import` it in your code | `toolkit/str`, `resources`, `rag` |
 | **Heavy** | Own `go.mod`, only when needed | `webauthn`, `mongo`, `qr`, SQL drivers |
 
@@ -109,7 +108,7 @@ Resolve services with `From(app)` helpers. Do not expect `app.Auth()` on the ker
 ```go
 auth.From(app)
 session.From(app)
-database.Migrator(app)
+db.SQLFrom(app)
 notification.From(app)
 ```
 
