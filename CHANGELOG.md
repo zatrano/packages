@@ -7,6 +7,10 @@ Historical `2.0.x` headings below recorded the framework pin, not a packages `/v
 
 ## Unreleased
 
+### Changed
+
+- Require `github.com/zatrano/rawhttp v1.0.0`. The code is the same as rawhttp `v0.2.10`.
+
 ## 1.15.1 - 2026-10-12
 
 ### Changed

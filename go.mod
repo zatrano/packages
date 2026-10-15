@@ -6,7 +6,7 @@ require (
 	github.com/redis/go-redis/v9 v9.11.0
 	github.com/zatrano/canvas v0.2.0
 	github.com/zatrano/framework/v3 v3.1.2
-	github.com/zatrano/rawhttp v0.2.5
+	github.com/zatrano/rawhttp v1.0.0
 	golang.org/x/crypto v0.55.0
 	golang.org/x/sys v0.47.0
 	modernc.org/sqlite v1.38.2

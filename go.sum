@@ -26,6 +26,8 @@ github.com/zatrano/framework/v3 v3.1.2 h1:FE6RSC6zUSTRIdpuKa8tscnBkv2I5yIkWbvg4T
 github.com/zatrano/framework/v3 v3.1.2/go.mod h1:orqt/m5np5kGONzsX85IAKWTsR4EVYvtxvBZTbqSDbI=
 github.com/zatrano/rawhttp v0.2.5 h1:4BjrsFmhblAtrHOv1r4MCxOvc/qBVS0yXHNY76xwG8k=
 github.com/zatrano/rawhttp v0.2.5/go.mod h1:r6454t8cXYE7n+Qgkci7yCNJDqDhvQWVQDkVGo7YzmU=
+github.com/zatrano/rawhttp v1.0.0 h1:EJi3TAQ1ctNAy8v3qPhG6qN64D3/H4okdPp66EDobBc=
+github.com/zatrano/rawhttp v1.0.0/go.mod h1:r6454t8cXYE7n+Qgkci7yCNJDqDhvQWVQDkVGo7YzmU=
 golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
 golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
 golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b h1:M2rDM6z3Fhozi9O7NWsxAkg/yqS/lQJ6PmkyIV3YP+o=
