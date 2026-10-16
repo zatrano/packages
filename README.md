@@ -21,11 +21,11 @@
 </p>
 
 <p align="center">
-  Current releases: Framework <a href="https://github.com/zatrano/framework/releases/tag/v3.1.2"><code>v3.1.2</code></a>
+  Current releases: Framework <a href="https://github.com/zatrano/framework/releases/tag/v3.2.0"><code>v3.2.0</code></a>
   ·
-  rawhttp <a href="https://github.com/zatrano/rawhttp/releases/tag/v0.2.5"><code>v0.2.5</code></a>
+  rawhttp <a href="https://github.com/zatrano/rawhttp/releases/tag/v1.0.1"><code>v1.0.1</code></a>
   ·
-  Canvas <code>canvas@v0.2.0</code> via <code>framework/v3/core/ssr</code>
+  Canvas <a href="https://github.com/zatrano/canvas/releases/tag/v1.0.0"><code>v1.0.0</code></a>
   ·
   Packages <a href="https://github.com/zatrano/packages/releases/tag/v1.15.1"><code>v1.15.1</code></a>
 </p>
@@ -36,11 +36,23 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module path (no `/v2` suffix). This module requires `github.com/zatrano/framework/v3 v3.1.2` and `github.com/zatrano/rawhttp v0.2.5`. Install those with the packages release `v1.15.1`. Nested package `VERSION` files are informational only.
+It is a **v1** Go module path (no `/v2` suffix). This release (`v1.15.1`) requires `github.com/zatrano/framework/v3 v3.1.2`, `github.com/zatrano/rawhttp v1.0.0`, and `github.com/zatrano/canvas v0.2.0`. Those are the `go.mod` pins, not the current tags above. Nested package `VERSION` files are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z`.
 
 The kernel lives in [github.com/zatrano/framework](https://github.com/zatrano/framework) (`main`): HTTP (rawhttp), routing, middleware, config, the CLI, `zatrano new`, Canvas wiring (`core/ssr`). Optional capabilities — sessions, auth, `packages/db`, queues, AI — live **here**.
+
+## Measurements
+
+This module is not an HTTP engine and not a template engine. It has no throughput matrix of its own. The published measurements for the current tags are:
+
+| Repo | Tag | What was measured | Where |
+| --- | --- | --- | --- |
+| framework | v3.2.0 | Paired TCP against Fiber (tuned), pool off and pool on | [bench/RESULTS.md](https://github.com/zatrano/framework/blob/main/bench/RESULTS.md) |
+| rawhttp | v1.0.1 | Paired TCP against fasthttp, plaintext 64/256/1024/4096, plus ServeConn gates | [rawhttp README](https://github.com/zatrano/rawhttp/blob/main/README.md) |
+| canvas | v1.0.0 | Typed list and `RenderTo` against quicktemplate and `html/template` | [canvas README](https://github.com/zatrano/canvas/blob/main/README.md) |
+
+The go get below follows this module's pin (`framework v3.1.2`). The current kernel tag is `v3.2.0`; this release has not moved its require.
 
 The two modules cannot be merged: this one already requires the framework.
 
