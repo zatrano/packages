@@ -5,6 +5,12 @@ All notable changes to `github.com/zatrano/packages` are documented in this file
 This module is versioned independently of `github.com/zatrano/framework/v2`.
 Historical `2.0.x` headings below recorded the framework pin, not a packages `/v2` module.
 
+## 1.15.3 - 2026-10-16
+
+### Changed
+
+- Require `github.com/zatrano/canvas v1.0.1`. Nested `@foreach` with `@if` in the body, struct-field loops, and map iteration on the AOT path were empty after the first outer iteration on `v1.0.0`.
+
 ## 1.15.2 - 2026-10-16
 
 ### Changed

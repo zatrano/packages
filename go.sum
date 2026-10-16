@@ -20,8 +20,8 @@ github.com/redis/go-redis/v9 v9.11.0 h1:E3S08Gl/nJNn5vkxd2i78wZxWAPNZgUNTp8WIJUA
 github.com/redis/go-redis/v9 v9.11.0/go.mod h1:huWgSWd8mW6+m0VPhJjSSQ+d6Nh1VICQ6Q5lHuCH/Iw=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
-github.com/zatrano/canvas v1.0.0 h1:e4E8kC8a3ADUjxcG5PNsKCqnmabAE6ad7pZ+fPRGkhs=
-github.com/zatrano/canvas v1.0.0/go.mod h1:tdbUa0I95Z7cvu8ZZu+qMGuZw6dwb9hku9VDW5rNCJ0=
+github.com/zatrano/canvas v1.0.1 h1:Hq076lvKdI9jFR3r+ysIIp8uZuTwIIqsgbN2vSmse3g=
+github.com/zatrano/canvas v1.0.1/go.mod h1:tdbUa0I95Z7cvu8ZZu+qMGuZw6dwb9hku9VDW5rNCJ0=
 github.com/zatrano/framework/v3 v3.1.2 h1:FE6RSC6zUSTRIdpuKa8tscnBkv2I5yIkWbvg4TCz+bA=
 github.com/zatrano/framework/v3 v3.1.2/go.mod h1:orqt/m5np5kGONzsX85IAKWTsR4EVYvtxvBZTbqSDbI=
 github.com/zatrano/rawhttp v1.0.0 h1:EJi3TAQ1ctNAy8v3qPhG6qN64D3/H4okdPp66EDobBc=

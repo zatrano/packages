@@ -29,8 +29,8 @@ func TestGoModPinsReleasedFramework(t *testing.T) {
 	if !strings.Contains(text, "github.com/zatrano/framework/v3 v3.1.2") {
 		t.Fatal("go.mod must require github.com/zatrano/framework/v3 v3.1.2")
 	}
-	if !strings.Contains(text, "github.com/zatrano/canvas v1.0.0") {
-		t.Fatal("go.mod must require github.com/zatrano/canvas v1.0.0")
+	if !strings.Contains(text, "github.com/zatrano/canvas v1.0.1") {
+		t.Fatal("go.mod must require github.com/zatrano/canvas v1.0.1")
 	}
 	if !strings.Contains(text, "github.com/zatrano/rawhttp v1.0.0") {
 		t.Fatal("go.mod must require github.com/zatrano/rawhttp v1.0.0")
@@ -61,7 +61,7 @@ func TestPublicCanvasAndRawHTTPResolveWithoutSibling(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, spec := range []string{
-		"github.com/zatrano/canvas@v1.0.0",
+		"github.com/zatrano/canvas@v1.0.1",
 		"github.com/zatrano/rawhttp@v1.0.0",
 	} {
 		cmd := exec.Command("go", "get", spec)
@@ -84,8 +84,8 @@ func TestPublicCanvasAndRawHTTPResolveWithoutSibling(t *testing.T) {
 	if strings.Contains(text, "replace ") {
 		t.Fatalf("public consumer must not use replace:\n%s", text)
 	}
-	if !strings.Contains(text, "github.com/zatrano/canvas v1.0.0") {
-		t.Fatalf("expected canvas v1.0.0:\n%s", text)
+	if !strings.Contains(text, "github.com/zatrano/canvas v1.0.1") {
+		t.Fatalf("expected canvas v1.0.1:\n%s", text)
 	}
 	if !strings.Contains(text, "github.com/zatrano/rawhttp v1.0.0") {
 		t.Fatalf("expected rawhttp v1.0.0:\n%s", text)
