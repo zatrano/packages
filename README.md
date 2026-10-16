@@ -27,7 +27,7 @@
   ·
   Canvas <a href="https://github.com/zatrano/canvas/releases/tag/v1.0.0"><code>v1.0.0</code></a>
   ·
-  Packages <a href="https://github.com/zatrano/packages/releases/tag/v1.15.1"><code>v1.15.1</code></a>
+  Packages <a href="https://github.com/zatrano/packages/releases/tag/v1.15.2"><code>v1.15.2</code></a>
 </p>
 
 ---
@@ -36,7 +36,7 @@ This module is [github.com/zatrano/packages](https://github.com/zatrano/packages
 
 `ai`, `rag`, `agent`, and `workflow` are **experimental**: they have not completed the same security review as the rest of the ecosystem. See [PACKAGES.md](PACKAGES.md).
 
-It is a **v1** Go module path (no `/v2` suffix). This release (`v1.15.1`) requires `github.com/zatrano/framework/v3 v3.1.2`, `github.com/zatrano/rawhttp v1.0.0`, and `github.com/zatrano/canvas v0.2.0`. Those are the `go.mod` pins, not the current tags above. Nested package `VERSION` files are informational only.
+It is a **v1** Go module path (no `/v2` suffix). This release (`v1.15.2`) requires `github.com/zatrano/framework/v3 v3.1.2`, `github.com/zatrano/rawhttp v1.0.0`, and `github.com/zatrano/canvas v1.0.0`. Framework `v3.1.2` and rawhttp `v1.0.0` are the `go.mod` pins. Canvas `v1.0.0` is both the pin and the current tag. `v1.15.1` is retracted: it requires canvas `v0.2.0`, and its zip stays in the checksum database. Nested package `VERSION` files are informational only.
 
 Releases are created only with `scripts/release.sh`. Do not run `git tag` by hand. Preview with `scripts/release.sh --dry-run vX.Y.Z`.
 
@@ -99,13 +99,13 @@ From the app CLI:
 
 ```bash
 go get github.com/zatrano/framework/v3@v3.1.2
-go get github.com/zatrano/packages@v1.15.1
+go get github.com/zatrano/packages@v1.15.2
 go run ./cmd/app package:enable auth
 go run ./cmd/app package:list
 go run ./cmd/app package:doctor
 ```
 
-`v1.15.1` is the current public packages tag (V3). `v1.13.1` remains the last v2 tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0` → `v1.11.0` → `v1.11.1` → `v1.12.0` → `v1.13.0` → `v1.13.1` → `v1.14.0` → `v1.15.0` → `v1.15.1`. Do not use `@main` for application consumption.
+`v1.15.2` is the current public packages tag (V3). `v1.15.1` is retracted. `v1.13.1` remains the last v2 tag. Do not use `@v1.7.0` for new apps: that historical tag requires an unpublished nested SQLite module and must not be retagged. Upgrade path: `v1.7.0` → `v1.7.1` → `v1.7.2` → `v1.8.0` → `v1.9.0` → `v1.9.1` → `v1.10.0` → `v1.11.0` → `v1.11.1` → `v1.12.0` → `v1.13.0` → `v1.13.1` → `v1.14.0` → `v1.15.0` → `v1.15.1` → `v1.15.2`. Do not use `@main` for application consumption.
 
 `package:enable` writes the blank-import into `bootstrap/addons.go` and merges `packages/<name>/.env.example` into the app `.env.example` (existing keys are not overwritten). Libraries are never enabled — you just `import` them.
 
@@ -291,9 +291,9 @@ Public consumption of a nested driver is a separate `go get`, for example:
 go get github.com/zatrano/packages/db/postgres@v1.0.0
 ```
 
-The Git tag for that module must be `db/postgres/v1.0.0`. A tag named `packages/db/postgres/v1.0.0` is not a valid Go module version. Nested tags are a separate release operation; they are not part of root `v1.15.1`.
+The Git tag for that module must be `db/postgres/v1.0.0`. A tag named `packages/db/postgres/v1.0.0` is not a valid Go module version. Nested tags are a separate release operation; they are not part of root `v1.15.2`.
 
-`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.15.1` does not require those nested module paths.
+`db:setup` in the app pulls the driver you choose. None of them are linked until then — including SQLite. Root `github.com/zatrano/packages@v1.15.2` does not require those nested module paths.
 
 ## Local development
 

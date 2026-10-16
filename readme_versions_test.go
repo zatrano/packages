@@ -22,10 +22,10 @@ func TestReadmeVersions(t *testing.T) {
 		"releases/tag/v3.2.0",
 		"releases/tag/v1.0.1",
 		"releases/tag/v1.0.0",
-		"releases/tag/v1.15.1",
+		"releases/tag/v1.15.2",
 		"github.com/zatrano/framework/v3 v3.1.2",
 		"github.com/zatrano/rawhttp v1.0.0",
-		"github.com/zatrano/canvas v0.2.0",
+		"github.com/zatrano/canvas v1.0.0",
 	} {
 		if !strings.Contains(text, piece) {
 			t.Fatalf("README is missing %s", piece)

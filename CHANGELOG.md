@@ -5,11 +5,13 @@ All notable changes to `github.com/zatrano/packages` are documented in this file
 This module is versioned independently of `github.com/zatrano/framework/v2`.
 Historical `2.0.x` headings below recorded the framework pin, not a packages `/v2` module.
 
-## Unreleased
+## 1.15.2 - 2026-10-16
 
 ### Changed
 
 - Require `github.com/zatrano/rawhttp v1.0.0`. The code is the same as rawhttp `v0.2.10`.
+- Require `github.com/zatrano/canvas v1.0.0`. That tag is the same code as canvas `v0.2.1`.
+- Retract `v1.15.1`. That tag requires canvas `v0.2.0`. The checksum database already recorded its zip, so the tag stays. Use `v1.15.2`.
 
 ## 1.15.1 - 2026-10-12
 

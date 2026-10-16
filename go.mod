@@ -4,13 +4,16 @@ go 1.25.0
 
 require (
 	github.com/redis/go-redis/v9 v9.11.0
-	github.com/zatrano/canvas v0.2.0
+	github.com/zatrano/canvas v1.0.0
 	github.com/zatrano/framework/v3 v3.1.2
 	github.com/zatrano/rawhttp v1.0.0
 	golang.org/x/crypto v0.55.0
 	golang.org/x/sys v0.47.0
 	modernc.org/sqlite v1.38.2
 )
+
+// v1.15.1 requires canvas v0.2.0. Its zip is in the checksum database.
+retract v1.15.1
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
