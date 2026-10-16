@@ -19,7 +19,7 @@ func TestReadmeVersions(t *testing.T) {
 	}
 	text := string(raw)
 	for _, piece := range []string{
-		"releases/tag/v3.2.0",
+		"releases/tag/v3.2.1",
 		"releases/tag/v1.0.1",
 		"releases/tag/v1.0.0",
 		"releases/tag/v1.15.2",
