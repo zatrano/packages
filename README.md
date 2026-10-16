@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  Current releases: Framework <a href="https://github.com/zatrano/framework/releases/tag/v3.2.1"><code>v3.2.1</code></a>
+  Current releases: Framework <a href="https://github.com/zatrano/framework/releases/tag/v3.2.2"><code>v3.2.2</code></a>
   ·
   rawhttp <a href="https://github.com/zatrano/rawhttp/releases/tag/v1.0.1"><code>v1.0.1</code></a>
   ·
@@ -52,7 +52,7 @@ This module is not an HTTP engine and not a template engine. It has no throughpu
 | rawhttp | v1.0.1 | Paired TCP against fasthttp, plaintext 64/256/1024/4096, plus ServeConn gates | [rawhttp README](https://github.com/zatrano/rawhttp/blob/main/README.md) |
 | canvas | v1.0.0 | Typed list and `RenderTo` against quicktemplate and `html/template` | [canvas README](https://github.com/zatrano/canvas/blob/main/README.md) |
 
-The go get below follows this module's pin (`framework v3.1.2`). The current kernel tag is `v3.2.1`; this release has not moved its require.
+The go get below follows this module's pin (`framework v3.1.2`). The current kernel tag is `v3.2.2`; this release has not moved its require.
 
 The two modules cannot be merged: this one already requires the framework.
 
